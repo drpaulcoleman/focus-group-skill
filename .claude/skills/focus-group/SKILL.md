@@ -65,6 +65,12 @@ run a panel — read/write `config.json` in the skill root:
 | `/focus-group config clear user-role` | Forget the saved role; Step 1 will re-ask next run. |
 | `/focus-group config clear last-product-pack` | Forget the cached product pack so Step 3 asks again. |
 | `/focus-group config clear last-industry-pack` | Forget the cached industry pack. |
+| `/focus-group config set role-elaboration "<text>"` | Save a freeform role description (≤200 chars) from `/make-this-mine`. |
+| `/focus-group config set deal-types <slug>,<slug>,...` | Save preferred deal types (from `/make-this-mine`). |
+| `/focus-group config set excluded-noise <slug>,<slug>,...` | Save noise categories to demote in Stage A.5. |
+| `/focus-group config set panel-size <n>` | Override default panel cap (3, 5, 7, or null). |
+| `/focus-group config set default-stage <slug>` | Tiebreaker when content-type inference is ambiguous. |
+| `/focus-group config clear personalization` | Drop all `/make-this-mine` keys (role-elaboration, deal-types, excluded-noise, panel-size, default-stage). |
 
 Then stop. `config.json` is plain JSON — may also be hand-edited.
 
@@ -90,7 +96,8 @@ All other invocations. Run the 12-step pipeline below.
 | `--probe` | Force a fresh tooling preflight (CLI + MCP detection), bypassing the 24-hour `.focus-group-cache.json`. Useful right after installing a new CLI or MCP server. |
 | `--attendees <path>` | Folder of attendee profile files (one per stakeholder) the skill reads to ground the panel in real people on the call. See [references/usage.md](references/usage.md). |
 | `--stage <stage>` | Set the deal stage for persona output calibration. Values: `discovery`, `demo`, `negotiation`, `post-sale`. When omitted, the skill infers stage from content type (pitch deck → demo; contract redline → negotiation; QBR materials → post-sale; discovery questions → discovery). Shapes every persona's output via the deal-stage adaptation in [references/persona-output-template.md](references/persona-output-template.md). |
-| `--quick` | Fast mode for time-pressed AEs. Runs 3 personas only (AE, SE, Economic Buyer) on local Claude. Skips Steps 0, 4c, 7, 8, 10. Output: role-framed instrument only (Meeting Prep or Demo Prep) — no analytical sections, no citations block, no devil's advocate. Target: <60 seconds, fits one screen. |
+| `--quick` · `--fast` | Fast mode for time-pressed AEs. Runs 3 personas only (AE, SE, Economic Buyer) on local Claude. Skips Steps 0, 4c, 7, 8, 10. Output: role-framed instrument only (Meeting Prep or Demo Prep) — no analytical sections, no citations block, no devil's advocate. Target: <60 seconds, fits one screen. |
+| `--no-citations` | Skip citation enforcement and auto-research. Step 7 does not auto-run `/download`; accuracy score is not capped; un-cited claims stay in the main report. For speed or when working offline. Inverse of `--require-citations`. |
 
 ## What actually gets asked (the speed-up rules)
 
@@ -113,7 +120,7 @@ panel approval), and the first invocation never runs Step 0 again that
 day. Detection cache invalidates immediately on any failed CLI/MCP call,
 so removing a tool is picked up the next time the skill tries to use it.
 
-Under `--quick`: only Steps 1 (if unsaved), 2, and 5 run. Steps 0, 3, 4c, 7, 8, 10 are skipped. Step 9 runs with 3 personas only (AE, SE, Economic Buyer). Step 9.5 is the primary output gate. Step 12 presents the role-framed instrument only (no Deep Analysis appendix).
+Under `--quick`: only Steps 1 (if unsaved), 2, and 5 run. Steps 0, 3, 4c, 7, 8, 10 are skipped. Step 9 runs with 3 personas only. Step 9.5 is the primary output gate. Step 12 presents the role-framed instrument only.
 
 ## The 12-step pipeline
 
@@ -324,6 +331,12 @@ Three beats (see [references/persona-roster.md](references/persona-roster.md)):
 - Small nonprofit + Nonprofit Cloud → skip Enterprise Architect; lead with Executive Director, Director of Development, Program Manager.
 - Fortune 100 bank + Financial Services → lead with Enterprise Architect, FINRA-aware InfoSec Officer, CIO Economic Buyer.
 
+**Deliberative-spread enforcement (mandatory).** After composing the recommended panel, verify it against the 4-axis model in [references/deliberation.md](references/deliberation.md):
+- **At least one structural dissenter** must be present in any panel of 3+. Structural dissenters are personas whose `## Deliberative profile` includes low ambiguity-tolerance + conservative risk orientation (e.g., InfoSec Officer, Compliance Officer, Procurement).
+- **Spread on ambiguity-tolerance axis:** the panel must not be uniformly low OR uniformly high. If it is, swap one persona for a counterweight (e.g., swap a second conservative-analytical seat for a progressive-challenger or moderate-collaborative one).
+- **Spread on locus-of-control axis:** at least one internal-locus persona (owns the outcome) and one external-locus persona (subject to forces outside their control) should be represented.
+- **If the panel is deliberatively homogeneous** after applying the above checks, **prepend a warning to the panel preview**: *"⚠ Deliberative spread: this panel clusters on [axis]. Consider swapping [persona] for [suggestion] to catch what uniform [trait] panels miss."* The user can override, but they see the tradeoff.
+
 **Empty industry persona pool guard.** Before composing, check whether the active industry pack's `personas/industries/<slug>/` directory has any `.md` files. If the directory is empty (or contains only `.gitkeep`), the composer must fall back to operations-leaning generics (generic-technical, generic-stakeholder, plus the appropriate Salesforce-side seats) AND **prepend a visible notice to the panel preview**: *"⚠ The `<slug>` industry persona pool is currently empty. I'm using operations-leaning generics — treat this report as directionally useful but not industry-deep. (See [references/industry-packs/](references/industry-packs/) for which packs ship which personas.)"* Never silently substitute generics for a missing industry roster; the notice converts silent degradation into honest scaffolding.
 
 **Sub-vertical / product-pack alignment advisor.** When the customer-type classifier routes to a specific sub-vertical and the pack ships a sub-vertical-conditioned `## Recommended product-pack pairings` block (e.g., `### For renewables developer / IPP`), compare the recommended stack to the product packs the user actually named (or that the prompt strongly implies). When they differ in load-bearing ways — packs the user named that the sub-vertical's recommended stack omits, OR packs the user omitted that the sub-vertical's stack treats as required — **prepend a visible advisory to the panel preview**: *"⚠ Sub-vertical alignment: your customer routed to **<sub-vertical>** in the **<pack>** pack. The pack's recommended stack for this sub-vertical is **<A, B, C>**. Packs you named that aren't load-bearing here: **<X, Y>** — consider carving them from the bundle, or be explicit about why they're in scope. Packs the sub-vertical typically expects that you didn't name: **<Z>**."* This surfaces the "selling IOU-default Field Service to an IPP" mistake before dispatch instead of waiting for the panel to point it out. Skip when the pack has no sub-vertical-conditioned pairings block, or when the user's stack matches the recommendation.
@@ -338,14 +351,24 @@ Three beats (see [references/persona-roster.md](references/persona-roster.md)):
 ### Step 6 — Choose mode
 Stakeholder (sign-off lens) or Audience (reception lens). Defaults from [references/persona-roster.md](references/persona-roster.md); flip when the purpose differs.
 
-### Step 7 — Topic research (optional)
-If URLs in scope are not yet in `references/<slug>/`, offer `/download` for grounding. Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate every harvested artifact actually contains the expected content before any persona reads it.
+### Step 7 — Topic research (auto-run with consent)
+**Default behavior:** When the user approved web research at Step 4 (chose "Profile by name" or "Profile by culture & size" with relationship = prospect/lead), `/download` runs automatically for any in-scope URLs not yet in `references/<slug>/`. No additional prompt needed — Step 4 consent covers it.
+
+**Consent-gated exceptions:**
+- If Step 4 Q1 = "Skip — generic feedback is fine" → do NOT auto-run `/download`. Offer it as an option only.
+- If `--no-citations` is set → skip `/download` entirely.
+- If the customer profile signals heightened sensitivity (public-sector, healthcare with PHI, regulated finance) → ask before each URL rather than batch-auto.
+- LinkedIn / sign-in-wall / paywall URLs → respect the Step 2 short-circuit rules (never fetch; suggest local-save workaround).
+
+**Failure is non-blocking.** If `/download` finds nothing or fails for any URL, note the gap in the report header and proceed. The accuracy rubric's citation-density factor will reflect the missing sources.
+
+Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate every harvested artifact actually contains the expected content before any persona reads it.
 
 ### Step 8 — Distribute panel across models
 Round-robin across available channels (Claude, Codex, Gemini, opencode). If only Claude is available, use the multi-Claude fallback (Opus + Sonnet). Quota-skip → reassign to the next channel. See [references/multi-model-panel.md](references/multi-model-panel.md).
 
 ### Step 9 — Stage A: aggregate
-Claude (latest) aggregates persona feedback into the **Recommendations Report** per [references/output-format.md](references/output-format.md). Every persona's response follows the mandatory structure in [references/persona-output-template.md](references/persona-output-template.md). The aggregation step reads these structured responses and composes the role-framed instrument (Meeting Prep / Demo Prep / Architecture Review / Value Case) per [references/output-format.md](references/output-format.md) — role-framed instrument FIRST, then analytical Deep Analysis sections. **Frame the report for the user's role** (Step 1) — an Account Executive gets talk tracks and discovery-question revisions; a Solution Engineer gets demo-flow gotchas and feasibility flags; an Architect gets estate-impact and integration-sequencing notes; a Business Value Consultant gets ROI math and value-hypothesis language. Apply the anti-groupthink duties in [references/deliberation.md](references/deliberation.md): independent-derivation test, preserve dissent, Abilene check, devil's-advocate the verdict.
+Claude (latest) aggregates persona feedback into the **Recommendations Report** per [references/output-format.md](references/output-format.md). **Frame the report for the user's role** (Step 1) — an Account Executive gets talk tracks and discovery-question revisions; a Solution Engineer gets demo-flow gotchas and feasibility flags; an Architect gets estate-impact and integration-sequencing notes; a Business Value Consultant gets ROI math and value-hypothesis language. Every persona's response follows the mandatory structure in [references/persona-output-template.md](references/persona-output-template.md). The aggregation step reads these structured responses and composes the role-framed instrument (Meeting Prep / Demo Prep / Architecture Review / Value Case) per [references/output-format.md](references/output-format.md) — role-framed instrument FIRST, then analytical Deep Analysis sections. Apply the anti-groupthink duties in [references/deliberation.md](references/deliberation.md): independent-derivation test, preserve dissent, Abilene check, devil's-advocate the verdict.
 
 ### Step 9.5 — "So What?" Transformation (the actionability gate)
 
@@ -357,7 +380,18 @@ Before consolidation, apply the actionability filter to every finding from Stage
 
 This gate ensures the top-level output contains ONLY directly actionable material. The user reads the instrument section and knows exactly what to do. Background context is preserved but doesn't clutter the primary output.
 
-**Under `--quick`:** Stage A.5 is mandatory (it IS the output filter). Only items that pass the "specific action" test appear. Everything else is dropped entirely (no Deep Analysis appendix in quick mode).
+**Stage-aware specificity check.** Every action item that passes the "specific action" test must ALSO pass a specificity check calibrated to the active deal stage:
+
+| Stage | Required fields | Acceptable "BY WHEN" |
+|-------|----------------|---------------------|
+| **Discovery** | WHO + WHAT | "next call" / "before discovery meeting" is fine |
+| **Demo / Mid** | WHO + WHAT + WHAT-TO-SHOW (the specific demo moment, slide, or proof point) | "before the demo" / "during POV setup" |
+| **Negotiation** | WHO + WHAT + BY WHEN + HOW TO VERIFY (what confirms it's done) | Concrete: "before SOW review," "by procurement deadline" |
+| **Post-sale** | WHO + WHAT + METRIC TO WATCH (the number that proves value) | "by next QBR" / "within 30 days" |
+
+Items that fail the stage-appropriate specificity check are **rewritten** by the synthesis (adding the missing fields from context) or **demoted** to Deep Analysis if the missing information genuinely isn't available. The rewrite is preferred — demoting should be rare.
+
+**Under `--quick` / `--fast`:** Stage A.5 is mandatory (it IS the output filter). Only items that pass both the "specific action" test AND the specificity check appear. Everything else is dropped entirely (no Deep Analysis appendix in quick mode).
 
 **Persona output template dependency:** Stage A.5 reads the structured persona output per [references/persona-output-template.md](references/persona-output-template.md). The "Risk Level" tags (RED/YELLOW/GREEN) and "What Would Change My Mind" fields are the primary inputs to the actionability filter.
 
@@ -368,6 +402,8 @@ Submit the Stage-A report to a *different* model than Stage A used (Codex/Gemini
 Merge Stage B with Stage A. Where they agree → high confidence. Where they disagree → surface, judge, decide (do not vote-count). Where Stage B caught something missed → add it, attributed. Compute the accuracy score per [references/accuracy-rubric.md](references/accuracy-rubric.md). Attach the citations block from all `references/<slug>/meta.json` files used.
 
 Under `--require-citations`, move under-cited claims to a "Needs verification" section and cap the accuracy score at 70 until the gap is closed.
+
+Under `--no-citations`, skip citation enforcement entirely: do not cap accuracy, do not move claims to "Needs verification," do not reference missing citations in the report. The accuracy rubric's citation-density factor scores 0 (no penalty, no bonus).
 
 ### Step 12 — Present & save
 Present to the user. Save to `.scratch/focus-group/<YYYY-MM-DD>-<short-slug>.md`.
@@ -414,6 +450,12 @@ The gate **never blocks the panel.** If a check cannot complete (no API key, off
   Stage B (consolidation) calls `cross_ai.py` to dispatch the Stage-A
   report to a second model. Also provides the multi-Claude fallback
   when only the Claude CLI is available.
+- **`/make-this-mine`** (`.claude/skills/make-this-mine/SKILL.md`) —
+  guided personalization interview. Writes to this skill's `config.json`
+  (keys: `role_elaboration`, `deal_types`, `excluded_noise`,
+  `preferred_panel_size`, `default_stage`). The pipeline reads these at:
+  Step 1 (role enrichment), Step 2 (stage tiebreaker), Step 5a (panel
+  sizing and bias), Step 9.5 (noise demotion).
 
 ## References
 

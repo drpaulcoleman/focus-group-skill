@@ -6,7 +6,7 @@
 
 <title>Focus Group Skills — AI Sales-Team Companions for Salesforce</title>
 
-<meta name="description" content="Six Claude Code / Cursor skills for Salesforce sales teams. Convene a panel of sales-savvy reviewers, ground in real Salesforce docs, fact-check across AI models, sharpen the panel report before you send it on, and never let a customer name leave your laptop. For Account Executives, Solution Engineers, Architects, Industry Specialists, and Business Value Consultants.">
+<meta name="description" content="Seven Claude Code / Cursor skills for Salesforce sales teams. Convene a panel of sales-savvy reviewers, ground in real Salesforce docs, fact-check across AI models, sharpen the panel report before you send it on, and never let a customer name leave your laptop. For Account Executives, Solution Engineers, Architects, Industry Specialists, and Business Value Consultants.">
 <meta name="author" content="Dr. Paul Coleman">
 <meta name="document-version" content="1.0.0"><meta name="last-modified" content="2026-05-21"><meta name="robots" content="index, follow">
 <meta name="color-scheme" content="light dark">
@@ -16,7 +16,7 @@
 <!-- Open Graph / social share — keep in sync with the fields above -->
 <meta property="og:type" content="article">
 <meta property="og:title" content="Focus Group Skills — AI Sales-Team Companions for Salesforce">
-<meta property="og:description" content="Six Claude Code / Cursor skills for Salesforce sales teams. Convene persona panels, ground in Salesforce docs, fact-check across models, anonymize customer data, surface Slack context, sharpen the final report.">
+<meta property="og:description" content="Seven Claude Code / Cursor skills for Salesforce sales teams. Convene persona panels, ground in Salesforce docs, fact-check across models, anonymize customer data, surface Slack context, sharpen the final report, personalize to your role.">
 <meta property="og:url" content="https://drpaulcoleman.github.io/focus-group-skill/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Focus Group Skills">
@@ -28,7 +28,7 @@
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "Focus Group Skills — AI Sales-Team Companions for Salesforce",
-  "description": "Six Claude Code / Cursor skills for Salesforce sales teams: /focus-group, /download, /cross-ai-review, /anonymize, /slackbot, /how-can-this-be-improved.",
+  "description": "Seven Claude Code / Cursor skills for Salesforce sales teams: /focus-group, /download, /cross-ai-review, /anonymize, /slackbot, /how-can-this-be-improved, /make-this-mine.",
   "author": { "@type": "Person", "name": "Dr. Paul Coleman" },
   "datePublished": "2026-05-21",
   "dateModified": "2026-05-21",
@@ -842,7 +842,7 @@ figure.chat-mock-figure figcaption code{font-style:normal;background:var(--code-
     <p class="subject">Five tough viewpoints on every draft you write — grounded in your real Salesforce docs and account data. Customer names never leave your laptop.</p>
     <div class="hero-cta">
       <a href="#install" class="btn-primary">Get started in 3 minutes →</a>
-      <a href="#panel" class="btn-secondary">Tour the six skills</a>
+      <a href="#panel" class="btn-secondary">Tour the seven skills</a>
       <a href="#examples" class="btn-secondary">See the prompt examples</a>
     </div>
     <div class="hero-foot">
@@ -867,7 +867,7 @@ figure.chat-mock-figure figcaption code{font-style:normal;background:var(--code-
     <div class="orient-row">
       <div class="orient-cell">
         <div class="orient-label">What this is</div>
-        <p>Six skill files for <strong>Claude Code</strong> or <strong>Cursor</strong>. You drop them in a folder; the slash commands appear in autocomplete.</p>
+        <p>Seven skill files for <strong>Claude Code</strong> or <strong>Cursor</strong>. You drop them in a folder; the slash commands appear in autocomplete.</p>
       </div>
       <div class="orient-cell">
         <div class="orient-label">What it isn't</div>
@@ -941,7 +941,7 @@ figure.chat-mock-figure figcaption code{font-style:normal;background:var(--code-
   <!-- MEET THE PANEL -->
   <section class="card" id="panel">
     <div class="eyebrow">Meet the panel</div>
-    <h2>Meet the panel — six skills, one workflow</h2>
+    <h2>Meet the panel — seven skills, one workflow</h2>
     <p class="lead">Each skill earns its keep on its own. Together they take you from cold prospect research to a draft your customer's InfoSec officer can't pick apart.</p>
 
     <div class="skill-cards">
@@ -991,6 +991,14 @@ figure.chat-mock-figure figcaption code{font-style:normal;background:var(--code-
         <p>Catches the hedges, the buried bottom line, the audience the panel didn't cover — before they reach a customer. Point it at the report your <code>/focus-group</code> run just produced, or any draft, and you get a sharper version back.</p>
         <div class="skill-when"><b>Reach for it when</b> the panel just finished and you want a fresh-eye pass before you send anything on.</div>
         <div class="skill-try">Try: <code>/how-can-this-be-improved .scratch/focus-group/2026-05-21-acme-qbr.md</code></div>
+      </div>
+
+      <div class="skill-card mtm">
+        <div class="skill-head"><span class="skill-icon">🎯</span><h3><code>/make-this-mine</code></h3></div>
+        <p class="skill-tag">Personalization.</p>
+        <p>A two-minute guided interview that tunes <code>/focus-group</code> to your specific role, deal types, industry, and noise preferences. Run once; the skill remembers. Panels get sharper because they know what matters to <em>you</em>.</p>
+        <div class="skill-when"><b>Reach for it when</b> you first install the skills, after a role change, or when panel recommendations feel off-target.</div>
+        <div class="skill-try">Try: <code>/make-this-mine</code></div>
       </div>
     </div>
   </section>
@@ -1311,7 +1319,7 @@ cd focus-group-skill</code></pre>
       <tbody>
         <tr>
           <td><code>/focus-group</code></td>
-          <td><code>--product &lt;slug&gt;</code> · <code>--industry &lt;slug&gt;</code> · <code>--generic</code> · <code>--single-ai</code> · <code>--personas "&lt;NL&gt;"</code> · <code>--everyone</code> · <code>--org-profile</code> · <code>--no-org-profile</code> · <code>--require-citations</code> · <code>--&lt;channel&gt;-model &lt;m&gt;</code> · <code>help</code> · <code>config</code></td>
+          <td><code>--product &lt;slug&gt;</code> · <code>--industry &lt;slug&gt;</code> · <code>--generic</code> · <code>--single-ai</code> · <code>--quick</code> / <code>--fast</code> · <code>--personas "&lt;NL&gt;"</code> · <code>--everyone</code> · <code>--org-profile</code> · <code>--no-org-profile</code> · <code>--require-citations</code> · <code>--no-citations</code> · <code>--stage &lt;s&gt;</code> · <code>--role &lt;slug&gt;</code> · <code>--attendees &lt;path&gt;</code> · <code>--probe</code> · <code>--&lt;channel&gt;-model &lt;m&gt;</code> · <code>help</code> · <code>config</code></td>
           <td><code>.claude/skills/focus-group/SKILL.md</code></td>
         </tr>
         <tr>
@@ -1338,6 +1346,11 @@ cd focus-group-skill</code></pre>
           <td><code>/how-can-this-be-improved</code></td>
           <td><code>&lt;path-to-file&gt;</code> · <code>&lt;skill-name&gt;</code> · <code>(no arg)</code> · <code>help</code></td>
           <td><code>.claude/skills/how-can-this-be-improved/SKILL.md</code></td>
+        </tr>
+        <tr>
+          <td><code>/make-this-mine</code></td>
+          <td><code>(no arg)</code> — guided interview · <code>help</code></td>
+          <td><code>.claude/skills/make-this-mine/SKILL.md</code></td>
         </tr>
       </tbody>
     </table>
@@ -1414,7 +1427,7 @@ cd focus-group-skill</code></pre>
     <section class="card" id="references">
     <div class="eyebrow">Related links</div>
     <h2>Related links — where to go next</h2>
-    <p class="lead">The skill specs themselves are the canonical reference once you start using them — open the <code>SKILL.md</code> in any of the six skill folders.</p>
+    <p class="lead">The skill specs themselves are the canonical reference once you start using them — open the <code>SKILL.md</code> in any of the seven skill folders.</p>
 
     <h3>This repository</h3>
     <ul class="bullets">

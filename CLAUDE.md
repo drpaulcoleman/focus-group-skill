@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**focus-group-skill** is a collection of six Claude Code / Cursor skills designed for Salesforce sales teams (Account Executives, Solution Engineers, Industry Specialists, Architects, Business Value Consultants, and Lead Engagement roles).
+**focus-group-skill** is a collection of seven Claude Code / Cursor skills designed for Salesforce sales teams (Account Executives, Solution Engineers, Industry Specialists, Architects, Business Value Consultants, and Lead Engagement roles).
 
 **Core concept:** Multi-persona review panels and supporting tools that ground feedback in real customer context, product knowledge, and industry expertise.
 
@@ -20,7 +20,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ├── cross-ai-review/     # Multi-model auditor: detects claude/codex/gemini/opencode CLIs
 ├── anonymize/           # Bidirectional scrubber: placeholders stay local in map.json
 ├── slackbot/            # Slack-sourced context: queries Slack MCP, routes through /anonymize
-└── how-can-this-be-improved/  # Local-only improvement coach
+├── how-can-this-be-improved/  # Local-only improvement coach
+└── make-this-mine/      # Guided personalization interview — tunes focus-group to user's role/deals/noise prefs
 ```
 
 Each skill is **self-contained**:

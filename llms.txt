@@ -1,11 +1,13 @@
 # Focus Group Skills
 
-> Six Claude Code / Cursor skills built for Salesforce sales teams: a
+> Seven Claude Code / Cursor skills built for Salesforce sales teams: a
 > multi-persona review panel, a runtime-adaptive doc harvester, a multi-model
 > cross-AI audit, a bidirectional anonymizer that scrubs customer data before
-> any external LLM call, a Slack-MCP-sourced customer-context profiler, and
+> any external LLM call, a Slack-MCP-sourced customer-context profiler,
 > a local-only improvement coach that sharpens the panel report (or any
-> draft) before the user sends it on.
+> draft) before the user sends it on, and a guided personalization interview
+> that tunes the panel to the user's specific role, deal types, and noise
+> preferences.
 
 This file follows the llms.txt convention (https://llmstxt.org). It gives
 AI systems a fast, link-rich summary of the focus-group-skill repository
@@ -23,7 +25,7 @@ so they can reference it accurately.
   passes through `/anonymize` first; the local map.json never leaves the
   laptop; no telemetry.
 
-## The six skills
+## The seven skills
 
 ### /focus-group — multi-persona review panel
 - Path: `.claude/skills/focus-group/SKILL.md`
@@ -64,6 +66,19 @@ so they can reference it accurately.
 - Queries via the Slack MCP server.
 - Member-only scope (never DMs, never channels the user isn't in).
 - Routes the raw profile through /anonymize before any model sees it.
+
+### /how-can-this-be-improved — local-only improvement coach
+- Path: `.claude/skills/how-can-this-be-improved/SKILL.md`
+- Catches hedges, buried bottom lines, audience gaps.
+- Point at any draft or skill file for a fresh-eye pass.
+- Never calls external models on its own.
+
+### /make-this-mine — guided personalization interview
+- Path: `.claude/skills/make-this-mine/SKILL.md`
+- Two-minute interview: role elaboration, deal types, excluded noise
+  categories, preferred panel size, default stage assumption.
+- Writes to existing `/focus-group` config.json (single source of truth).
+- Privacy: personalization data is git-ignored, never reaches external models.
 
 ## Where to start
 

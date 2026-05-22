@@ -14,11 +14,12 @@ under `.claude/skills/focus-group/`. The shim exists because Cursor reads
 
 When the user invokes `/focus-group` (with any arguments — file paths, pasted
 content, URLs, switches like `--product`, `--industry`, `--generic`,
-`--require-citations`, etc.):
+`--require-citations`, `--no-citations`, `--quick`/`--fast`, `--stage`,
+`--role`, `--attendees`, `--probe`, etc.):
 
 1. **Read the canonical SKILL.md** at
    [`.claude/skills/focus-group/SKILL.md`](../../.claude/skills/focus-group/SKILL.md)
-   and follow its full 11-step pipeline. It is the source of truth — the
+   and follow its full 12-step pipeline. It is the source of truth — the
    shim does not override or summarize it.
 2. **Read the referenced sub-docs** as the pipeline says, including but
    not limited to:

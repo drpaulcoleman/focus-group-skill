@@ -57,6 +57,12 @@ one of these panels:
 | `--no-org-profile` | Skip the org-profile gate for one-off generic prompts. |
 | `--org-profile-file <path>` | Load org profile from a hand-edited JSON. |
 | `--require-citations` | Strict — any factual claim without a `/download` source goes to "Needs verification"; accuracy score capped at 70 until the gap is closed. |
+| `--no-citations` | Skip citation enforcement and auto-research. `/download` does not auto-run at Step 7; accuracy not capped; un-cited claims stay in main report. For speed or offline use. |
+| `--quick` · `--fast` | Fast mode: 3 personas (AE, SE, Economic Buyer), local Claude only, no citations, no Stage B/C, <60 seconds. |
+| `--stage <stage>` | Set deal stage: `discovery`, `demo`, `negotiation`, `post-sale`. Shapes persona output calibration. |
+| `--role <slug>` | Override saved role for this run. Slugs: `ae`, `se`, `industry-specialist`, `enterprise-architect`, `technical-architect`, `bvc`, `lead-engagement`, `csm`, `partner-am`, `other`. |
+| `--probe` | Force fresh CLI/MCP detection, bypassing the 24-hour cache. |
+| `--attendees <path>` | Folder of attendee profiles to ground the panel in real people on the call. |
 
 ## What the skill asks you up-front
 

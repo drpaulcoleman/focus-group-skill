@@ -2,7 +2,7 @@
 
 > **📖 Full documentation, prompt examples, install paths:** <https://drpaulcoleman.github.io/focus-group-skill/>
 
-**Six Claude Code / Cursor skills that put your toughest reviewers in the room with you before the customer is.** Solution Engineer. CIO. Champion. InfoSec officer. Industry Specialist. They pressure-test your draft — grounded in your real Salesforce docs and account data — before it ever leaves your laptop.
+**Seven Claude Code / Cursor skills that put your toughest reviewers in the room with you before the customer is.** Solution Engineer. CIO. Champion. InfoSec officer. Industry Specialist. They pressure-test your draft — grounded in your real Salesforce docs and account data — before it ever leaves your laptop.
 
 ## In 30 seconds
 
@@ -12,7 +12,7 @@ Type this in Claude Code, in the folder where the skills live:
 
 A panel sized to the customer reads the draft from each of their seats — Executive Director, Director of Development, Board Treasurer, IT Director, Program Manager. A second AI model cross-checks every factual claim. The skill hands you a sharpened version with citations, an accuracy score, and a ranked action list. Typically under ten minutes. Customer names never leave your laptop.
 
-## The six skills
+## The seven skills
 
 Each one earns its keep on its own. Together they take you from cold prospect research to a draft your customer's InfoSec officer can't pick apart.
 
@@ -22,6 +22,7 @@ Each one earns its keep on its own. Together they take you from cold prospect re
 - **`/anonymize`** — Talk to AI about your real customers without the legal blast radius. Names, ARR, account IDs become typed placeholders before any model sees them — and get restored on the way back. Token map stays on your laptop.
 - **`/slackbot`** — Pull the freshest team intel before a status call. Surfaces recent mentions of the account in channels you're already in; never DMs, never channels you aren't in.
 - **`/how-can-this-be-improved`** — Catches the hedges, the buried bottom line, the audience the panel didn't cover — before they reach a customer.
+- **`/make-this-mine`** — Two-minute guided interview that personalizes `/focus-group` to your role, deal types, industry, and noise preferences. Run once; the skill remembers.
 
 ## Built for
 
@@ -29,7 +30,7 @@ Account Executives · Solution Engineers · Industry Specialists · Enterprise /
 
 ## What it costs
 
-Free. MPL-2.0. No telemetry, no account beyond your existing Claude Code or Cursor subscription. Not a CRM plugin, not a Salesforce add-on, not a vendor service — six skill files you drop into a folder.
+Free. MPL-2.0. No telemetry, no account beyond your existing Claude Code or Cursor subscription. Not a CRM plugin, not a Salesforce add-on, not a vendor service — seven skill files you drop into a folder.
 
 ## Getting started — three install paths
 
@@ -96,6 +97,7 @@ Per-skill specs (switches, edge cases, full pipelines) live in each skill's `SKI
 | `/anonymize` | [`.claude/skills/anonymize/SKILL.md`](.claude/skills/anonymize/SKILL.md) |
 | `/slackbot` | [`.claude/skills/slackbot/SKILL.md`](.claude/skills/slackbot/SKILL.md) |
 | `/how-can-this-be-improved` | [`.claude/skills/how-can-this-be-improved/SKILL.md`](.claude/skills/how-can-this-be-improved/SKILL.md) |
+| `/make-this-mine` | [`.claude/skills/make-this-mine/SKILL.md`](.claude/skills/make-this-mine/SKILL.md) |
 
 Or open the [docs site](https://drpaulcoleman.github.io/focus-group-skill/) for the brochure version with prompt examples.
 
