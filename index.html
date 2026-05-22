@@ -856,8 +856,8 @@ figure.chat-mock-figure figcaption code{font-style:normal;background:var(--code-
 
   <!-- STAT ROW: five numbers, count up when scrolled into view -->
   <section class="card stat-row" aria-label="At a glance">
-    <div class="stat-cell"><div class="stat-num" data-count-to="177">0</div><div class="stat-label">Personas</div></div>
-    <div class="stat-cell"><div class="stat-num" data-count-to="6">0</div><div class="stat-label">Skills</div></div>
+    <div class="stat-cell"><div class="stat-num" data-count-to="187">0</div><div class="stat-label">Personas</div></div>
+    <div class="stat-cell"><div class="stat-num" data-count-to="7">0</div><div class="stat-label">Skills</div></div>
     <div class="stat-cell"><div class="stat-num" data-count-to="19">0</div><div class="stat-label">Industry packs</div></div>
     <div class="stat-cell"><div class="stat-num" data-count-to="3" data-suffix=" min">0 min</div><div class="stat-label">To install</div></div>
   </section>
@@ -1096,7 +1096,9 @@ cd focus-group-skill</code></pre>
 
     <h3>Where to put the skills — project-local vs global</h3>
     <p><b>Just for one project</b> (recommended while trying it): keep the folder as-is. The <code>.claude/</code> and <code>.cursor/</code> subfolders are picked up automatically when you open that folder.</p>
-    <p><b>For every Claude Code / Cursor session</b> (once you like it): copy each folder inside <code>.claude/skills/</code> into your global skills folder. Your OS:</p>
+    <p><b>Ready to move from local to global skills?</b> Once you've tried it in one project and want every future Claude Code / Cursor session to have these skills, the easiest path is to just ask Claude (or Cursor) directly:</p>
+    <blockquote><em>"Copy the local AI skills to global for me."</em></blockquote>
+    <p>The assistant will copy each folder under <code>.claude/skills/</code> into your OS-specific global skills folder and confirm what landed where. Prefer to do it by hand? Here's where each OS keeps its global skills folder:</p>
     <table class="cmd-table">
       <thead><tr><th>Your OS</th><th>Global skills folder</th></tr></thead>
       <tbody>
@@ -1356,7 +1358,7 @@ cd focus-group-skill</code></pre>
     </table>
 
     <h3>Persona library — what's in the pool</h3>
-    <p>A panel is drawn from a library of 177 personas — sales-side seats, buyer-side seats, partner-ecosystem seats, and industry-specific voices. The skill picks a panel of five sized to your customer; <code>--everyone</code> opts into the full set for the active packs.</p>
+    <p>A panel is drawn from a library of 187 personas — sales-side seats, buyer-side seats, partner-ecosystem seats, and industry-specific voices. The skill picks a panel of five sized to your customer; <code>--everyone</code> opts into the full set for the active packs.</p>
     <table class="cmd-table">
       <thead><tr><th>Family</th><th>Count</th><th>Examples</th></tr></thead>
       <tbody>
@@ -1368,7 +1370,7 @@ cd focus-group-skill</code></pre>
         <tr><td>Salesforce — Sales</td><td>9</td><td>AE, SE, Industry Specialist, Enterprise / Technical Architect, Business Value Consultant, ...</td></tr>
         <tr><td>Salesforce — Customer</td><td>9</td><td>Economic Buyer, Champion, Champion's Manager, Technical Decision-Maker, InfoSec / Privacy, Legal, Procurement, ...</td></tr>
         <tr><td>Salesforce — Partner</td><td>4</td><td>Implementation Partner, GSI Partner Lead, Boutique SI, AppExchange ISV</td></tr>
-        <tr><td>Industry-specific</td><td>114</td><td>19 industry packs ranging from 3 to 8 personas each (public-sector ships 13: state/local + federal/DoD + international) — see the breakdown in the Industry persona library section below</td></tr>
+        <tr><td>Industry-specific</td><td>124</td><td>19 industry packs ranging from 4 to 9 personas each (public-sector ships 13: state/local + federal/DoD + international) — see the breakdown in the Industry persona library section below</td></tr>
       </tbody>
     </table>
 
@@ -1378,14 +1380,14 @@ cd focus-group-skill</code></pre>
   <section class="card" id="industry-personas">
     <div class="eyebrow">Personas by industry</div>
     <h2>Industry persona library</h2>
-    <p class="lead">Loading an industry pack with <code>--industry &lt;slug&gt;</code> brings these persona files into the panel-selection pool. They sit alongside the Salesforce-Sales, Salesforce-Customer, and Salesforce-Partner families so the panel can mix vertical expertise with role coverage. Packs ship 3–8 personas depending on how many sub-verticals the industry needs to serve; public sector ships thirteen (state/local + federal/DoD + international).</p>
+    <p class="lead">Loading an industry pack with <code>--industry &lt;slug&gt;</code> brings these persona files into the panel-selection pool. They sit alongside the Salesforce-Sales, Salesforce-Customer, and Salesforce-Partner families so the panel can mix vertical expertise with role coverage. Packs ship 4–9 personas depending on how many sub-verticals the industry needs to serve; public sector ships thirteen (state/local + federal/DoD + international).</p>
     <table class="cmd-table">
-      <thead><tr><th>Industry pack</th><th>Industry-specific personas (3–8 per pack)</th></tr></thead>
+      <thead><tr><th>Industry pack</th><th>Industry-specific personas (4–9 per pack)</th></tr></thead>
       <tbody>
-        <tr><td><code>aec-construction</code></td><td>Capital Projects Director · Field Service Coordinator · <b>VDC / BIM Lead</b> · <b>Preconstruction &amp; Estimating Director</b></td></tr>
+        <tr><td><code>aec-construction</code></td><td>Capital Projects Director · Field Service Coordinator · <b>VDC / BIM Lead</b> · <b>Preconstruction &amp; Estimating Director</b> · <b>Cost Engineer</b> · <b>Owner / Procurement Lead</b></td></tr>
         <tr><td><code>airlines-air-travel</code></td><td>Airline Operations Control Center Lead · Reservations &amp; Booking Director · Ancillary Revenue Manager · <b>Revenue Management &amp; Pricing Scientist</b></td></tr>
-        <tr><td><code>automotive</code></td><td>Dealer Network Director · Fleet Operations Manager · Connected-Vehicle Product Lead · Aftersales / Service Director · Brand &amp; Loyalty Lead · <b>OEM Digital &amp; CX VP</b></td></tr>
-        <tr><td><code>commercial-real-estate</code></td><td>Facilities Operations Lead · Property Manager · Tenant Experience Lead · <b>Capital Markets &amp; Acquisitions Director</b></td></tr>
+        <tr><td><code>automotive</code></td><td>Dealer Network Director · Fleet Operations Manager · Connected-Vehicle Product Lead · Aftersales / Service Director · Brand &amp; Loyalty Lead · <b>OEM Digital &amp; CX VP</b> · <b>Recall &amp; Compliance Officer</b></td></tr>
+        <tr><td><code>commercial-real-estate</code></td><td>Facilities Operations Lead · Property Manager · Tenant Experience Lead · <b>Capital Markets &amp; Acquisitions Director</b> · <b>Lease Administration Lead</b> · <b>Property Controller</b></td></tr>
         <tr><td><code>communications</code></td><td>Network Operations Lead · Service Provisioning Manager · B2B Sales Director · CX / Care Director · Wholesale &amp; Carrier Relations Lead · <b>BSS/OSS Architect</b></td></tr>
         <tr><td><code>consumer-goods</code></td><td>Trade Promotion Manager · D2C / E-commerce Lead · Field Sales Director · Brand Manager · Supply Chain Lead · <b>Retailer Buyer / Category Manager</b></td></tr>
         <tr><td><code>education</code></td><td>Provost / VP Academic Affairs · Director of Enrollment · Student Success Advisor · CIO / IT Director · Advancement &amp; Alumni Officer · <b>K-12 Superintendent</b> · <b>Faculty Senate Chair</b></td></tr>
@@ -1393,14 +1395,14 @@ cd focus-group-skill</code></pre>
         <tr><td><code>financial-services</code></td><td>Retail Banking Head · Wealth Advisor · Underwriting Officer · Compliance &amp; AML Officer · Insurance Claims Lead</td></tr>
         <tr><td><code>freight-logistics-transportation</code></td><td><b>Network Operations Director</b> · <b>Revenue Assurance &amp; Pricing Lead</b> · <b>Compliance &amp; Safety Officer</b> · <b>Shipper Experience Director</b> · <b>Driver &amp; Dispatcher Front-Line</b></td></tr>
         <tr><td><code>healthcare-life-sciences</code></td><td>Chief Medical Officer · Director of Patient Experience · Clinical Trial Operations Lead · Payer Network Director · HIPAA Privacy Officer</td></tr>
-        <tr><td><code>hotels-hospitality</code></td><td>Guest Loyalty Lead · Guest Experience Director · <b>Revenue Management &amp; Pricing Scientist</b></td></tr>
+        <tr><td><code>hotels-hospitality</code></td><td>Guest Loyalty Lead · Guest Experience Director · <b>Revenue Management &amp; Pricing Scientist</b> · <b>Hotel Reservations Manager</b> · <b>PMS Integration Specialist</b></td></tr>
         <tr><td><code>manufacturing</code></td><td>Channel Partner Manager · Warranty Operations Lead · Dealer Network Director · Plant Operations Lead · Aftermarket Service Director · <b>Supply Chain / S&amp;OP Lead</b></td></tr>
-        <tr><td><code>media</code></td><td>Ad Sales Director · Rights &amp; Licensing Manager · Subscriber Experience Lead · Content Acquisition Lead · Audience Analytics Lead · <b>Editorial / Newsroom Lead</b></td></tr>
-        <tr><td><code>nonprofit</code></td><td>Executive Director · Director of Development · Program Manager · Grants Officer · Board Treasurer</td></tr>
+        <tr><td><code>media</code></td><td>Ad Sales Director · Rights &amp; Licensing Manager · Subscriber Experience Lead · Content Acquisition Lead · Audience Analytics Lead · <b>Editorial / Newsroom Lead</b> · <b>DRM &amp; Content Protection Lead</b></td></tr>
+        <tr><td><code>nonprofit</code></td><td>Executive Director · Director of Development · Program Manager · Grants Officer · Board Treasurer · <b>Nonprofit Controller</b></td></tr>
         <tr><td><code>professional-services</code></td><td>Resource Manager · Engagement Partner · Billing &amp; Project Accounting Lead · Client Relationship Director · Practice Lead · <b>Independence &amp; Risk Management Lead</b></td></tr>
         <tr><td><code>public-sector</code></td><td><b>State/local:</b> Constituent Services Director · Licensing &amp; Permits Manager · Emergency Response Coordinator · Case Worker · IT Modernization Director · State CIO · City/County Manager. <b>Federal/DoD:</b> Federal CIO · Federal Authorizing Official · Federal Contracting Officer · DoD Mission Owner · Inspector General / Auditor. <b>International:</b> International Public-Sector Officer (UN agencies · EU institutions · MDBs · non-US national governments).</td></tr>
         <tr><td><code>retail</code></td><td>Store Operations Director · Loyalty Program Manager · Merchandising Lead · Unified Commerce / Order Management Lead · Customer Care Director · <b>Buying / Planning Lead</b> · <b>Loss Prevention Director</b></td></tr>
-        <tr><td><code>technology</code></td><td>Recurring Revenue / RevOps Lead · Partner Sales Manager · Customer Success Director · Product-Led Growth Lead · Renewals Manager · <b>Developer Advocate / DevRel Lead</b> · <b>Platform / Marketplace Lead</b> · <b>Security / Trust Officer</b></td></tr>
+        <tr><td><code>technology</code></td><td>Recurring Revenue / RevOps Lead · Partner Sales Manager · Customer Success Director · Product-Led Growth Lead · Renewals Manager · <b>Developer Advocate / DevRel Lead</b> · <b>Platform / Marketplace Lead</b> · <b>Security / Trust Officer</b> · <b>API Platform Architect</b></td></tr>
       </tbody>
     </table>
 

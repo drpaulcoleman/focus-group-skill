@@ -44,8 +44,11 @@ This repo is a **GitHub template**. Pick the path that fits how you work:
 
 Then type `/focus-group help` in Claude Code (or Cursor) and you're off.
 
-**OS-specific global install** (after you decide you like it): see the
-[full install walkthrough](https://drpaulcoleman.github.io/focus-group-skill/#install) on the docs site.
+**Ready to move from local to global skills?** Once you've tried it in one project and want every future Claude Code / Cursor session to have these skills, the easiest path is to just ask:
+
+> *"Copy the local AI skills to global for me."*
+
+Claude (or Cursor) will copy each folder under `.claude/skills/` into your OS-specific global skills folder (`~/.claude/skills/` on macOS / Linux, `C:\Users\<your-name>\.claude\skills\` on Windows) and confirm what landed where. Prefer to do it by hand? See the [full install walkthrough](https://drpaulcoleman.github.io/focus-group-skill/#install) on the docs site.
 
 ## Salesforce & Slack integrations
 

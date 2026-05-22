@@ -1,5 +1,6 @@
 {
   "skill_name": "download",
+  "assertion_schema": "see ../focus-group/evals/evals.json#assertion_schema",
   "evals": [
     {
       "id": 1,
@@ -7,7 +8,30 @@
       "prompt": "/download https://help.salesforce.com/s/articleView?id=sf.service_cloud_voice.htm",
       "expected_output": "Skill detects runtime. If a headless browser is available (Playwright via Python or Node, or Edge on Windows 11, or Chrome), uses it. Saves references/help-salesforce-com-service-cloud-voice/{page.html, page.md, meta.json}. The meta.json includes retrieval date. The page.md contains real content, not a near-empty shell. If no headless browser is available, the skill says so plainly using the printed-cookbook-vs-kitchen analogy and offers the ranked install walkthrough.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "file_present",
+          "path": "references/help-salesforce-com-service-cloud-voice/page.md",
+          "rationale": "A successful render must produce a non-empty page.md, not just a shell."
+        },
+        {
+          "kind": "file_present",
+          "path": "references/help-salesforce-com-service-cloud-voice/meta.json"
+        },
+        {
+          "kind": "json_path_equals",
+          "pointer": "/retrieval_date_present",
+          "expected": true,
+          "target": "meta_json",
+          "rationale": "meta.json must record the retrieval date so freshness decay can age the citation."
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "<div id=[\"']app[\"']></div>",
+          "target": "page_md",
+          "rationale": "An empty SPA shell means JS did not execute; the runtime selection is wrong."
+        }
+      ]
     },
     {
       "id": 2,
@@ -15,7 +39,24 @@
       "prompt": "/download agentforce for healthcare patient services",
       "expected_output": "Skill detects the Salesforce-flavored topic and runs the Salesforce-aware engines (help.salesforce.com, trailhead, architect, developer.salesforce.com) in addition to the general engines (Google, Bing, Scholar). Writes references/_search/agentforce-for-healthcare-patient-services.md with engine attribution. Offers to harvest the top 3-5 results.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "file_present",
+          "path": "references/_search/agentforce-for-healthcare-patient-services.md"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(help\\.salesforce\\.com|trailhead|developer\\.salesforce\\.com)",
+          "target": "search_md",
+          "rationale": "Salesforce-flavored topic must engage at least one Salesforce-aware engine."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(google|bing|scholar)",
+          "target": "search_md",
+          "rationale": "General engines must also run; Salesforce-aware is additive, not replacement."
+        }
+      ]
     },
     {
       "id": 3,
@@ -23,7 +64,19 @@
       "prompt": "/download https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_ref_guide.htm",
       "expected_output": "Skill detects the linked PDF edition of the Apex Reference Guide and downloads the PDF instead of crawling the multi-page HTML portal. Saves references/<slug>/page.pdf + meta.json. Tells the user the PDF was preferred and why.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "file_present",
+          "path": "references/apex-reference-guide/page.pdf",
+          "rationale": "Full-guide PDF must be preferred over the HTML portal per the Salesforce-doc shortcut map."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(PDF.*preferred|full-guide PDF|skipped HTML crawl)",
+          "target": "stdout",
+          "rationale": "User must see why the PDF route was chosen — silent preference is opaque."
+        }
+      ]
     },
     {
       "id": 4,
@@ -31,7 +84,19 @@
       "prompt": "/download help",
       "expected_output": "Skill prints the user-facing walkthrough: what it does, the headless-browser analogy in plain English, the runtime detection chain, every flag with a worked example, the proactive install offers, the err-doctrine close. Does NOT fetch anything. Does NOT prompt for a URL.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(printed cookbook|kitchen|headless)",
+          "target": "stdout",
+          "rationale": "Help text must include the runtime analogy users learn from."
+        },
+        {
+          "kind": "file_absent",
+          "path": "references/_last_run/page.html",
+          "rationale": "Help mode must not fetch anything — no run artifact should appear."
+        }
+      ]
     },
     {
       "id": 5,
@@ -39,7 +104,25 @@
       "prompt": "/download https://help.salesforce.com/s/articleView?id=sf.service_cloud_voice.htm (assume no headless runtime is installed; only curl/wget are available)",
       "expected_output": "Skill uses fetch-basic.sh, gets back a near-empty <div id='app'> shell, recognizes the result is incomplete, tells the user using the printed-cookbook-vs-kitchen analogy, and presents the ranked four-option install offer (Python+Playwright / Node+Playwright / Edge on Windows / skip-for-now / never-ask-again). Persists the answer in .install-asked.json.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(printed cookbook|kitchen|empty shell|near-empty)",
+          "target": "stdout",
+          "rationale": "User must understand WHY the result is unusable, not just see a failure."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(Python.*Playwright|Node.*Playwright|Edge|Chrome)",
+          "target": "stdout",
+          "rationale": "The ranked install offer must surface concrete runtime options."
+        },
+        {
+          "kind": "file_present",
+          "path": ".install-asked.json",
+          "rationale": "Answer must persist so the offer doesn't repeat on every run."
+        }
+      ]
     }
   ]
 }

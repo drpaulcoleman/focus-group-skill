@@ -98,37 +98,53 @@ optionally harvest the top results.
 Run the probe and read its report:
 
 ```sh
+# macOS / Linux / WSL / Git Bash
 sh .claude/skills/download/scripts/detect-runtime.sh
+
+# Windows-native PowerShell (no Git Bash needed)
+powershell -File .claude\skills\download\scripts\detect-runtime.ps1
 ```
 
 It prints which runtimes, browsers, and tools are available.
 
 ## Step 2 — Choose the path
 
+**Priority order (load-bearing):** real Chrome > real Edge > Playwright >
+no-JS fallback. Real browsers (Chrome.app on macOS, `chrome.exe` on
+Windows, `google-chrome` on Linux) are far less likely to be bot-blocked
+by **Akamai / Cloudflare / Google captcha** than Playwright's bundled
+Chromium, which advertises itself as headless via well-known
+fingerprints. Real Chrome is also typically already installed, making
+it the zero-install path for most users.
+
 Use the first row whose requirements the probe confirmed:
 
-| Runtime present                            | Use this script              | JS rendering        |
-|--------------------------------------------|------------------------------|---------------------|
-| Python 3 **with Playwright**               | `scripts/harvest.py`         | Yes (best)          |
-| Node.js **with Playwright/Puppeteer**      | `scripts/harvest.mjs`        | Yes                 |
-| Windows PowerShell **+ Microsoft Edge**    | `scripts/harvest.ps1`        | Yes (Edge headless) |
-| Chrome / Chromium (macOS, Linux, Windows)  | `scripts/harvest-chrome.sh`  | Yes (Chrome headless)|
-| Only `curl` / `wget` (or none of the above)| `scripts/fetch-basic.sh`     | No — static HTML/PDF only |
+| Runtime present                                    | Use this script                                   | JS rendering        |
+|----------------------------------------------------|---------------------------------------------------|---------------------|
+| **Real Google Chrome** (macOS / Linux / WSL / Git Bash) | `scripts/harvest-chrome.sh` ⭐ recommended    | Yes (Chrome headless) |
+| **Real Google Chrome** (Windows-native PowerShell) | `scripts/harvest-chrome.ps1` ⭐ recommended       | Yes (Chrome headless) |
+| **Real Microsoft Edge** (Windows 11 default)       | `scripts/harvest.ps1`                             | Yes (Edge headless) |
+| Python 3 **with Playwright**                       | `scripts/harvest.py`                              | Yes (Chromium — bot-block risk) |
+| Node.js **with Playwright/Puppeteer**              | `scripts/harvest.mjs`                             | Yes (Chromium — bot-block risk) |
+| Only `curl` / `wget` (or none of the above)        | `scripts/fetch-basic.sh`                          | No — static HTML/PDF only |
 
 If only the no-JS fallback is available, tell the user (using the analogy
-above) and offer the §"Proactive install offers" walkthrough.
+above) and offer the §"Proactive install offers" walkthrough — recommend
+**Chrome first** (free, dodges bot-detection), Playwright second.
 
 ## Fetching a URL
 
 ```sh
-# Python path
-python scripts/harvest.py "<url>" --out references
-# Node path
-node scripts/harvest.mjs "<url>" --out references
-# PowerShell path
-powershell -File scripts/harvest.ps1 -Url "<url>" -Out references
-# Chrome headless path
+# Real Chrome (macOS / Linux / WSL / Git Bash) — preferred
 sh scripts/harvest-chrome.sh "<url>" references
+# Real Chrome (Windows-native PowerShell) — preferred
+powershell -File scripts/harvest-chrome.ps1 -Url "<url>" -Out references
+# Real Edge (Windows PowerShell)
+powershell -File scripts/harvest.ps1 -Url "<url>" -Out references
+# Python + Playwright (bundled Chromium — bot-block risk)
+python scripts/harvest.py "<url>" --out references
+# Node + Playwright (bundled Chromium — bot-block risk)
+node scripts/harvest.mjs "<url>" --out references
 # No-JS fallback
 sh scripts/fetch-basic.sh "<url>" references
 ```
@@ -249,7 +265,8 @@ Triggers and ranked menus follow the universal pattern in
 
 | When | What we offer | Why this is the right moment |
 |------|---------------|------------------------------|
-| User fetched a JS-rendered page and only `curl`/`wget` was available — output came back nearly empty | (⭐⭐⭐) Python 3 + Playwright OR (⭐⭐) Node.js + Playwright OR (⭐) Windows: Microsoft Edge (already on Windows 11) | The empty result is visible; the user can see the symptom. |
+| User fetched a JS-rendered page and only `curl`/`wget` was available — output came back nearly empty | (⭐⭐⭐) Real Google Chrome (free, dodges most bot-detection) OR (⭐⭐) Real Microsoft Edge (already on Windows 11) OR (⭐) Python 3 + Playwright (bundled Chromium — may still be bot-blocked on Akamai / Cloudflare sites) | The empty result is visible; the user can see the symptom. |
+| Existing Playwright fetches keep coming back as bot-block / CAPTCHA pages | (⭐⭐⭐) Real Google Chrome — switches to `harvest-chrome.sh` / `.ps1` and sidesteps the headless-Chromium fingerprint | The block page is visible; real Chrome immediately fixes it. |
 | The topic looks Salesforce-flavored and `sf` is not detected | (⭐) Salesforce CLI (`sf`) — improves citations and unlocks `/focus-group` Step 3c | Concrete value: better grounding for the active product pack. |
 | The topic touches `slack` and no Slack MCP is detected | (⭐) Slack MCP | Same logic. |
 | Workspace has no `.git` and the user has been generating files | (⭐) git, soft offer at session end | Time-machine framing — recoverability matters when AI is editing files. |
@@ -286,8 +303,44 @@ I'll translate it."*
 
 Common failure shapes:
 - Headless runtime missing → suggest the install walkthrough above.
-- A site blocks automated access → report it; suggest the user save the page
-  manually into `references/` from their own browser. Most modern browsers
-  have a "Save Page As — Webpage, Complete" option.
+- A site blocks automated access → see "Bot-block escalation chain" below.
 - A page legitimately has no content (404, paywall, login wall) → say so; do
   not silently save a useless artifact.
+
+## Bot-block escalation chain
+
+Some sites (notably `www.salesforce.com/*` marketing pages, behind Akamai
+Edgesuite) bot-block automated requests at the network edge regardless of
+which headless browser is used. The harvest scripts detect these block
+pages and tag them so they don't get cited as facts.
+
+**How block-page detection works:** after rendering, the script scans the
+saved HTML for three signatures:
+1. Akamai — `errors.edgesuite.net` link or `Reference #18.<hex>` in the body.
+2. Cloudflare — `cf-error-details` markup or `Cloudflare Ray ID` in the body.
+3. Page `<title>` matches "Access Denied", "Just a moment", "Attention
+   Required", "Pardon Our Interruption", or "Are you a robot".
+
+Any match marks the artifact as bot-blocked: `meta.json` gets
+`"bot_blocked": 1` and the `method` field is suffixed `(bot-blocked)`.
+`/focus-group` Stage C reads this flag and excludes the URL from the
+citations block. The artifact is still saved so the user can see what was
+returned.
+
+**Escalation chain (cheapest first):**
+
+| Step | Try | What it costs | When it works |
+|------|-----|---------------|---------------|
+| 1 | Default `--headless=new` | nothing — already the default | most JS-rendered sites |
+| 2 | `--headless-old` flag (sh) / `-HeadlessOld` switch (ps1) | nothing — same script, one flag flip | sites that block the new headless fingerprint but not the legacy one |
+| 3 | Open the URL in your normal browser, File → Save As → "Webpage, Complete", drop the resulting `.html` and folder into `references/<slug>/` | 30 seconds of user time | sites fingerprinting at the network edge (egress IP, no warmed cookies) |
+
+**Why no automated step beyond `--headless-old`:** a non-headless visible
+Chrome could in principle dodge edge-level fingerprinting, but Chrome's
+`--print-to-pdf` and `--dump-dom` flags only work in headless mode.
+Running visible Chrome and then capturing the page would require a
+windowing pause (visible flicker on the user's desktop) and interactive
+control we don't want to automate. The manual-save fallback is the right
+escalation — it takes half a minute, produces higher-fidelity output
+than any automated path could, and respects the bot-block as a
+deliberate site-owner decision.

@@ -70,6 +70,7 @@ run a panel — read/write `config.json` in the skill root:
 | `/focus-group config set excluded-noise <slug>,<slug>,...` | Save noise categories to demote in Stage A.5. |
 | `/focus-group config set panel-size <n>` | Override default panel cap (3, 5, 7, or null). |
 | `/focus-group config set default-stage <slug>` | Tiebreaker when content-type inference is ambiguous. |
+| `/focus-group config set grounding-prompt on\|off` | Whether Step 4 asks the customer-grounding wizard. `on` = ask on every run when no profile is on file (the post-first-run default). `off` = always go straight to generic feedback (what fresh installs do until the user opts in). |
 | `/focus-group config clear personalization` | Drop all `/make-this-mine` keys (role-elaboration, deal-types, excluded-noise, panel-size, default-stage). |
 
 Then stop. `config.json` is plain JSON — may also be hand-edited.
@@ -160,6 +161,10 @@ naked `/focus-group` feel slow after the first one. Cache the result:
       "preferred":  "python",
       "candidates": ["python", "node", "powershell", "shell"],
       "degraded":   false
+    },
+    "thin_render_nudge": {
+      "last_dismissed": null,
+      "never_ask":      false
     }
   }
   ```
@@ -446,9 +451,17 @@ The inferred or explicit stage is passed to every persona via the deal-stage cal
 - Override the cache with `/focus-group config set product <slug>` or
   `/focus-group config set industry <slug>`.
 
-### Step 4 — **Customer-grounding gate (runs before topic research)**
+### Step 4 — **Customer-grounding gate (opt-in on first run, sticky after)**
 
-Non-negotiable by default — see [references/org-profile-schema.md](references/org-profile-schema.md). Scan the user's prompt for a named org or explicit cultural/scale signals. If neither is present and no org profile is on file (or it is > 14 days old), stop and ask.
+The grounding gate is the highest-leverage decision in the run *and* the most-cited reason users abandon the skill before they see value. The behavior splits by run history:
+
+**First run on this workspace** (no `config.json` user_role saved AND no `.org-profile.json`): default to **generic feedback** and skip the grounding wizard. The panel runs against the user's content right away, headline reads `Org grounding: generic`, and the report appends a short "Want sharper results next time?" footer:
+
+> *This run produced generic feedback — fast and useful, but not tuned to a specific customer. Two questions next time would lift the accuracy score by ~10-15 points: (1) Are you reviewing for a named org? (2) Current customer or prospect? Reply `/focus-group config set grounding-prompt on` to be asked once next run, or just include the customer name in your prompt and I'll ground from there.*
+
+This is the load-bearing fix for first-run friction: the user sees the panel work before they're asked to invest in profiling. The footer is the soft pull into deeper grounding on run 2+, on the user's terms.
+
+**Subsequent runs** (saved user_role OR existing `.org-profile.json`, OR `--org-profile` was passed, OR the prompt explicitly names an org): run the gate as before. Scan the prompt for a named org or explicit cultural/scale signals; if neither is present and no profile is on file (or it is > 14 days old), stop and ask.
 
 **Q1 — How to profile:**
 1. **Profile by name** — name the actual org; the skill grounds research in it (Step 4a).
@@ -459,6 +472,11 @@ Non-negotiable by default — see [references/org-profile-schema.md](references/
 1. **Current customer** — try `sf` / Salesforce MCP / Slack for live grounding (Step 4c).
 2. **Prospect / lead** — stick to public sources via `/download`.
 3. **Not sure / mixed** — public sources first; layer in internal data later if confirmed.
+
+**Override switches** (load-bearing for users who already know what they want):
+- `--org-profile` forces the wizard regardless of run history (used to refresh a stale profile).
+- `--no-org-profile` forces the generic path on any run (used for one-off quick checks).
+- A prompt that names an org (`/focus-group review my Acme Health proposal`) skips the first-run silent default and treats the named org as the answer to Q1.1 — the user already showed intent.
 
 #### Step 4a — Profile by name
 Say plainly: *"I won't guess facts about [Org Name] from memory — let's ground this."* Offer `/download` against a small public seed-list (the org's About / IR / news / a search like `"<Org Name>" salesforce site:linkedin.com OR site:crunchbase.com`). Propose a profile draft from the harvested artifacts; the user confirms / corrects / fills gaps. Save with `source: "public-web:<org>"` and the source URLs. If Q2 = Current customer, branch to Step 4c.
@@ -546,6 +564,22 @@ Skip this check when `--no-citations` is set (the user has explicitly opted out)
 This makes the offline failure visible and actionable rather than a quiet score cap. Default is (a) on user approval; (b) and (c) are explicit choices.
 
 Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate every harvested artifact actually contains the expected content before any persona reads it.
+
+**Thin-render install nudge (post-Step 7, fires conditionally).** Step 0's tooling probe is silent — it never offers to install a headless browser proactively, because most users don't need one and the offer would be noise. The right moment to surface the offer is **right after `/download` actually struggled.** After the citation-density check, count the in-scope URLs that came back as **thin renders** — `meta.json` exists but `page.md` is under ~1500 chars, OR the saved page is recognizably an empty SPA shell (matches `<div id="app"></div>` with no rendered content). Compute the thin-render rate as `thin / total` for this run.
+
+If the thin-render rate is **above 30%** AND the user has not dismissed this nudge in the last **14 days** (recorded in `.focus-group-cache.json` → `thin_render_nudge.last_dismissed`), surface a single non-technical install offer **once per run, after Step 7 finishes, before Step 8 dispatches**:
+
+> *Some pages came back nearly empty — those sites need a headless browser to render properly, and the current setup doesn't have one. Three of the four pages I tried tonight came back as empty shells (the page loads, but nothing inside it shows up).*
+>
+> *Want me to walk you through installing one? Takes ~3 minutes either way:*
+> - *(a) Use the real Chrome already on this Mac — no install needed (Recommended)*
+> - *(b) Install Playwright (Python or Node.js — pick whichever you have)*
+> - *(c) Skip — I'll continue with the pages that did render. Don't ask again for 14 days.*
+> - *(d) Skip and never ask again*
+
+The 30% threshold avoids triggering on a single bad page in a 10-URL batch. The 14-day sticky dismissal avoids nagging on every run. Option (d) writes `thin_render_nudge.never_ask: true` to the cache permanently. Option (a) is recommended first because real Chrome (Chrome.app on macOS, chrome.exe on Windows, google-chrome on Linux) is the most reliable way past the bot-detection (Akamai, Cloudflare, Google captcha) that blocks Playwright's bundled Chromium and curl/wget — and it's already installed on most laptops, so it's a zero-install path.
+
+When the nudge succeeds (the user picks (a) or (b) and the runtime lands), the orchestrator should re-run `/download` for the failed URLs in this same run before proceeding to Step 8. When the nudge is declined, proceed with the partial citations and let the citation-density factor reflect the gap.
 
 ### Step 8 — Distribute panel across models
 

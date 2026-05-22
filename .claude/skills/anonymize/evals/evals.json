@@ -1,5 +1,6 @@
 {
   "skill_name": "anonymize",
+  "assertion_schema": "see ../focus-group/evals/evals.json#assertion_schema",
   "evals": [
     {
       "id": 1,
@@ -7,7 +8,34 @@
       "prompt": "Scrub this text using known entities 'Providence Health' and 'Sarah Chen': 'Sarah Chen at Providence Health asked about $4.2M ARR and a 5,847 employee deal in #providence-deal-room. Email s.chen@providence.org, SF org id 00D5g0000XYZAbcDEF, linkedin.com/in/sarah-chen-12345, case OCC EA-2024-018.'",
       "expected_output": "All 9 entities scrubbed: 1 COMPANY (Providence Health), 1 PERSON (Sarah Chen), 1 EMAIL, 1 ORG_ID, 1 REVENUE ({{REVENUE_1_ARR}}), 1 HEADCOUNT, 1 SLACK_CHANNEL, 1 LINKEDIN, 1 CASE_ID. The phrase 'employee deal' is preserved (only the number bracketed). Salesforce product names and round-bucket headcounts left alone (none present here).",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_absent",
+          "pattern": "(Providence Health|Sarah Chen|s\\.chen@providence\\.org|00D5g0000XYZAbcDEF)",
+          "target": "stdout",
+          "rationale": "All raw entities must be replaced with placeholders before output is returned."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "\\{\\{COMPANY_\\d+\\}\\}",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "\\{\\{PERSON_\\d+\\}\\}",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "\\{\\{EMAIL_\\d+\\}\\}",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "\\{\\{ORG_ID_\\d+\\}\\}",
+          "target": "stdout"
+        }
+      ]
     },
     {
       "id": 2,
@@ -15,7 +43,20 @@
       "prompt": "Restore this LLM response using the map from eval 1: '{{PERSON_1}} at {{COMPANY_1}} asked about ${{REVENUE_1_ARR}} and the {{HEADCOUNT_1}} employee deal. We also discussed {{ORG_ID_99}} which I have no record of.'",
       "expected_output": "Known placeholders ({{PERSON_1}}, {{COMPANY_1}}, {{REVENUE_1_ARR}}, {{HEADCOUNT_1}}) restored to real values. The unknown {{ORG_ID_99}} (which the LLM invented) left as-is and surfaced in stderr.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "\\{\\{ORG_ID_99\\}\\}",
+          "target": "stdout",
+          "rationale": "Unknown placeholder must remain literal in output (not silently dropped) so the user sees the LLM hallucinated an entity."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(unknown|invented|not in map)",
+          "target": "stderr",
+          "rationale": "Unknown placeholder must surface in stderr so the orchestrator knows to flag the LLM output."
+        }
+      ]
     },
     {
       "id": 3,
@@ -23,7 +64,18 @@
       "prompt": "Scrub: 'We're proposing Service Cloud + Agentforce for the customer's Health Cloud rollout, integrating with Microsoft Dynamics on Azure.'",
       "expected_output": "Nothing scrubbed. Salesforce, Service Cloud, Agentforce, Health Cloud, Microsoft Dynamics, Azure are all in the built-in whitelist.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "Service Cloud \\+ Agentforce",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "\\{\\{(COMPANY|PRODUCT)_",
+          "target": "stdout"
+        }
+      ]
     },
     {
       "id": 4,
@@ -31,7 +83,20 @@
       "prompt": "Scrub: 'A 25,000 employee enterprise vs. a 5,847 employee mid-market.'",
       "expected_output": "Only 5,847 is bracketed (precise count). 25,000 is preserved (round bucket).",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "25,000 employee enterprise",
+          "target": "stdout",
+          "rationale": "Round-bucket headcounts (25,000) are non-identifying; preserved verbatim."
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "5,847 employee",
+          "target": "stdout",
+          "rationale": "Precise headcount (5,847) is identifying; must be bracketed."
+        }
+      ]
     },
     {
       "id": 5,
@@ -39,7 +104,18 @@
       "prompt": "Run scrub with no --input and no stdin",
       "expected_output": "Exits with error: 'no input. Pass --input <file>, ...' (the err-doctrine in action: plain-English cause + what to do).",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "exit_code_equals",
+          "code": 2,
+          "rationale": "Argparse-style usage error returns exit 2."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(no input|--input)",
+          "target": "stderr"
+        }
+      ]
     },
     {
       "id": 6,
@@ -47,7 +123,13 @@
       "prompt": "/anonymize help",
       "expected_output": "Prints the SKILL.md walkthrough (the trick: bidirectional placeholders, when to invoke, modes, what gets scrubbed, CLI shape, library use, safety rules). Does NOT scrub anything. Does NOT prompt for input.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(bidirectional|placeholder)",
+          "target": "stdout"
+        }
+      ]
     }
   ]
 }

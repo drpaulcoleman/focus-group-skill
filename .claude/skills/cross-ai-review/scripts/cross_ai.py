@@ -402,29 +402,40 @@ def format_apa(c, n):
 
 
 # -----------------------------------------------------------------------------
-# Accuracy score (per references/accuracy-rubric.md in the /focus-group skill)
+# Structural pre-score (NOT the canonical 6-factor accuracy rubric)
 # -----------------------------------------------------------------------------
-def compute_accuracy(results, citations, require_citations, multi_claude):
-    """Compute the 0-100 accuracy estimate per the rubric. Heuristic by design.
+# IMPORTANT: this score is a coarse *structural* heuristic computed from
+# channel availability and citation file counts -- nothing more. It does NOT
+# implement the canonical 6-factor accuracy rubric in
+# `../focus-group/references/accuracy-rubric.md`, which requires per-claim
+# inter-model agreement averaging, anti-hallucination spot-checks, and
+# Platform-Fact verification against each pack's `## Platform Facts` table.
+#
+# The canonical accuracy score is computed by the synthesis agent during
+# `/focus-group` Stage C, where claim extraction and pack lookup happen.
+# This script's pre-score is useful as a fast triage signal -- "did 3
+# channels respond and is there any citation grounding at all?" -- and is
+# rendered in the report with that framing, not as `Accuracy: NN/100`.
+def compute_prescore(results, citations, require_citations, multi_claude):
+    """Compute the coarse 0-100 structural pre-score.
 
-    Returns {"score": int, "summary": str, "factors": {...}}.
+    Returns {"score": int, "summary": str, "factors": {...}, "kind": "structural-pre-score"}.
 
-    Factors:
+    This is NOT the canonical accuracy rubric. See the block comment above
+    and `../focus-group/references/accuracy-rubric.md` for the canonical
+    six-factor rubric (channel coverage 20, inter-model agreement 25,
+    citation density 15, hedging 10, anti-hallucination 10, Platform-Fact
+    verification 20). Stage C of `/focus-group` computes that score; this
+    function does not.
+
+    Pre-score factors (structural only):
       coverage         (25)  responded / available
-      agreement        (30)  cross-model agreement on factual content -- a
-                             *structural* estimate (we have no ground truth):
-                             scale with number-of-channels-that-agreed, with
-                             a 0.7 dampener under multi-Claude (same vendor).
+      agreement        (30)  channel-count proxy for agreement -- not the
+                             rubric's per-claim averaging.
       citation_density (25)  citations present in the workspace.
-      hedging          (10)  no behavioural signal here; awards full marks
-                             when citation density is high (proxy for the
-                             responses having grounding to hedge against).
-      cross_check      (10)  full marks unless require_citations and there
-                             are factual-looking claims with zero citations.
-
-    The rubric document is the canonical spec; this implementation is a
-    coarse heuristic that gives a meaningful, comparable score across runs.
-    A subagent doing the synthesis can override individual factors."""
+      hedging          (10)  proxy: full marks when citation density is high.
+      cross_check      (10)  full marks unless require_citations and zero
+                             citations on file."""
     factors = {}
     total = len(results)
     ok = sum(1 for r in results if r["status"] == "ok")
@@ -501,7 +512,7 @@ STATUS_ICON = {
 }
 
 
-def render_report(meta, results, prompt, accuracy, citations):
+def render_report(meta, results, prompt, prescore, citations):
     """Build the human-readable markdown report."""
     lines = []
     lines.append(f"# Cross-AI Run -- {meta['timestamp_utc']}")
@@ -519,15 +530,19 @@ def render_report(meta, results, prompt, accuracy, citations):
     lines.append(f"- **Channels:** {summary}")
     ok = sum(1 for r in results if r["status"] == "ok")
     lines.append(f"- **Responded:** {ok} of {len(results)}")
-    if accuracy:
-        lines.append(f"- **Accuracy:** {accuracy['score']}/100 -- {accuracy['summary']}")
-        lines.append(f"  (factors: coverage {accuracy['factors']['coverage']}, "
-                     f"agreement {accuracy['factors']['agreement']}, "
-                     f"citation density {accuracy['factors']['citation_density']}, "
-                     f"hedging {accuracy['factors']['hedging']}, "
-                     f"cross-check {accuracy['factors']['cross_check']})")
-        lines.append("  *An internal-confidence estimate, not a truth claim. "
-                     "See references/accuracy-rubric.md.*")
+    if prescore:
+        lines.append(f"- **Structural pre-score:** {prescore['score']}/100 -- {prescore['summary']}")
+        lines.append(f"  (factors: coverage {prescore['factors']['coverage']}, "
+                     f"agreement {prescore['factors']['agreement']}, "
+                     f"citation density {prescore['factors']['citation_density']}, "
+                     f"hedging {prescore['factors']['hedging']}, "
+                     f"cross-check {prescore['factors']['cross_check']})")
+        lines.append("  *Structural pre-score only -- channel availability + citation file count. "
+                     "NOT the canonical 6-factor accuracy rubric "
+                     "(coverage / agreement / citations / hedging / anti-hallucination / "
+                     "Platform Facts). The canonical score is computed by `/focus-group` "
+                     "Stage C, which has the claim extractor and pack-fact lookup. "
+                     "See `../focus-group/references/accuracy-rubric.md`.*")
     if meta.get("require_citations"):
         lines.append("- **Citation mode:** Strict (`--require-citations`) -- "
                      "claims without a meta.json source are demoted; score capped at 70 "
@@ -575,7 +590,7 @@ def render_report(meta, results, prompt, accuracy, citations):
         for i, c in enumerate(citations, 1):
             lines.append(format_apa(c, i))
     else:
-        lines.append("*No citations on file. The accuracy score reflects this "
+        lines.append("*No citations on file. The pre-score reflects this "
                      "(citation density = 0). To strengthen the next run, "
                      "ask `/download <url-or-topic>` first.*")
     lines.append("")
@@ -654,14 +669,14 @@ def parse_args(argv):
                                "parallel) even when other CLIs are installed. "
                                "Automatic when only `claude` is detected.")
 
-    cites = ap.add_argument_group("citations & accuracy")
+    cites = ap.add_argument_group("citations & pre-score")
     cites.add_argument("--require-citations", action="store_true",
                        help="Strict mode -- demote claims without a meta.json "
-                            "source; cap the accuracy score at 70 until "
+                            "source; cap the structural pre-score at 70 until "
                             "the gap closes.")
     cites.add_argument("--no-citations", action="store_true",
                        help="Skip the citations block and the citation-density "
-                            "factor in the accuracy score.")
+                            "factor in the structural pre-score.")
 
     out = ap.add_argument_group("output")
     out.add_argument("--out-dir", help="Directory for the run folder "
@@ -834,20 +849,23 @@ def main(argv):
                 done[r["name"]] = r
         results = [done[c] for c in chans]  # preserve requested order
 
-    # ---- citations + accuracy ----------------------------------------------
+    # ---- citations + structural pre-score ----------------------------------
     citations = [] if args.no_citations else scan_citations(Path.cwd())
-    accuracy = None if args.no_citations else compute_accuracy(
+    prescore = None if args.no_citations else compute_prescore(
         results, citations, args.require_citations, multi_claude)
 
     # ---- write artefacts ---------------------------------------------------
     (run_dir / "prompt.txt").write_text(prompt, encoding="utf-8")
-    report_md = render_report(meta, results, prompt, accuracy, citations)
+    report_md = render_report(meta, results, prompt, prescore, citations)
     (run_dir / "report.md").write_text(report_md, encoding="utf-8")
     report_json = dict(meta)
     report_json["prompt"] = prompt
     report_json["channels"] = results
     report_json["citations"] = citations
-    report_json["accuracy"] = accuracy
+    report_json["prescore"] = prescore
+    # Back-compat: keep `accuracy` key pointed at the same payload for any
+    # existing consumer, but the canonical key is now `prescore`.
+    report_json["accuracy"] = prescore
     report_json["summary"] = {
         "ok": sum(1 for r in results if r["status"] == "ok"),
         "skipped_quota": sum(1 for r in results if r["status"] == "quota"),
@@ -867,8 +885,10 @@ def main(argv):
         print(f"  {r['name']:8s} {STATUS_ICON[r['status']]:28s} {extra}")
     ok = report_json["summary"]["ok"]
     print(f"\n{ok} of {len(results)} channel(s) responded.")
-    if accuracy:
-        print(f"Accuracy: {accuracy['score']}/100 -- {accuracy['summary']}")
+    if prescore:
+        print(f"Structural pre-score: {prescore['score']}/100 -- {prescore['summary']}")
+        print("  (Not the canonical accuracy score -- see /focus-group Stage C "
+              "for the 6-factor rubric with Platform Facts.)")
     if citations:
         print(f"Citations: {len(citations)} source(s) from references/")
     elif not args.no_citations:

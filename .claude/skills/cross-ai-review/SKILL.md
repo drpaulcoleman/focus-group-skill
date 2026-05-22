@@ -6,10 +6,13 @@ description: >-
   collect every answer into one report, and synthesize where they agree,
   disagree, and what each missed. If only Claude is available, fan out to
   two Claude models (Opus + Sonnet) so the user still gets a multi-model
-  audit. Reports an estimated Accuracy score (0–100) and a Citations block
-  built from any /download references in the workspace. Any CLI that is
-  rate-limited or out of tokens is skipped automatically so a partial review
-  still completes. Use this whenever the user wants a cross-AI review, a
+  audit. Reports a coarse structural pre-score (0–100) computed from
+  channel availability and citation file count, plus a Citations block
+  built from any /download references in the workspace. (The canonical
+  6-factor accuracy score with Platform-Fact verification is computed by
+  the synthesis agent in /focus-group Stage C, not by this script.) Any
+  CLI that is rate-limited or out of tokens is skipped automatically so a
+  partial review still completes. Use this whenever the user wants a cross-AI review, a
   second or third opinion from other models, an independent accuracy /
   errors-and-omissions / hallucination audit, a fact-check across models,
   or asks things like "what do Gemini and Codex think", "cross-check this
@@ -172,7 +175,7 @@ python <skill>/scripts/cross_ai.py --prompt-file ask.txt --skip gemini
 # Force the multi-Claude fallback even when other CLIs are available
 python <skill>/scripts/cross_ai.py --prompt-file ask.txt --multi-claude
 
-# Skip the citations block AND the accuracy score entirely (no scan, no rubric)
+# Skip the citations block AND the structural pre-score entirely (no scan)
 python <skill>/scripts/cross_ai.py --prompt-file ask.txt --no-citations
 
 # Strict citation mode (caps score at 70 when the workspace has zero citations on file)
@@ -197,15 +200,18 @@ per CLI); `--fast` downshifts to quick models.
 The script writes a run folder (default `~/.claude/cross-ai-runs/<run-id>/`):
 
 - `report.md` — human-readable: the prompt, each channel's answer or its
-  skip/failure note, **the Accuracy score with rubric breakdown**, and the
-  **Citations block** sourced from any `references/<slug>/meta.json` files
-  in the workspace.
+  skip/failure note, **the structural pre-score with factor breakdown**, and
+  the **Citations block** sourced from any `references/<slug>/meta.json`
+  files in the workspace.
 - `report.json` — the same data structured, including per-channel `status`.
+  The pre-score lives under `prescore` (with a back-compat `accuracy` alias).
 - `prompt.txt` — the exact prompt, preserved so a skipped channel can be
   re-run later with identical input.
 
 **Read `report.md`.** Note which channels answered, which were skipped, and
-how the citation density shaped the accuracy score.
+how the citation density shaped the pre-score. The canonical accuracy
+score is computed in the synthesis step (Stage 4 below) — the script's
+pre-score is structural triage, not the final number.
 
 ### 4. Synthesize — present a Cross-AI Review Summary
 
@@ -217,8 +223,10 @@ this structure (adapt the headings to the task):
 
 **Channels:** claude-opus OK · claude-sonnet OK · codex SKIPPED (quota)
               — 2 of 3 responded (multi-Claude fallback in effect)
-**Accuracy:** 82/100 — high coverage, moderate citation density, 2 claims
-              under-cited (flags below)
+**Structural pre-score:** 82/100 — full coverage; 6 citations on file
+**Accuracy (canonical, agent-computed):** 78/100 — full coverage, 4-of-5
+              factual claims cited; 1 platform claim landed on a TODO row
+              in `salesforce-crm-agentforce` (factor 6 = 16/20).
 
 **Consensus** — where the responding models agree (independent reasoning paths)
 - ...
@@ -253,34 +261,48 @@ Principles for a good synthesis:
 - **Attribute claims.** "Codex flagged X" lets the user trace it; "the AIs
   said X" does not.
 
-## Accuracy score (0–100)
+## Structural pre-score (0–100) — NOT the canonical accuracy score
 
-Computed by `cross_ai.py` per the rubric in
-[../focus-group/references/accuracy-rubric.md](../focus-group/references/accuracy-rubric.md).
-The factors:
+`cross_ai.py` computes a **coarse structural pre-score** on every run. This
+is a triage signal — channel availability and citation file count — not the
+canonical accuracy rubric. The pre-score factors:
 
-| Factor | Weight |
-|--------|--------|
-| Channel coverage (responding / available) | 25 |
-| Inter-model agreement on factual claims | 30 |
-| Citation density (claims with a `meta.json` source) | 25 |
-| Hedging / uncertainty calibration | 10 |
-| Anti-hallucination cross-check (spot-check 3 claims) | 10 |
+| Factor | Weight | What it measures |
+|--------|--------|------------------|
+| Channel coverage | 25 | responding / available |
+| Channel-count agreement proxy | 30 | 3+ ok → 30; 2 → 20; 1 → 10. Multi-Claude × 0.7. **Not** per-claim averaging. |
+| Citation density | 25 | `meta.json` files in `references/` (0 → 0; 8+ → 25, linear). |
+| Hedging proxy | 10 | full marks when citation density is high. |
+| Strict-mode cross-check | 10 | full marks unless `--require-citations` and zero citations. |
 
-**Reported as** `Accuracy: 82/100 — high coverage, moderate citation density,
-two claims under-cited (see flags)`.
+**Reported as** `Structural pre-score: 82/100 — full coverage; 6 citations on
+file`.
 
-Under `--require-citations`, the **score is capped at 70** when the workspace
-has zero `references/<slug>/meta.json` citation files on file. The script
+The **canonical accuracy score** is the 6-factor rubric in
+[../focus-group/references/accuracy-rubric.md](../focus-group/references/accuracy-rubric.md)
+(coverage 20 / agreement 25 / citations 15 / hedging 10 / anti-hallucination
+10 / **Platform Facts 20**). That score is computed by the synthesis agent
+during `/focus-group` Stage C, where claim extraction and pack-fact lookup
+happen. `cross_ai.py` does not implement the claim extractor, the
+anti-hallucination spot-check, or the Platform Facts lookup — those are
+agent-side tasks because they need to read the actual model output and
+match it against per-pack tables.
+
+**Why the split is honest:** the pre-score answers "is this run worth
+synthesizing at all?" in a few lines of Python. The canonical score
+answers "how confident should the user be in this report?" and needs
+the model output to compute. Conflating them would either over-claim
+(calling a coarse heuristic an "accuracy score") or under-claim (waiting
+for an agent round-trip before saying anything about the run's structure).
+
+Under `--require-citations`, the **pre-score is capped at 70** when the
+workspace has zero `references/<slug>/meta.json` citation files. The script
 records the cap on the report header. The skill can also offer to run
 `/download` first against a recommended seed list to add citations before
-the run. Note: per-claim "Needs verification" demotion (attributing each
-under-cited claim individually) is a planned addition — today, the cap is
-workspace-level rather than per-claim. The orchestrator can do the
-per-claim audit by re-reading `report.md` and flagging in the synthesis.
+the run.
 
-The score is an estimate of *internal confidence*, not a truth claim. The
-report header says so.
+The pre-score is an estimate of *structural confidence*, not a truth
+claim and not a substitute for the canonical accuracy score.
 
 ## Citations block
 

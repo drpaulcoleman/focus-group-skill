@@ -1,5 +1,6 @@
 {
   "skill_name": "slackbot",
+  "assertion_schema": "see ../focus-group/evals/evals.json#assertion_schema",
   "evals": [
     {
       "id": 1,
@@ -7,7 +8,29 @@
       "prompt": "/slackbot Providence Health (assume Slack MCP is configured and the user belongs to 2 channels that mention Providence)",
       "expected_output": "Skill calls MCP conversations.list (is_member=true), searches the 2 matching channels for 'Providence', assembles the raw profile at .org-profile-raw/providence-health/slack.md, runs anonymize.py scrub with --scrub 'Providence Health' and the detected person names, produces .org-profile-raw/providence-health/slack.anonymized.md, presents the approval summary with placeholders, asks the user to approve/edit/reject.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "file_present",
+          "path": ".org-profile-raw/providence-health/slack.md",
+          "rationale": "Raw (un-anonymized) profile must persist locally so the user can audit the source."
+        },
+        {
+          "kind": "file_present",
+          "path": ".org-profile-raw/providence-health/slack.anonymized.md",
+          "rationale": "Only the anonymized version is allowed to flow onward to /focus-group."
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "Providence Health",
+          "target": "anonymized_md",
+          "rationale": "Customer name must be replaced with a placeholder in the anonymized profile."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "\\{\\{COMPANY_\\d+\\}\\}",
+          "target": "anonymized_md"
+        }
+      ]
     },
     {
       "id": 2,
@@ -15,7 +38,23 @@
       "prompt": "/slackbot Acme Credit Union (assume no Slack MCP server configured in the user's MCP config)",
       "expected_output": "Skill stops; presents the four-option install menu from /focus-group references/usage.md §8 (walk through Slack MCP setup / skip for this run / etc.). Does not attempt to query anything. Records the answer in .install-asked.json.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(Slack MCP|install walkthrough|set up)",
+          "target": "stdout"
+        },
+        {
+          "kind": "file_absent",
+          "path": ".org-profile-raw/acme-credit-union/slack.md",
+          "rationale": "No query should run when the MCP is missing — no raw profile should be created."
+        },
+        {
+          "kind": "file_present",
+          "path": ".install-asked.json",
+          "rationale": "Install offer answer must persist so it doesn't repeat on every run."
+        }
+      ]
     },
     {
       "id": 3,
@@ -23,7 +62,24 @@
       "prompt": "/slackbot Obscure Customer (MCP is configured but no channels the user belongs to mention this customer)",
       "expected_output": "Skill reports plainly: 'no mentions of Obscure Customer in any channel you're a member of in the last 30 days.' Offers to widen the window to 90 or 180 days, or skip. Does not invent mentions.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "no mentions",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(90|180) days",
+          "target": "stdout",
+          "rationale": "Must offer to widen the window rather than fail silently."
+        },
+        {
+          "kind": "file_absent",
+          "path": ".org-profile-raw/obscure-customer/slack.anonymized.md",
+          "rationale": "Empty result must NOT produce an anonymized profile — no fabrication."
+        }
+      ]
     },
     {
       "id": 4,
@@ -31,7 +87,23 @@
       "prompt": "/slackbot Providence Health (MCP works, but anonymize.py script is missing)",
       "expected_output": "Raw profile saved to .org-profile-raw/.../slack.md (local-only, as designed). Anonymize call fails. Skill refuses to hand the profile onward to /focus-group and tells the user the anonymize layer is required for any model-bound use. Suggests installing the /anonymize skill folder.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "file_present",
+          "path": ".org-profile-raw/providence-health/slack.md",
+          "rationale": "Raw profile is local-only and may persist even when anonymize fails."
+        },
+        {
+          "kind": "file_absent",
+          "path": ".org-profile-raw/providence-health/slack.anonymized.md",
+          "rationale": "No anonymized profile may be produced when scrub failed — load-bearing for privacy."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(anonymize.*required|cannot hand off|/anonymize)",
+          "target": "stderr"
+        }
+      ]
     },
     {
       "id": 5,
@@ -39,7 +111,19 @@
       "prompt": "/slackbot help",
       "expected_output": "Prints SKILL.md walkthrough (what it is, when to invoke, prerequisites, the 5-step workflow, privacy posture, install path). Does NOT query Slack. Does NOT prompt for a customer name.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(member-only|privacy posture|workflow)",
+          "target": "stdout"
+        },
+        {
+          "kind": "cli_invocation_count",
+          "cli": "slack_mcp",
+          "count": 0,
+          "rationale": "Help mode must not call any Slack MCP tools."
+        }
+      ]
     },
     {
       "id": 6,
@@ -47,7 +131,20 @@
       "prompt": "/slackbot CustomerX (MCP is configured; the user is NOT a member of #customerx-deal-room but the channel exists)",
       "expected_output": "Skill does NOT surface anything from #customerx-deal-room. The query is constrained to is_member=true. The summary may note 'A channel named #customerx-deal-room exists but you are not a member of it.' (informational only, no contents disclosed).",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_absent",
+          "pattern": "(message excerpt|thread|sentiment)\\s.*#customerx-deal-room",
+          "target": "anonymized_md",
+          "rationale": "Member-only scope is load-bearing — no message content from non-member channels may appear."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "is_member.*true",
+          "target": "mcp_call_log",
+          "rationale": "The MCP query parameters must include is_member=true."
+        }
+      ]
     }
   ]
 }

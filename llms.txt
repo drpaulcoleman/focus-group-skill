@@ -29,7 +29,7 @@ so they can reference it accurately.
 
 ### /focus-group — multi-persona review panel
 - Path: `.claude/skills/focus-group/SKILL.md`
-- 177 persona files across 9 lens groupings (5 Generic sub-families + Salesforce-Sales + Salesforce-Customer + Salesforce-Partner + Industry-specific). Public sector ships 13 personas (state/local + federal/DoD + international); most other packs ship 5–8 to cover the load-bearing seats per sub-vertical.
+- 187 persona files across 9 lens groupings (5 Generic sub-families + Salesforce-Sales + Salesforce-Customer + Salesforce-Partner + Industry-specific). Public sector ships 13 personas (state/local + federal/DoD + international); most other packs ship 5–9 to cover the load-bearing seats per sub-vertical.
 - 13 product packs + 19 industry packs + generic bypass.
 - Default product pack: salesforce-crm-agentforce. Default panel size: 5.
 - 12-step pipeline (role gate at Step 1, customer-grounding gate at Step 4
@@ -40,8 +40,19 @@ so they can reference it accurately.
 
 ### /download — runtime-adaptive doc harvester
 - Path: `.claude/skills/download/SKILL.md`
-- Runtime chain: Python+Playwright → Node+Playwright/Puppeteer →
-  PowerShell+Edge → Chrome headless → curl/wget.
+- Runtime chain (priority order — real browsers preferred over Playwright's
+  bundled Chromium because they dodge most Akamai / Cloudflare bot-detection):
+  real Chrome → real Edge → Python+Playwright → Node+Playwright/Puppeteer →
+  curl/wget.
+- Cross-OS real-Chrome path: `harvest-chrome.sh` (macOS / Linux / WSL /
+  Git Bash) and `harvest-chrome.ps1` (Windows-native PowerShell). Both
+  use isolated temp `--user-data-dir` so an existing user Chrome session
+  doesn't lock the harvest profile, and a `--headless-old` flag for
+  fingerprint variation when `--headless=new` gets blocked.
+- Bot-block detection: harvested pages are scanned for Akamai Edgesuite,
+  Cloudflare, and "Access Denied" title signatures; matches are tagged
+  `bot_blocked: 1` in meta.json so /focus-group never cites them, and
+  the script emits the err-doctrine four-line escalation chain.
 - Salesforce-aware search engines (help.salesforce.com, Trailhead,
   architect.salesforce.com, developer.salesforce.com).
 - LinkedIn URLs short-circuit to a local-files workaround.
@@ -51,7 +62,12 @@ so they can reference it accurately.
 - Detects claude, codex, gemini, opencode CLIs.
 - Multi-Claude fallback: when only `claude` is installed, runs Opus +
   Sonnet in parallel.
-- Accuracy score (0–100); --require-citations strict mode caps at 70.
+- Reports a coarse **structural pre-score** (0–100) from channel
+  availability + citation file count. The canonical 6-factor accuracy
+  score (with Platform-Fact verification) is computed agent-side in
+  `/focus-group` Stage C; the script does not implement claim
+  extraction or Platform Facts lookup.
+- `--require-citations` strict mode caps the pre-score at 70.
 
 ### /anonymize — bidirectional placeholder safety layer
 - Path: `.claude/skills/anonymize/SKILL.md`

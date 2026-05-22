@@ -83,6 +83,27 @@ Each skill is **self-contained**:
 - **anonymize:** review `references/scrub-patterns.md` to add new PII patterns (email, SSN, etc.)
 - **download:** runtime chain priority in `scripts/` controls fallback order; test that curl still works when Playwright is unavailable
 
+### Harvesting URLs — always defer to /download
+
+When any task in this repo needs to fetch web content (a URL, a doc, a PDF,
+search results, citations for a `/focus-group` panel), **invoke `/download`
+as the first line of attack**. Do not reimplement harvest logic in ad-hoc
+subagent prompts and do not call `WebFetch` directly on Salesforce help
+pages, Trailhead, or other JS-rendered sites — they return empty SPA shells
+under static fetch and Akamai/Cloudflare bot-block headless Chromium.
+
+`/download` has cross-OS runtime detection that prioritizes **real
+Chrome** (then real Edge, then Playwright, then curl). Real browsers dodge
+most bot-detection that blocks Playwright's bundled Chromium. The
+priority order, scripts, and install walkthroughs all live under
+`.claude/skills/download/` — extending or fixing harvest behavior
+belongs there, not in the calling skill.
+
+This applies to subagents too: when spawning an `Explore` or `general-purpose`
+agent that needs web content, instruct it to call `/download` (or run
+`scripts/harvest-chrome.sh` / `scripts/harvest-chrome.ps1` directly)
+rather than rolling its own fetch.
+
 ## Key Files to Know
 
 | File | Purpose |

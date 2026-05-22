@@ -38,12 +38,21 @@ mark "$chrome"   "Chrome / Chromium"
 mark "$curlw"    "curl or wget"
 echo "-----------------------------------"
 
-if   [ "$pyplay"   = "1" ]; then echo "RECOMMENDED PATH: scripts/harvest.py   (Python + Playwright)"
+# Priority order: prefer the user's REAL Chrome/Edge over Playwright's
+# bundled Chromium. Real browsers (Chrome.app on macOS, msedge.exe on
+# Windows, google-chrome on Linux) are far less likely to be bot-blocked
+# by Akamai / Cloudflare / Google captcha than headless Chromium, which
+# advertises itself as headless via well-known fingerprints. They are
+# usually already installed, so this is also the zero-install path for
+# most users.
+if   [ "$chrome" = "1" ]; then
+     echo "RECOMMENDED PATH: scripts/harvest-chrome.sh  (real Chrome --headless=new --dump-dom)"
+     echo "REASON: real Chrome dodges most bot-detection that blocks Playwright's Chromium."
+elif [ "$edge" = "1" ] && [ "$ps" = "1" ]; then
+     echo "RECOMMENDED PATH: scripts/harvest.ps1  (real Microsoft Edge headless)"
+     echo "REASON: real Edge dodges most bot-detection that blocks Playwright's Chromium."
+elif [ "$pyplay"   = "1" ]; then echo "RECOMMENDED PATH: scripts/harvest.py   (Python + Playwright)"
 elif [ "$nodeplay" = "1" ]; then echo "RECOMMENDED PATH: scripts/harvest.mjs  (Node.js headless browser)"
-elif [ "$ps" = "1" ] && [ "$edge" = "1" ]; then
-     echo "RECOMMENDED PATH: scripts/harvest.ps1  (PowerShell + headless Edge)"
-elif [ "$chrome" = "1" ]; then
-     echo "RECOMMENDED PATH: scripts/harvest-chrome.sh  (headless Chrome --dump-dom)"
 elif [ "$curlw" = "1" ]; then
      echo "RECOMMENDED PATH: scripts/fetch-basic.sh  (no JavaScript rendering)"
      echo "NOTE: JS-rendered pages may be incomplete. See README.md to add a headless browser."

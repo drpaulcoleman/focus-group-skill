@@ -1,65 +1,212 @@
 {
   "skill_name": "how-can-this-be-improved",
+  "assertion_schema": "see ../focus-group/evals/evals.json#assertion_schema",
   "evals": [
     {
       "id": "help-mode-prints-walkthrough",
       "prompt": "/how-can-this-be-improved help",
       "expected_output": "Skill reads references/usage.md and presents the walkthrough (what it does, the three modes, examples, edge cases). Does NOT run an audit.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(three modes|file-review|skill-audit|usage-pattern)",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "(## What's working|## Sharpen|## Top 3 changes)",
+          "target": "stdout",
+          "rationale": "Help mode must NOT emit Mode A/B/C section headers — that would mean an audit ran."
+        }
+      ]
     },
     {
       "id": "help-mode-aliases",
       "prompt": "/how-can-this-be-improved --help",
       "expected_output": "Same behavior as 'help'. Alias coverage: --help / -h / ? all route to help mode and stop.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(three modes|file-review|skill-audit)",
+          "target": "stdout"
+        }
+      ]
     },
     {
       "id": "file-review-real-markdown",
       "prompt": "/how-can-this-be-improved README.md",
       "expected_output": "Mode A activates. Output has all 6 sections (What's working, Sharpen, Cut, Add, Cite or soften, Bottom-line check) plus the single highest-leverage change at the end.",
-      "files": ["README.md"]
+      "files": ["README.md"],
+      "assertions": [
+        {
+          "kind": "output_section_present",
+          "heading": "What's working"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Sharpen"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Cut"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Add"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Cite or soften"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Bottom-line check"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(highest-leverage|single biggest|one change)",
+          "target": "stdout",
+          "rationale": "The closing recommendation is load-bearing — without it the audit reads as a list, not a verdict."
+        }
+      ]
     },
     {
       "id": "file-review-panel-report",
       "prompt": "/how-can-this-be-improved .scratch/focus-group/2026-05-21-acme-qbr.md",
       "expected_output": "Mode A activates on the primary target (a /focus-group culmination report). Sharpening pass focuses on what to fix before the user sends the report on.",
-      "files": [".scratch/focus-group/2026-05-21-acme-qbr.md"]
+      "files": [".scratch/focus-group/2026-05-21-acme-qbr.md"],
+      "assertions": [
+        {
+          "kind": "output_section_present",
+          "heading": "Sharpen"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Cite or soften"
+        }
+      ]
     },
     {
       "id": "file-review-nonexistent",
       "prompt": "/how-can-this-be-improved nonexistent-file.md",
       "expected_output": "Skill says the file doesn't exist plainly. Does not attempt the audit. Does not invent content.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(does not exist|not found|cannot find)",
+          "target": "stderr"
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "(## What's working|## Sharpen|## Top 3 changes)",
+          "target": "stdout",
+          "rationale": "No audit may run on a missing file — emitting section headers would mean fabricated content."
+        },
+        {
+          "kind": "exit_code_equals",
+          "code": 2
+        }
+      ]
     },
     {
       "id": "skill-audit-focus-group",
       "prompt": "/how-can-this-be-improved focus-group",
       "expected_output": "Mode B activates. Reads focus-group SKILL.md + references/ + scripts/ + config.json + README/index.html mentions. Output has 7 sections including the new Description triggering section.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "output_section_present",
+          "heading": "Strengths"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Description triggering"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Drift between docs and implementation"
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Top 3 changes"
+        }
+      ]
     },
     {
       "id": "skill-audit-invalid-name",
       "prompt": "/how-can-this-be-improved bogus-skill-name",
       "expected_output": "Skill lists the 6 valid skill names and asks which the user meant. Does not attempt to audit a nonexistent skill.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(focus-group|download|cross-ai-review|anonymize|slackbot)",
+          "target": "stdout",
+          "rationale": "Must enumerate valid skill names rather than fail opaquely."
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "## Strengths",
+          "target": "stdout",
+          "rationale": "No audit content may be generated for a nonexistent skill."
+        }
+      ]
     },
     {
       "id": "usage-pattern-empty-workspace",
       "prompt": "/how-can-this-be-improved",
       "expected_output": "Mode C activates. On a workspace with no .scratch/focus-group/ history and no .org-profile.json, the skill says so plainly and suggests running /focus-group once before re-invoking. Does not invent usage patterns.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(no saved state|fresh clone|run /focus-group once)",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "## What I learned about your usage",
+          "target": "stdout",
+          "rationale": "No usage-pattern bullets may be invented when the workspace has no state."
+        }
+      ]
     },
     {
       "id": "negative-no-auto-trigger-on-adjacent-talk",
       "prompt": "I'm worried this Q3 forecast is wrong. Can you help me think about it?",
       "expected_output": "Skill does NOT auto-activate. The user did not invoke /how-can-this-be-improved, used no trigger phrases (no 'how can this be improved', no 'audit this report', no 'sharpen this'). This is adjacent review-talk, not an invocation.",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_absent",
+          "pattern": "(## What's working|## Sharpen|## Strengths|## Top 3 changes)",
+          "target": "stdout",
+          "rationale": "Skill must not auto-trigger on adjacent talk that lacks the explicit invocation."
+        }
+      ]
     },
     {
       "id": "ambiguous-file-vs-skill-name",
       "prompt": "/how-can-this-be-improved focus-group.md",
       "expected_output": "Argument has a path-like shape (.md extension). Skill treats this as Mode A and tries the file first. If the file doesn't exist, the skill says so (does NOT silently fall back to Mode B on the bare 'focus-group' string).",
-      "files": []
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(does not exist|not found|cannot find).*focus-group\\.md",
+          "target": "stderr",
+          "rationale": "The .md extension is the user's explicit signal for Mode A — the skill must not silently switch modes."
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "## Description triggering",
+          "target": "stdout",
+          "rationale": "Mode B section header would indicate an unwanted silent fallback."
+        }
+      ]
     }
   ]
 }

@@ -1,5 +1,29 @@
 {
   "skill_name": "focus-group",
+  "assertion_schema": {
+    "version": 1,
+    "doc": "Each eval has zero or more `assertions`. Each assertion is a structured check the orchestrator can verify against the run artefacts (final report markdown + report.json + filesystem state). The eval-runner agent reads each assertion, looks up the named target, and records pass/fail with the matched substring or compared value. The orchestrator-agent contract is: every assertion field listed here must be checkable without re-running the panel.",
+    "kinds": {
+      "regex_match":          "Pattern (case-insensitive unless flagged) must appear in the named target. Fields: pattern, target.",
+      "regex_absent":         "Pattern must NOT appear in the target. Fields: pattern, target.",
+      "score_in_range":       "Numeric score parsed from `target` must fall in [min, max]. Fields: min, max, target.",
+      "score_capped_at":      "Numeric score parsed from `target` must be <= max. Fields: max, target.",
+      "file_present":         "File path (relative to workspace) must exist after the run. Fields: path.",
+      "file_absent":          "File path must NOT exist after the run. Fields: path.",
+      "header_field_equals":  "A named field in the report header equals an expected value. Fields: field, expected.",
+      "output_section_present": "A named markdown section heading exists in the final report. Fields: heading.",
+      "cli_invocation_count": "The script invoked the named CLI exactly N times. Fields: cli, count.",
+      "exit_code_equals":     "The script exited with the expected code. Fields: code.",
+      "json_path_equals":     "JSON-pointer-style path in report.json equals expected value. Fields: pointer, expected."
+    },
+    "target_aliases": {
+      "report_md":   "the final report markdown rendered to the user (focus-group: the synthesized panel report; cross-ai-review: cross-ai-runs/<run-id>/report.md)",
+      "report_json": "the structured run artefact (cross-ai-review: report.json; focus-group: the in-memory pipeline state, dumped to .scratch/focus-group/<date>-<slug>.json when --debug-state is on)",
+      "stdout":      "the script's captured stdout",
+      "stderr":      "the script's captured stderr",
+      "header":      "the leading metadata block of report_md (everything before the first '## Prompt' or '## Panel' section)"
+    }
+  },
   "evals": [
     {
       "id": 1,
@@ -7,7 +31,36 @@
       "prompt": "/focus-group I'm prepping discovery for a new prospect — Providence Health, a regional hospital network on the West Coast. They've reached out about Agentforce for their patient-services team. Here are the questions I want to take into the first call: 1. What problem are you actually trying to solve in patient services? 2. How are you handling agent-assist today? 3. What's your current Service Cloud footprint? 4. What does success look like in 90 days? Tell me which ones a strong SE / Champion / Economic Buyer / HIPAA Privacy Officer would push back on, and what they'd suggest I add or drop.",
       "expected_output": "Skill stops to ask the customer-grounding gate (Q1 name, Q2 prospect vs. current). User selects 'profile by name' and 'prospect'. Skill offers /download against providence.org public sources. Skill proposes a panel of 5 (likely SE, HIPAA Privacy Officer, Champion/Patient Services Director, CIO Economic Buyer, Industry Specialist for healthcare). Final report cites the downloaded sources, includes an accuracy score, and gives concrete suggestions on each of the 4 discovery questions, named to specific personas.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(profile by name|profile by culture)",
+          "target": "stdout",
+          "rationale": "The skill must surface the customer-grounding wizard when an org is named in the prompt and no profile is on file."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(HIPAA|Privacy Officer)",
+          "target": "report_md",
+          "rationale": "Healthcare panel must include the privacy seat the prompt requested."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "Solution Engineer|\\bSE\\b",
+          "target": "report_md"
+        },
+        {
+          "kind": "score_in_range",
+          "min": 60,
+          "max": 100,
+          "target": "report_md",
+          "rationale": "Accuracy score should be present and parseable. Range is wide because score depends on actual citations harvested in the run."
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Citations"
+        }
+      ]
     },
     {
       "id": 2,
@@ -15,7 +68,18 @@
       "prompt": "/focus-group --product service-cloud --industry financial-services Review this QBR draft for Acme Credit Union. They're a current Service Cloud customer (Sandbox alias: acme-sb). Focus on whether I'm leading with the right wins and whether the renewal-risk page is honest about the 2 open Sev-2 cases.",
       "expected_output": "Skill detects 'current customer' from the prompt context plus the org alias. Skill probes for sf, Salesforce MCP, Slack. If sf is installed and acme-sb is reachable, offers the per-data consent menu. If not, offers the install walkthrough. Panel composed with FinServ industry personas (Retail Banking Head, Compliance/AML Officer) plus Customer Success Manager, Champion, Solution Engineer. Report references the live data summary (user-approved).",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(Compliance|AML)",
+          "target": "report_md"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(Customer Success|CSM|Champion)",
+          "target": "report_md"
+        }
+      ]
     },
     {
       "id": 3,
@@ -23,7 +87,20 @@
       "prompt": "/focus-group --generic Review the executive-summary slide of this pitch deck for clarity, story arc, and one-line value-prop strength. I want it punchy but not gimmicky.",
       "expected_output": "Skill skips the org-profile gate (--generic context implies no specific customer; or the skill explicitly asks once and accepts 'skip'). Recommends a generic panel (Pitch-Narrative Coach, Enterprise Buyer, SMB Buyer, Compliance Officer, Strategic Acquirer or Enterprise SaaS VC). Report focuses on narrative, not Salesforce specifics.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_absent",
+          "pattern": "Salesforce CRM \\+ Agentforce",
+          "target": "report_md",
+          "rationale": "--generic must NOT load the default product pack."
+        },
+        {
+          "kind": "score_capped_at",
+          "max": 90,
+          "target": "report_md",
+          "rationale": "Per accuracy-rubric.md, --generic mode caps factor 6 at 10/20 (no Platform Facts source on file). Practical ceiling is ~90/100."
+        }
+      ]
     },
     {
       "id": 4,
@@ -31,7 +108,24 @@
       "prompt": "/focus-group help",
       "expected_output": "Skill prints the user-facing walkthrough from references/usage.md — what it is, how to invoke, switches table, quick-pick panels, the two up-front gate questions, the §8 install-offers trigger table, examples, privacy stance. Does NOT run a panel. Does NOT prompt for content under review.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(switches|quick-pick|install offers)",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "(panel|Stage [ABC])",
+          "target": "report_md",
+          "rationale": "Help mode must not produce a panel report."
+        },
+        {
+          "kind": "file_absent",
+          "path": ".scratch/focus-group/",
+          "rationale": "Help mode must not write a panel artefact."
+        }
+      ]
     },
     {
       "id": 5,
@@ -39,15 +133,92 @@
       "prompt": "/focus-group --require-citations Review my proposal section: 'Service Cloud's average implementation time at customers your size is 14 weeks, and TCO over 3 years is 40% lower than ServiceNow per the Forrester TEI study.' Is this defensible?",
       "expected_output": "Skill identifies two factual claims (14 weeks; 40% lower per Forrester TEI). Under --require-citations, these claims have no meta.json source on file. The report moves them to 'Needs verification' and caps accuracy at 70. The skill offers to /download the Forrester TEI study and Salesforce's published implementation-time benchmarks first.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "score_capped_at",
+          "max": 70,
+          "target": "report_md",
+          "rationale": "Per accuracy-rubric.md, --require-citations + zero meta.json on file caps the score at 70 until the gap closes."
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Needs verification",
+          "rationale": "Strict mode demotes uncited factual claims to a separate 'Needs verification' section."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(/download|seed list|offer to harvest)",
+          "target": "stdout",
+          "rationale": "Strict mode must offer to /download against the active pack's seed list before dispatch."
+        }
+      ]
     },
     {
       "id": 6,
-      "name": "multi-claude-fallback-detection",
+      "name": "single-ai-mode-stage-A-only",
       "prompt": "/focus-group --single-ai Review this discovery doc for me. (Assume only the claude CLI is installed on this machine.)",
       "expected_output": "Skill respects --single-ai (no external CLI dispatch, no Stage B/C consolidation). Panel runs as local Claude subagents. Report is the Stage-A aggregation; the report header notes that Stage B/C was skipped per --single-ai.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "cli_invocation_count",
+          "cli": "codex",
+          "count": 0,
+          "rationale": "--single-ai must not dispatch to external CLIs."
+        },
+        {
+          "kind": "cli_invocation_count",
+          "cli": "gemini",
+          "count": 0
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(Single-AI mode|--single-ai)",
+          "target": "header",
+          "rationale": "The header must disclose that single-AI mode is in effect."
+        },
+        {
+          "kind": "score_capped_at",
+          "max": 90,
+          "target": "report_md",
+          "rationale": "Per accuracy-rubric.md, --single-ai practical ceiling is ~87/100. We allow up to 90 to leave headroom for rubric tweaks."
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "platform-facts-todo-stub-half-credit",
+      "prompt": "/focus-group --product salesforce-crm-agentforce Review my pitch slide that says 'Agentforce includes Apex governor relief — agents can run 200 SOQL queries per transaction instead of the standard 100.'",
+      "expected_output": "Skill loads the agentforce pack. The claim about governor limits lands on a TODO-stub row in the pack's Platform Facts table. The synthesis flags the claim as 'unverified — check current Salesforce help / release notes', scores factor 6 at 0.5 for that claim, and notes the half-credit rationale in the report.",
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(unverified|TODO|half-credit|verify against)",
+          "target": "report_md",
+          "rationale": "The TODO-stub claim must be visibly flagged, not silently full-credited."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(Platform.[Ff]acts|factor 6|platform-fact)",
+          "target": "report_md"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "require-citations-offline-failure-path",
+      "prompt": "/focus-group --require-citations Review this proposal section. (Assume the host is offline / DNS errors on every /download attempt.)",
+      "expected_output": "Skill detects that every /download attempt failed (offline, DNS error, all seed URLs unreachable). The orchestrator stops BEFORE panel dispatch and offers (a) abort and retry online, (b) continue accepting the 70 cap, or (c) drop --require-citations for this run. Does NOT silently cap at 70 with no remediation.",
+      "files": [],
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "(abort and retry|continue accepting the 70 cap|drop --require-citations)",
+          "target": "stdout",
+          "rationale": "The offline-failure path must surface the three-option prompt before dispatch, not after."
+        }
+      ]
     }
   ]
 }

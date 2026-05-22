@@ -19,7 +19,7 @@ The report header always says so explicitly:
 | **Citation density** | 15 | `(claims_backed_by_meta_json / total_factual_claims) × 15`. A `references/<slug>/meta.json` from `/download` counts; an inline URL the model invented does not. |
 | **Hedging / uncertainty calibration** | 10 | Reward appropriate hedging on under-cited claims ("according to the customer's public IR page, ..."); penalize confident assertions on under-cited claims. Spot-check 5 claims; each scores 0–2. |
 | **Anti-hallucination cross-check** | 10 | Spot-check 3 claims against their cited sources. Pass → 10. Any one fails → 0 (and the failed claim is flagged in the report). |
-| **Platform-fact verification** | 20 | For each claim about Salesforce platform behavior (governor limits, pricing, feature GA status, sharing-model behavior, API limits, data-volume thresholds), verify against the active product pack's `## Platform Facts` section. **Claims that contradict the pack** → flagged and corrected in the report, scored 0. **Claims the pack confirms** with a non-TODO row → scored 1.0. **Claims that land on a TODO-stub row** (the pack lists the topic but has not been verified) → scored **0.5** and the report flags the claim as "unverified — check current Salesforce help / release notes before quoting to a customer." **Claims the pack doesn't cover at all** (no row, even as stub) → scored 0.25 and marked "off-pack — verify against current docs." Average × 20. If no platform claims exist in the output, score the full 20 (no risk of misinformation). See "TODO-stub scoring rationale" below for why stubs receive half-credit instead of zero. |
+| **Platform-fact verification** | 20 | For each claim about Salesforce platform behavior (governor limits, pricing, feature GA status, sharing-model behavior, API limits, data-volume thresholds), verify against the active product pack's `## Platform Facts` section. **Claims that contradict the pack** → flagged and corrected in the report, scored 0. **Claims the pack confirms** with a verified row are scored on a freshness curve (see "Freshness decay" below): row verified ≤12 months ago → 1.0; 12–24 months → 0.75 + "verified but aging" flag; >24 months → 0.5 + "stale — re-verify before quoting" flag. **Claims that land on a TODO-stub row** (the pack lists the topic but has not been verified) → scored **0.5** and the report flags the claim as "unverified — check current Salesforce help / release notes before quoting to a customer." **Claims the pack doesn't cover at all** (no row, even as stub) → scored 0.25 and marked "off-pack — verify against current docs." Average × 20. If no platform claims exist in the output, score the full 20 (no risk of misinformation). See "TODO-stub scoring rationale" and "Freshness decay" below. |
 
 Total: 0–100. Reported as `Accuracy: NN/100 — <one-line summary of where the
 points came from and where they did not>`.
@@ -55,6 +55,59 @@ requires a verified, citable row — but the score reflects the actual
 risk: an unverified claim *might* be correct, and a panel built on a
 pack whose maintainer is behind on stub-filling shouldn't be punished
 the same as a panel making a claim that contradicts a verified row.
+
+### Freshness decay on filled rows
+
+The earlier rubric treated any filled row the same regardless of how
+recently it was verified. That broke down quickly: Salesforce ships
+~3 releases a year and governor limits, GA status, and pricing model
+details move per release. A "verified once in 2024" row scoring 1.0 in
+2026 is dishonest accounting — the row reflects *past* truth, not
+*current* truth.
+
+Freshness decay (effective 2026-05-22) reads the `Last verified` column
+of each filled row and scales the per-claim score:
+
+| Age of `Last verified` | Score | Report flag |
+|------------------------|-------|-------------|
+| ≤ 12 months | 1.0 | (none) |
+| 12–24 months | 0.75 | "verified but aging — re-check before quoting to a customer" |
+| > 24 months | 0.5 | "stale — re-verify against current docs before quoting" |
+
+The 24-month threshold matches roughly one major-release cycle past
+the typical "this is still current" window. Stale-flagged claims are
+not removed from the report — the underlying concern often still
+holds, even if the specific number has shifted; the flag tells the user
+to confirm before externalizing.
+
+A filled row with **no `Last verified` date** (or a malformed date) is
+treated as 12–24-months-old (0.75) — better than TODO (0.5), worse
+than fresh (1.0). Maintainers should always include the date.
+
+**Header counts:** the report header always shows separate counts for
+the platform claims actually made, so users can read the score in
+context: `Platform claims: 4 verified-fresh · 1 aging · 0 stale · 1
+TODO-stub · 1 off-pack`. A high score on a panel with several aging
+or TODO-stub claims is structurally less reliable than the same score
+on all-fresh claims, and the count makes that visible.
+
+### Trivial-row maintainer caution
+
+A filled row scoring 1.0 still has to pass the "would a customer's
+admin Google this and get a useful answer?" sniff test. A row that says
+*"Agentforce exists"* is technically verifiable but adds nothing — it
+will catch any panel claim about Agentforce and inflate the score
+without grounding in real platform behavior. The rubric does not
+mechanically detect trivial rows, but the maintainer note in each pack
+calls this out: rows should encode *load-bearing* facts (governor
+limits, GA status, pricing motions, sharing model, default vs. opt-in
+behavior) — not breadth-of-fill for its own sake.
+
+When a reviewer scrubs a pack and finds rows that exist purely to lift
+score without informing a customer-facing answer, those rows should be
+*removed*, not preserved. A pack that is honest about the gaps
+(short list of high-quality filled rows + visible TODOs) is more
+useful than a long list of breadth-fill rows.
 
 ### TODO-stub scoring rationale
 

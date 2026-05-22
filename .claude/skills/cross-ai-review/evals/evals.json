@@ -1,37 +1,126 @@
 {
   "skill_name": "cross-ai-review",
+  "assertion_schema": "see ../focus-group/evals/evals.json#assertion_schema",
   "evals": [
     {
       "id": 1,
       "name": "three-cli-full-fanout-with-citations",
       "prompt": "/cross-ai-review --prompt-file ./proposal-section-3.md --label proposal-audit (assume claude, codex, and gemini are all installed; the workspace has 4 meta.json files in references/)",
-      "expected_output": "Script runs all three CLIs in parallel. Report.md includes: header with Accuracy: N/100 (the rubric should reward 3-channel coverage and the 4 citations); per-channel responses; a Citations block listing the 4 sources in APA format; the multi-Claude badge is NOT present.",
+      "expected_output": "Script runs all three CLIs in parallel. Report.md includes: header with structural pre-score (the rubric should reward 3-channel coverage and the 4 citations); per-channel responses; a Citations block listing the 4 sources in APA format; the multi-Claude badge is NOT present.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "claude = OK",
+          "target": "report_md"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "codex = OK",
+          "target": "report_md"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "gemini = OK",
+          "target": "report_md"
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "Multi-Claude fallback in effect",
+          "target": "report_md"
+        },
+        {
+          "kind": "json_path_equals",
+          "pointer": "/summary/ok",
+          "expected": 3
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Citations"
+        },
+        {
+          "kind": "exit_code_equals",
+          "code": 0
+        }
+      ]
     },
     {
       "id": 2,
       "name": "only-claude-multi-claude-fallback",
       "prompt": "/cross-ai-review --prompt 'Audit this for hallucinations: \"Salesforce was founded in 1999 by Marc Benioff and went public in 2004 at a $1.5B valuation.\"' (assume ONLY the claude CLI is installed)",
-      "expected_output": "Script auto-engages multi-Claude fallback (claude-opus + claude-sonnet). Report.md header explicitly states 'Multi-Claude fallback in effect' and notes that agreement weight is dampened. Both Claude models respond; the accuracy rubric's agreement factor is multiplied by 0.7.",
+      "expected_output": "Script auto-engages multi-Claude fallback (claude-opus + claude-sonnet). Report.md header explicitly states 'Multi-Claude fallback in effect' and notes that agreement weight is dampened. Both Claude models respond; the rubric's agreement factor is multiplied by 0.7.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "Multi-Claude fallback in effect",
+          "target": "report_md"
+        },
+        {
+          "kind": "json_path_equals",
+          "pointer": "/multi_claude",
+          "expected": true
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "claude-opus",
+          "target": "report_md"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "claude-sonnet",
+          "target": "report_md"
+        }
+      ]
     },
     {
       "id": 3,
       "name": "require-citations-with-no-references",
       "prompt": "/cross-ai-review --prompt-file ./claims.md --require-citations (assume the workspace has NO references/ folder)",
-      "expected_output": "Script runs the fan-out and produces a report. Accuracy score is capped at 70 (per --require-citations + zero citations). Report.md notes 'Citation mode: Strict' and 'Citations: *No citations on file*'. The stdout summary prints 'Citations: 0 -- run /download first to strengthen the next run.'",
+      "expected_output": "Script runs the fan-out and produces a report. Pre-score is capped at 70 (per --require-citations + zero citations). Report.md notes 'Citation mode: Strict' and 'Citations: *No citations on file*'. The stdout summary prints 'Citations: 0 -- run /download first to strengthen the next run.'",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "score_capped_at",
+          "max": 70,
+          "target": "report_md",
+          "rationale": "Pre-score must respect --require-citations cap when no meta.json files exist."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "Citation mode: Strict",
+          "target": "report_md"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "No citations on file",
+          "target": "report_md"
+        }
+      ]
     },
     {
       "id": 4,
       "name": "help-mode-no-fanout",
       "prompt": "/cross-ai-review help",
-      "expected_output": "Skill prints the user-facing walkthrough: what it does, the multi-Claude fallback rule, the install offers, the four-step workflow, the accuracy rubric, the prompt templates, the err-doctrine. Does NOT run the script. Does NOT prompt for a prompt-file.",
+      "expected_output": "Skill prints the user-facing walkthrough: what it does, the multi-Claude fallback rule, the install offers, the four-step workflow, the structural pre-score, the canonical accuracy reference, the prompt templates, the err-doctrine. Does NOT run the script.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "cli_invocation_count",
+          "cli": "claude",
+          "count": 0
+        },
+        {
+          "kind": "cli_invocation_count",
+          "cli": "gemini",
+          "count": 0
+        },
+        {
+          "kind": "cli_invocation_count",
+          "cli": "codex",
+          "count": 0
+        }
+      ]
     },
     {
       "id": 5,
@@ -39,15 +128,47 @@
       "prompt": "python .claude/skills/cross-ai-review/scripts/cross_ai.py --check",
       "expected_output": "Script lists each channel (claude, gemini, codex, opencode) with installed/not-found status. If only claude is installed, additionally prints: 'Only `claude` detected -- multi-Claude fallback would activate' with the configured primary/secondary model ids.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "regex_match",
+          "pattern": "Cross-AI CLI availability",
+          "target": "stdout"
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "(installed|NOT FOUND)",
+          "target": "stdout"
+        }
+      ]
     },
     {
       "id": 6,
       "name": "quota-skip-graceful",
       "prompt": "/cross-ai-review --prompt 'Review this approach.' (assume gemini is rate-limited; claude and codex respond)",
-      "expected_output": "Script completes with exit code 0 (a skip is not a failure). Report.md header shows: 'claude = OK | gemini = SKIPPED (quota/rate-limit) | codex = OK', 'Responded: 2 of 3'. Accuracy score reflects the lower coverage. The Citations block is rendered regardless.",
+      "expected_output": "Script completes with exit code 0 (a skip is not a failure). Report.md header shows: 'claude = OK | gemini = SKIPPED (quota/rate-limit) | codex = OK', 'Responded: 2 of 3'. Pre-score reflects the lower coverage. The Citations block is rendered regardless.",
       "files": [],
-      "assertions": []
+      "assertions": [
+        {
+          "kind": "exit_code_equals",
+          "code": 0,
+          "rationale": "Quota skip is an expected outcome, not a script failure."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "gemini = SKIPPED",
+          "target": "report_md"
+        },
+        {
+          "kind": "json_path_equals",
+          "pointer": "/summary/ok",
+          "expected": 2
+        },
+        {
+          "kind": "json_path_equals",
+          "pointer": "/summary/skipped_quota",
+          "expected": 1
+        }
+      ]
     }
   ]
 }
