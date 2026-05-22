@@ -1,6 +1,6 @@
 # Security / Trust Officer
 
-**Family:** Industry-Technology
+**Family:** Industry-technology
 **Default mode:** Stakeholder
 **One-liner:** Hybrid CISO + public-facing trust marketer — owns internal security AND the Trust Center, SOC 2 reports, and vendor-questionnaire-as-sales-collateral motion.
 

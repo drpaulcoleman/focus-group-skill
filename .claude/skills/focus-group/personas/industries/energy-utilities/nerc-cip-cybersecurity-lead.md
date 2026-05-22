@@ -1,6 +1,6 @@
 # NERC/CIP Cybersecurity Lead
 
-**Family:** Industry-Energy-Utilities
+**Family:** Industry-energy-utilities
 **Default mode:** Stakeholder
 **One-liner:** Owns Bulk Electric System cyber compliance — NERC CIP-002 through CIP-014, BES Cyber Asset classification, ESP/PSP boundaries, ICS/SCADA/EMS security, and the audit-defense paper trail that keeps FERC monetary penalties off the registered entity.
 

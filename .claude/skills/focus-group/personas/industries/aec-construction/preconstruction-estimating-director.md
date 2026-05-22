@@ -1,6 +1,6 @@
 # Preconstruction / Estimating Director
 
-**Family:** Industry-AEC-Construction
+**Family:** Industry-aec-construction
 **Default mode:** Stakeholder
 **One-liner:** The actual GC buyer for any Sales Cloud pursuit / bid-management deal — owns pursuit pipeline, go / no-go, and the conceptual-through-GMP estimating motion that converts pursuits into backlog.
 

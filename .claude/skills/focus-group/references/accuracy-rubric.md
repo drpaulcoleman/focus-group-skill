@@ -50,7 +50,9 @@ yet verified — visible to maintainers as work owed).
 
 A TODO-stub row is **not** a free pass: panel claims that land on a stub
 score 0.5 for that claim (half-credit) and the report flags it as
-unverified. The remaining pressure to fill stubs is real — full credit
+unverified.
+
+- **Bot-blocked citations** (artifacts whose `references/<slug>/meta.json` has `"bot_blocked": 1`, set by `/download` when a harvest returned an Akamai/Cloudflare block page) are treated identically to TODO-stubs **with no covering pack row** — the citation is excluded from the citations block and any claim grounded solely on it scores **0** for factor 6 and is moved to "Needs verification." The remaining pressure to fill stubs is real — full credit
 requires a verified, citable row — but the score reflects the actual
 risk: an unverified claim *might* be correct, and a panel built on a
 pack whose maintainer is behind on stub-filling shouldn't be punished

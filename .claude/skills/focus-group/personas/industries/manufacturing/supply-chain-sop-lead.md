@@ -1,6 +1,6 @@
 # Supply Chain / S&OP Lead
 
-**Family:** Industry-Manufacturing
+**Family:** Industry-manufacturing
 **Default mode:** Stakeholder
 **One-liner:** Owns the S&OP cycle that reconciles demand forecast with constrained supply, and is the only seat that can answer whether the volumes a Sales Agreement promises can actually be made, sourced, and shipped.
 

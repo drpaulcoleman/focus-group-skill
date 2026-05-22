@@ -1,6 +1,6 @@
 # Developer Advocate / DevRel Lead
 
-**Family:** Industry-Technology
+**Family:** Industry-technology
 **Default mode:** Audience
 **One-liner:** Owns the developer-experience relationship — community, docs, SDKs, conferences, and the "will real developers actually use this?" filter that no marketing persona can fake.
 

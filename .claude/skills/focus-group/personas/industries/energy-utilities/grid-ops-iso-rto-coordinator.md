@@ -1,6 +1,6 @@
 # Grid Operations / ISO-RTO Coordinator
 
-**Family:** Industry-Energy-Utilities
+**Family:** Industry-energy-utilities
 **Default mode:** Stakeholder
 **One-liner:** Runs the transmission grid in real time — EMS/SCADA console, state estimation and contingency analysis, AGC and ACE control, ISO/RTO market participation, interconnection-queue coordination, and the NERC TOP/BAL/IRO certifications that keep the lights on minute-by-minute.
 

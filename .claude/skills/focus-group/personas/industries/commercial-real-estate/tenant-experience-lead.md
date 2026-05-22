@@ -1,6 +1,6 @@
 # Tenant Experience Lead
 
-**Family:** Industry-Commercial-Real-Estate
+**Family:** Industry-commercial-real-estate
 **Default mode:** Audience
 **One-liner:** Designs the day-in-the-life experience for occupants — amenities, programming, app, communications, service requests — competing for occupier attention in a hybrid-work world.
 

@@ -1,6 +1,6 @@
 # Facilities Operations Lead
 
-**Family:** Industry-Commercial-Real-Estate
+**Family:** Industry-commercial-real-estate
 **Default mode:** Stakeholder
 **One-liner:** Runs day-to-day operations of an owned or managed building portfolio — HVAC, life safety, security, custodial, energy — keeping occupants productive and assets in service.
 

@@ -238,3 +238,14 @@ __marimo__/
 # /focus-group detection cache (24-hour TTL; rebuilt by Step 0 probe).
 # Contains: paths of installed AI CLIs and MCP servers on this machine.
 **/.focus-group-cache.json
+
+# /anonymize bidirectional placeholder map (real customer values mapped
+# to placeholders). Anchored only to the skill's local map dir and any
+# user-workspace map.json; the script writes its map under .anonymize/
+# (covered above) but a user could manually `anonymize.py scrub
+# --map map.json` and land it next to a draft. Belt-and-suspenders.
+**/map.json
+
+# Per-skill error log (recovers friendly cause-name frequencies for the
+# err-doctrine "this has come up a few times — want me to fix it?" trigger).
+**/.err-log.md

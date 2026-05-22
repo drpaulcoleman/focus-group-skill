@@ -1,6 +1,6 @@
 # Renewables Developer VP (IPP / Solar / Wind / Storage Project Sponsor)
 
-**Family:** Industry-Energy-Utilities
+**Family:** Industry-energy-utilities
 **Default mode:** Stakeholder
 **One-liner:** Originates and shepherds utility-scale solar, wind, and BESS projects from site control through PPA execution, ISO interconnection, financial close, NTP, and COD — filtering every conversation through "does this move a project closer to financial close?"
 

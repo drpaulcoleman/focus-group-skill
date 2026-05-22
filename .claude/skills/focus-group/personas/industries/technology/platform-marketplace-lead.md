@@ -1,6 +1,6 @@
 # Platform / Marketplace Lead
 
-**Family:** Industry-Technology
+**Family:** Industry-technology
 **Default mode:** Stakeholder
 **One-liner:** Runs the customer's own marketplace or platform-extensibility surface — ISV economics, ranking, review queue, take-rate, and the ecosystem-as-a-flywheel motion.
 

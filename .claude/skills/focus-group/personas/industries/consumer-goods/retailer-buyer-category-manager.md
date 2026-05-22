@@ -1,6 +1,6 @@
 # Retailer Buyer / Category Manager
 
-**Family:** Industry-Consumer-Goods
+**Family:** Industry-consumer-goods
 **Default mode:** Audience
 **One-liner:** The buyer at the *retailer* (Walmart, Kroger, Target, Costco) who decides whether a CPG product earns shelf — they don't approve the CPG's Salesforce purchase but they receive every downstream consequence of it.
 

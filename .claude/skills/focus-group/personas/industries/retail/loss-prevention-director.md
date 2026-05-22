@@ -1,6 +1,6 @@
 # Loss Prevention / Asset Protection Director
 
-**Family:** Industry-Retail
+**Family:** Industry-retail
 **Default mode:** Stakeholder
 **One-liner:** Owns shrink, ORC, internal theft, returns fraud, and store safety — carries the veto on any in-store technology rollout that creates new shrink vectors or compromises safety posture.
 

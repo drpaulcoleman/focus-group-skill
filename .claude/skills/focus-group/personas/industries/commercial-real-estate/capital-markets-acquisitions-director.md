@@ -1,6 +1,6 @@
 # CRE Capital Markets / Acquisitions Director
 
-**Family:** Industry-Commercial-Real-Estate
+**Family:** Industry-commercial-real-estate
 **Default mode:** Stakeholder
 **One-liner:** Owns acquisitions, dispositions, and portfolio strategy across asset classes — the economic buyer who decides what enters and exits the portfolio, and whose underwriting math vetoes deals that don't pencil.
 

@@ -769,6 +769,8 @@ and "TODO-stub scoring rationale" for why stubs receive half-credit.
 
 Compute the accuracy score per [references/accuracy-rubric.md](references/accuracy-rubric.md). Attach the citations block from all `references/<slug>/meta.json` files used.
 
+**Bot-blocked artifact exclusion (mandatory).** Before composing the citations block, walk every `references/<slug>/meta.json` and skip any folder whose meta.json has `"bot_blocked": 1` (set by `/download`'s harvest scripts when an Akamai/Cloudflare "Access Denied" page is detected). Excluded artifacts must NOT appear in the citations block — citing an empty block-page URL is worse than no citation. If a panel claim was grounded on a now-skipped citation, downgrade that claim's accuracy contribution to 0 (treated identically to a TODO-stub-with-no-coverage per [accuracy-rubric.md factor 6](references/accuracy-rubric.md)) and surface it in the "Needs verification" tail of the report. Treat an absent `bot_blocked` field as `0` — backward-compatible with pre-detection meta.json files.
+
 Under `--require-citations`, move under-cited claims to a "Needs verification" section and cap the accuracy score at 70 until the gap is closed.
 
 Under `--no-citations`, skip citation enforcement entirely: do not cap accuracy, do not move claims to "Needs verification," do not reference missing citations in the report. The accuracy rubric's citation-density factor scores 0 (no penalty, no bonus).

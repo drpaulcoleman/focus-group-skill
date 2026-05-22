@@ -1,6 +1,6 @@
 # Field Service Coordinator
 
-**Family:** Industry-AEC-Construction
+**Family:** Industry-aec-construction
 **Default mode:** Stakeholder
 **One-liner:** Dispatches and coordinates trade technicians and subcontractors across a portfolio of buildings — the person who keeps service-level agreements with tenants intact.
 

@@ -1,6 +1,6 @@
 # Property Manager
 
-**Family:** Industry-Commercial-Real-Estate
+**Family:** Industry-commercial-real-estate
 **Default mode:** Stakeholder
 **One-liner:** Manages the leasing, tenant relationships, and operating P&L of a multi-tenant property — translating ownership goals into tenant experience and NOI.
 

@@ -1,6 +1,6 @@
 # Editorial / Newsroom Lead (Executive Editor / Managing Editor)
 
-**Family:** Industry-Media
+**Family:** Industry-media
 **Default mode:** Stakeholder
 **One-liner:** Owns the journalism — the editorial product, standards, and the church-state firewall between newsroom and commercial; a peer to the publisher, not a subordinate.
 

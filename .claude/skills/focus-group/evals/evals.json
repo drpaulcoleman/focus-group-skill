@@ -207,6 +207,41 @@
     },
     {
       "id": 8,
+      "name": "stage-c-skips-bot-blocked-citations",
+      "prompt": "/focus-group Review this Agentforce pricing one-pager. (Workspace pre-seeded: references/some-blocked-slug/meta.json has bot_blocked:1 and url https://www.salesforce.com/agentforce/rates/; references/agentforce-overview/meta.json is a normal artifact. A persona claim is grounded on the blocked URL.)",
+      "expected_output": "Stage C walks references/<slug>/meta.json files, detects bot_blocked:1 on some-blocked-slug, excludes its URL from the citations block, downgrades the dependent claim's factor-6 contribution to 0, and surfaces the affected claim in a 'Needs verification' section. The normal-artifact citation still appears.",
+      "files": [
+        {"path": "references/some-blocked-slug/meta.json", "content": "{\"url\":\"https://www.salesforce.com/agentforce/rates/\",\"title\":\"Access Denied\",\"retrieved\":\"2026-05-22\",\"type\":\"html\",\"method\":\"chrome-headless-new (bot-blocked)\",\"bytes\":313,\"bot_blocked\":1}"},
+        {"path": "references/agentforce-overview/meta.json", "content": "{\"url\":\"https://help.salesforce.com/agentforce/overview\",\"title\":\"Agentforce Overview\",\"retrieved\":\"2026-05-22\",\"type\":\"html\",\"method\":\"chrome-headless-new\",\"bytes\":48211,\"bot_blocked\":0}"}
+      ],
+      "assertions": [
+        {
+          "kind": "json_path_equals",
+          "pointer": "/references/some-blocked-slug/meta.json/bot_blocked",
+          "expected": 1,
+          "rationale": "Confirms the blocked-artifact fixture is correctly tagged before Stage C reads it."
+        },
+        {
+          "kind": "regex_absent",
+          "pattern": "salesforce\\.com/agentforce/rates",
+          "target": "report_md",
+          "rationale": "The bot-blocked URL must NOT appear in the final report's citations block."
+        },
+        {
+          "kind": "output_section_present",
+          "heading": "Needs verification",
+          "rationale": "A claim grounded on the now-skipped citation must be surfaced in the verification tail."
+        },
+        {
+          "kind": "regex_match",
+          "pattern": "help\\.salesforce\\.com/agentforce/overview",
+          "target": "report_md",
+          "rationale": "Non-blocked citations still appear normally — exclusion is scoped to bot_blocked:1 only."
+        }
+      ]
+    },
+    {
+      "id": 9,
       "name": "require-citations-offline-failure-path",
       "prompt": "/focus-group --require-citations Review this proposal section. (Assume the host is offline / DNS errors on every /download attempt.)",
       "expected_output": "Skill detects that every /download attempt failed (offline, DNS error, all seed URLs unreachable). The orchestrator stops BEFORE panel dispatch and offers (a) abort and retry online, (b) continue accepting the 70 cap, or (c) drop --require-citations for this run. Does NOT silently cap at 70 with no remediation.",

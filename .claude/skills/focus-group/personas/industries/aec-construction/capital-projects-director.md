@@ -1,6 +1,6 @@
 # Capital Projects Director
 
-**Family:** Industry-AEC-Construction
+**Family:** Industry-aec-construction
 **Default mode:** Stakeholder
 **One-liner:** Owns delivery of major capital projects — from preconstruction through commissioning — managing cost, schedule, and risk against owner, lender, and AHJ expectations.
 

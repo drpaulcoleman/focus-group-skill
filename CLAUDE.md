@@ -35,7 +35,7 @@ Each skill is **self-contained**:
 - **Generic personas** (`.claude/skills/focus-group/personas/generic/`) — 5 role families split by seniority/function: `customer/`, `executives/`, `investor/`, `stakeholder/`, `technical/`
 - **Industry-specific personas** (`.claude/skills/focus-group/personas/industries/<industry>/`) — 19 industries; each industry folder contains 5–13 role files (e.g., `healthcare-life-sciences/` has HIPAA Privacy Officer, CMO, IT Director, etc.)
 - **Salesforce role overlays** (`.claude/skills/focus-group/personas/salesforce-*`) — three Salesforce context variants: `salesforce-customer/`, `salesforce-partner/`, `salesforce-sales/`
-- **Persona file format** — YAML frontmatter (name, role, bio, expertise) + markdown body (the persona's viewpoint and pressure-test frame)
+- **Persona file format** — markdown header (`# Title`) + 3 bold metadata lines (`**Family:**`, `**Default mode:**`, `**One-liner:**`) + markdown body sections (Sub-profiles, Deliberative profile, Generic lens, optional Pack lenses, optional Sales-specific lens). All 187 personas follow this schema.
 
 ### Config and caching
 - `.claude/skills/focus-group/config.json` — persists user role, default product/industry pack, and model channel defaults
@@ -64,7 +64,7 @@ Each skill is **self-contained**:
 ### Adding a new persona
 1. Check `persona-roster.md` to find existing persona count and naming conventions
 2. Create a `.md` file in the appropriate persona folder (e.g., `.claude/skills/focus-group/personas/industries/healthcare-life-sciences/chief-medical-officer.md`)
-3. Use the template from an existing persona; frontmatter must include: `name`, `role`, `bio`, `expertise`
+3. Use the template from an existing persona — the file must have: `# Title` header, then `**Family:**`, `**Default mode:**`, `**One-liner:**` metadata lines, then `## Sub-profiles`, `## Deliberative profile`, `## Generic lens` sections at minimum
 4. Add the new persona to the roster table in `references/persona-roster.md`
 5. If adding to a new industry: create the industry folder, add 5–8 core personas covering the load-bearing seats
 

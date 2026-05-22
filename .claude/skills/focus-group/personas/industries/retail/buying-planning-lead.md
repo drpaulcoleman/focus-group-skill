@@ -1,6 +1,6 @@
 # Buying / Planning Lead
 
-**Family:** Industry-Retail
+**Family:** Industry-retail
 **Default mode:** Stakeholder
 **One-liner:** Allocates and replenishes the assortment the merchants buy — owns store clusters, size curves, weeks-of-supply, markdown ladders, and in-stock % as the primary KPI.
 

@@ -1,6 +1,6 @@
 # VDC / BIM Lead
 
-**Family:** Industry-AEC-Construction
+**Family:** Industry-aec-construction
 **Default mode:** Stakeholder
 **One-liner:** Owns the model-coordination veto on any project — without their sign-off, the model is wrong and downstream construction breaks.
 

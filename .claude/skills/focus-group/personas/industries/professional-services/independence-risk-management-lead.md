@@ -1,6 +1,6 @@
 # Independence & Risk Management Lead
 
-**Family:** Industry-Professional-Services
+**Family:** Industry-professional-services
 **Default mode:** Stakeholder
 **One-liner:** Speaks for the firm's license to operate — owns whether an engagement can exist at all under independence, conflicts, and professional-conduct rules; carries hard veto authority distinct from commercial fit.
 
