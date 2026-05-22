@@ -99,3 +99,38 @@ will dominate the InfoSec conversation and the Trust Layer story has to be told
 precisely. Pair with `public-sector` when the buyer is government — FedRAMP boundaries,
 data-residency, and the limited set of Agentforce features in Government Cloud Plus
 shape what is actually sellable.
+
+## Competitive Triggers
+
+Injected into AE, SE, and Industry Specialist personas when competitive
+positioning is relevant to the content under review. Each entry gives the
+persona enough context to surface competitive risk and arm the AE/SE with
+a response.
+
+### vs. Microsoft Dynamics 365 + Copilot for Sales
+- **Their pitch:** "You already have M365 — Copilot for Sales is included in your EA. Why pay for a separate CRM?"
+- **Our counter:** Platform depth. Dynamics CRM is adequate for pipeline tracking but lacks the platform-level extensibility (Flow, Apex, LWC, AppExchange ecosystem) and the industry-specific data models (Health Cloud, Financial Services Cloud, etc.) that let customers build differentiated processes — not just track them. Copilot for Sales summarizes emails; Agentforce executes multi-step business processes autonomously with guardrails.
+- **Demo trap:** They'll demo Copilot generating a meeting summary inside Outlook/Teams. Looks impressive. The catch: it's a summarization layer, not an action layer — it can't execute a multi-step workflow, can't enforce business logic, can't operate within a governed trust boundary with topic/action/guardrail architecture.
+- **Customer signal:** "We're already paying for M365 E5 so the CRM is basically free." / "Our IT team prefers to standardize on Microsoft."
+- **AE response:** "The CRM is free the way a hotel's free breakfast is free — it's included, but it's not why you chose the hotel. The question is whether your sales process is a differentiator or a commodity. If it's a differentiator, you need a platform that lets you build differentiated process, not just track activity."
+
+### vs. ServiceNow (Customer Service Management / Workflow)
+- **Their pitch:** "We're a workflow platform — CRM is just one workflow. Why not unify service, IT, and operations on one platform?"
+- **Our counter:** ServiceNow is excellent for internal IT service management and operational workflows. For customer-facing service (omnichannel, case management, knowledge, field service, self-service), Salesforce Service Cloud has 20+ years of customer-facing service depth — Einstein case routing, Omni-Channel, Knowledge, Field Service with mobile offline, and now Agentforce service agents. ServiceNow's CSM module is a bolt-on to their ITSM heritage, not their center of gravity.
+- **Demo trap:** They'll demo a unified portal where IT tickets, customer cases, and operational requests all flow through one system. Looks clean. The catch: it optimizes for the AGENT's experience (one queue), not the CUSTOMER's experience (channel of choice, personalized, proactive).
+- **Customer signal:** "We already use ServiceNow for IT — why not extend it to customer service?" / "Our ops team wants one platform for all workflows."
+- **AE response:** "ServiceNow is outstanding for internal workflows — ITSM, change management, asset management. The question is: do your CUSTOMERS care about your internal workflow platform, or do they care about getting their issue resolved in the channel they chose, by an agent (human or AI) that knows their history? That's what Service Cloud is purpose-built for."
+
+### vs. HubSpot (Commercial / Mid-Market)
+- **Their pitch:** "All-in-one marketing + sales + service for a fraction of the price. Easy to set up, free tier to start."
+- **Our counter:** HubSpot is excellent for companies where marketing owns the funnel and sales is order-taking. For companies where sales is a strategic, consultative motion — multi-stakeholder deals, complex pricing (CPQ), territory management, partner channels, enterprise-grade security — HubSpot hits a ceiling. The ceiling comes at ~$50M ARR or ~200 reps or the first time the CRO asks for forecasting that actually works.
+- **Demo trap:** They'll demo the all-in-one simplicity — marketing automation, CRM, and service desk in one UI with one bill. Looks frictionless. The catch: it's frictionless because it's simple, and simple means it lacks CPQ, advanced forecasting, territory management, role hierarchy/sharing, approval workflows, and the AppExchange ecosystem for industry-specific needs.
+- **Customer signal:** "We started on HubSpot and it's fine for what we need." / "The price difference is hard to justify." / "Our marketing team chose HubSpot and now sales is on it too."
+- **AE response:** "HubSpot is outstanding for the first stage of growth — when marketing drives leads and sales closes them in a simple cycle. The question is: has your sales motion outgrown that? If you need CPQ, territory management, multi-currency, or enterprise security — those aren't HubSpot problems to solve, they're Salesforce problems to solve. And switching later costs more than starting right."
+
+### vs. In-House Build (CTO/Engineering-Driven)
+- **Their pitch:** "We have engineers. We know our business better than any vendor. We'll build exactly what we need."
+- **Our counter:** You absolutely can build a CRM. The question is: should your engineers spend 18 months building pipeline management, forecasting, and activity capture — or should they spend that time building the things that differentiate YOUR business? Salesforce is infrastructure so your engineers can focus on your product, not your sales tooling. Also: the CTO leaves. The engineers who built it leave. Custom CRM becomes legacy CRM in 3 years.
+- **Demo trap:** There is no vendor demo to trap. The trap is the CTO's confidence: "We'll build it in a quarter." The counter is time-to-value: "How long until your homegrown CRM has mobile, offline, AI-powered forecasting, an AppExchange ecosystem, and SOC 2 compliance?" The answer is: never, because those aren't priorities for a product engineering team.
+- **Customer signal:** "We've been thinking about building this ourselves." / "Our CTO thinks we can do better in-house." / "We have a homegrown system that works okay."
+- **AE response:** "I respect that — your engineers are brilliant at building YOUR product. The question is opportunity cost: every sprint they spend on CRM is a sprint they DON'T spend on the product your customers pay for. Salesforce is the infrastructure layer so your team can focus where they add unique value."

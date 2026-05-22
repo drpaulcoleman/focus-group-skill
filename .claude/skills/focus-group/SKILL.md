@@ -89,6 +89,8 @@ All other invocations. Run the 12-step pipeline below.
 | `--role <slug>` | Override the saved role for this run only (does not persist). Slugs: `ae`, `se`, `industry-specialist`, `enterprise-architect`, `technical-architect`, `bvc`, `lead-engagement`, `csm`, `partner-am`, `other`. |
 | `--probe` | Force a fresh tooling preflight (CLI + MCP detection), bypassing the 24-hour `.focus-group-cache.json`. Useful right after installing a new CLI or MCP server. |
 | `--attendees <path>` | Folder of attendee profile files (one per stakeholder) the skill reads to ground the panel in real people on the call. See [references/usage.md](references/usage.md). |
+| `--stage <stage>` | Set the deal stage for persona output calibration. Values: `discovery`, `demo`, `negotiation`, `post-sale`. When omitted, the skill infers stage from content type (pitch deck → demo; contract redline → negotiation; QBR materials → post-sale; discovery questions → discovery). Shapes every persona's output via the deal-stage adaptation in [references/persona-output-template.md](references/persona-output-template.md). |
+| `--quick` | Fast mode for time-pressed AEs. Runs 3 personas only (AE, SE, Economic Buyer) on local Claude. Skips Steps 0, 4c, 7, 8, 10. Output: role-framed instrument only (Meeting Prep or Demo Prep) — no analytical sections, no citations block, no devil's advocate. Target: <60 seconds, fits one screen. |
 
 ## What actually gets asked (the speed-up rules)
 
@@ -110,6 +112,8 @@ A second invocation usually shows just **2 questions** (subject +
 panel approval), and the first invocation never runs Step 0 again that
 day. Detection cache invalidates immediately on any failed CLI/MCP call,
 so removing a tool is picked up the next time the skill tries to use it.
+
+Under `--quick`: only Steps 1 (if unsaved), 2, and 5 run. Steps 0, 3, 4c, 7, 8, 10 are skipped. Step 9 runs with 3 personas only (AE, SE, Economic Buyer). Step 9.5 is the primary output gate. Step 12 presents the role-framed instrument only (no Deep Analysis appendix).
 
 ## The 12-step pipeline
 
@@ -258,6 +262,16 @@ producing an empty-shell artifact.
 All of these go through `/anonymize` (per its 4-runtime chain) before
 any persona prompt is built.
 
+**Deal-stage inference (when `--stage` is not set):**
+Infer the deal stage from the content type to calibrate persona output:
+- **Discovery:** content is discovery questions, call prep, qualification notes, or meeting agenda for a first/second call → `--stage discovery`
+- **Demo:** content is a pitch deck, demo script, POV plan, solution overview, or architecture spec for customer presentation → `--stage demo`
+- **Negotiation:** content is a proposal, SOW, contract redline, pricing sheet, or procurement response → `--stage negotiation`
+- **Post-sale:** content is QBR materials, adoption report, renewal prep, or escalation brief → `--stage post-sale`
+- **Ambiguous:** if the content doesn't clearly match a stage, default to `demo` (the most common use case) and note the assumption in the report header.
+
+The inferred or explicit stage is passed to every persona via the deal-stage calibration block in [references/persona-output-template.md](references/persona-output-template.md).
+
 ### Step 3 — Resolve product/industry packs (mostly cached)
 - If `--product` is set, use it. Else use the value cached in
   `config.json` → `last_product_pack` (defaults to
@@ -331,7 +345,21 @@ If URLs in scope are not yet in `references/<slug>/`, offer `/download` for grou
 Round-robin across available channels (Claude, Codex, Gemini, opencode). If only Claude is available, use the multi-Claude fallback (Opus + Sonnet). Quota-skip → reassign to the next channel. See [references/multi-model-panel.md](references/multi-model-panel.md).
 
 ### Step 9 — Stage A: aggregate
-Claude (latest) aggregates persona feedback into the **Recommendations Report** per [references/output-format.md](references/output-format.md). **Frame the report for the user's role** (Step 1) — an Account Executive gets talk tracks and discovery-question revisions; a Solution Engineer gets demo-flow gotchas and feasibility flags; an Architect gets estate-impact and integration-sequencing notes; a Business Value Consultant gets ROI math and value-hypothesis language. Apply the anti-groupthink duties in [references/deliberation.md](references/deliberation.md): independent-derivation test, preserve dissent, Abilene check, devil's-advocate the verdict.
+Claude (latest) aggregates persona feedback into the **Recommendations Report** per [references/output-format.md](references/output-format.md). Every persona's response follows the mandatory structure in [references/persona-output-template.md](references/persona-output-template.md). The aggregation step reads these structured responses and composes the role-framed instrument (Meeting Prep / Demo Prep / Architecture Review / Value Case) per [references/output-format.md](references/output-format.md) — role-framed instrument FIRST, then analytical Deep Analysis sections. **Frame the report for the user's role** (Step 1) — an Account Executive gets talk tracks and discovery-question revisions; a Solution Engineer gets demo-flow gotchas and feasibility flags; an Architect gets estate-impact and integration-sequencing notes; a Business Value Consultant gets ROI math and value-hypothesis language. Apply the anti-groupthink duties in [references/deliberation.md](references/deliberation.md): independent-derivation test, preserve dissent, Abilene check, devil's-advocate the verdict.
+
+### Step 9.5 — "So What?" Transformation (the actionability gate)
+
+Before consolidation, apply the actionability filter to every finding from Stage A. For each item in the aggregated persona feedback, answer one question: **"What should the user (in their stated role from Step 1) do differently in their next customer interaction because of this?"**
+
+- If the answer is a **specific action** (change a slide, prepare a response, demo a feature, ask a question, flag a risk to deal desk) → the item stays in the role-framed instrument (Meeting Prep / Demo Prep / Architecture Review / etc.).
+- If the answer is **"nothing — this is background context"** → the item moves to the Deep Analysis appendix (Consensus, Disagreement, or Blind Spots sections).
+- If the answer is **"I'm not sure"** → the item goes to Deep Analysis with a note: "May be actionable with more context."
+
+This gate ensures the top-level output contains ONLY directly actionable material. The user reads the instrument section and knows exactly what to do. Background context is preserved but doesn't clutter the primary output.
+
+**Under `--quick`:** Stage A.5 is mandatory (it IS the output filter). Only items that pass the "specific action" test appear. Everything else is dropped entirely (no Deep Analysis appendix in quick mode).
+
+**Persona output template dependency:** Stage A.5 reads the structured persona output per [references/persona-output-template.md](references/persona-output-template.md). The "Risk Level" tags (RED/YELLOW/GREEN) and "What Would Change My Mind" fields are the primary inputs to the actionability filter.
 
 ### Step 10 — Stage B: consolidate
 Submit the Stage-A report to a *different* model than Stage A used (Codex/Gemini/opencode, or the second Claude model if multi-Claude fallback) via `cross_ai.py`. Ask each to consolidate, flag what Stage A over- or under-weighted, and produce a deduplicated action-item list. Skip under `--single-ai`. If all channels quota-fail, skip and note.
