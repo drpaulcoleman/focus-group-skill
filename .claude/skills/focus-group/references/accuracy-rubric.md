@@ -114,6 +114,14 @@ Under strict citation mode:
   cost of missing citations visible immediately.
 - The skill offers to run `/download` first against a recommended seed list
   (from the active product/industry pack) to close the gap.
+- **Offline failure is surfaced loudly, not silently.** When every `/download`
+  attempt fails (offline, DNS error, all seed URLs unreachable), the
+  orchestrator stops *before* panel dispatch and offers (a) abort and retry
+  online, (b) continue accepting the 70 cap, or (c) drop `--require-citations`
+  for this run. See SKILL.md Step 7 "Offline-failure path under
+  `--require-citations`" for the exact prompt. This avoids the footgun of a
+  silent 70 cap with no obvious remediation when the standard "Tighten this
+  report" block is suppressed (because the user already opted into rigor).
 
 ## Low-accuracy follow-up — the 75-point threshold
 
@@ -157,6 +165,38 @@ parallel (Opus + Sonnet by default). Then:
 - The report header says so plainly: *"Multi-Claude fallback in effect —
   two Claude models, one architecture. Agreement is meaningful but not as
   strong as a cross-vendor agreement would be."*
+
+## What changes under `--single-ai`
+
+Only `claude` runs (no external CLIs, Stage B/C skipped, Stage A is the
+final report). There is no second model and no second channel — the
+agreement-based factor needs explicit redefinition so the score the user
+sees is honest:
+
+- **Channel coverage (factor 1, /20):** 1-of-1 channel responded → 20.
+  Coverage is full *for the chosen mode*; the cap is information-only.
+- **Inter-model agreement (factor 2, /25, normally cross-model):**
+  redefined as **inter-persona agreement within the single model**.
+  For each factual claim, count how many of the responding personas
+  reach the same conclusion via independently-derived reasoning (per
+  [deliberation.md](deliberation.md)'s independent-derivation test):
+  3+ personas → 1.0; 2 personas → 0.66; lone claim → 0.33. Average,
+  then multiply by **0.5** before scaling to 25 — same model, same
+  architecture, same training data, so persona-level agreement is a
+  much weaker signal than cross-model agreement (weaker than even the
+  multi-Claude 0.7 dampening, because there is only one model in
+  play). Effective ceiling on factor 2 under `--single-ai` is
+  ~12/25.
+- **Factors 3–6 are unchanged.** Citations, hedging, anti-hallucination,
+  and platform-fact verification are model-count-agnostic.
+- **Practical ceiling under `--single-ai`** is ~87/100 (full marks
+  on factors 1, 3, 4, 5, 6 plus the dampened factor 2 ceiling). A
+  perfect 100 is structurally unreachable, which is correct: the mode
+  trades cross-model robustness for speed/privacy, and the score
+  should reflect that trade.
+- **Report header always says so plainly:** *"Single-AI mode — one
+  model, one architecture. Inter-model agreement replaced with
+  inter-persona agreement (dampened 0.5)."*
 
 ## What the score does NOT measure
 

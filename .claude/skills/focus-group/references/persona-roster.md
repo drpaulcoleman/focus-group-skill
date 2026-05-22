@@ -115,25 +115,25 @@ Each industry pack contributes 3–8 personas (most ship 5; some have grown to 6
 
 | Industry pack | Industry-specific personas |
 |---------------|----------------------------|
-| `nonprofit` | Executive Director · Director of Development (Fundraising) · Program Manager · Grants Officer · Board Treasurer |
+| `nonprofit` | Executive Director · Director of Development (Fundraising) · Program Manager · Grants Officer · Board Treasurer · **Nonprofit Controller** |
 | `education` | Provost / VP Academic Affairs · Director of Enrollment · Student Success Advisor · CIO/Director of IT · Advancement/Alumni Officer · **K-12 Superintendent** · **Faculty Senate Chair** |
-| `aec-construction` | Capital Projects Director · Field Service Coordinator · **VDC / BIM Lead** · **Preconstruction & Estimating Director** |
+| `aec-construction` | Capital Projects Director · Field Service Coordinator · **VDC / BIM Lead** · **Preconstruction & Estimating Director** · **Cost Engineer / Change-Order Lead** · **Owner-Side Procurement Officer** |
 | `airlines-air-travel` | Airline Ops Control Center Lead · Reservations & Booking Director · Ancillary Revenue Manager · **Revenue Management & Pricing Scientist** |
 | `healthcare-life-sciences` | Chief Medical Officer · Director of Patient Experience · Clinical Trial Operations Lead · Payer Network Director · HIPAA Privacy Officer |
-| `financial-services` | Retail Banking Head · Wealth Advisor · Underwriting Officer · Compliance/AML Officer · Insurance Claims Lead |
-| `automotive` | Dealer Network Director · Fleet Operations Manager · Connected-Vehicle Product Lead · Aftersales/Service Director · Brand/Loyalty Lead · **OEM Digital & CX VP** |
-| `commercial-real-estate` | Facilities Operations Lead · Property Manager · Tenant Experience Lead · **Capital Markets & Acquisitions Director** |
+| `financial-services` | Retail Banking Head · Wealth Advisor · Underwriting Officer · **Compliance/AML Officer** *(deepened: retail-bank, broker-dealer, insurance sub-profiles)* · Insurance Claims Lead |
+| `automotive` | Dealer Network Director · Fleet Operations Manager · Connected-Vehicle Product Lead · Aftersales/Service Director · Brand/Loyalty Lead · **OEM Digital & CX VP** · **Recall / TREAD Compliance Officer** |
+| `commercial-real-estate` | Facilities Operations Lead · Property Manager · Tenant Experience Lead · **Capital Markets & Acquisitions Director** · **Lease Administration / ASC 842 Specialist** · **Property Controller** |
 | `communications` | Network Ops Lead · Service Provisioning Manager · B2B Sales Director · CX/Care Director · Wholesale/Carrier Relations · **BSS/OSS Architect** |
 | `consumer-goods` | Trade Promotion Manager · D2C/E-commerce Lead · Field Sales Director · Brand Manager · Supply Chain Lead · **Retailer Buyer / Category Manager** |
 | `energy-utilities` | Customer Care Director · Billing/Metering Lead · Renewables Transition PM · Field Operations Manager · Regulatory Affairs · **NERC/CIP Cybersecurity Lead** · **Grid Ops / ISO-RTO Coordinator** · **Renewables Developer VP** |
 | `freight-logistics-transportation` | **Network Operations Director** · **Revenue Assurance & Pricing Lead** · **Compliance & Safety Officer** · **Shipper Experience Director** · **Driver & Dispatcher Front-Line** |
-| `hotels-hospitality` | Guest Loyalty Lead · Guest Experience Director · **Revenue Management & Pricing Scientist** |
+| `hotels-hospitality` | Guest Loyalty Lead · Guest Experience Director · **Revenue Management & Pricing Scientist** · **PMS Integration Specialist** · **Hotel Reservations Manager** |
 | `manufacturing` | Channel Partner Manager · Warranty Operations Lead · Dealer Network Director · Plant Operations Lead · Aftermarket Service Director · **Supply Chain / S&OP Lead** |
-| `media` | Ad Sales Director · Rights & Licensing Manager · Subscriber Experience Lead · Content Acquisition Lead · Audience Analytics Lead · **Editorial / Newsroom Lead** |
+| `media` | Ad Sales Director · Rights & Licensing Manager · Subscriber Experience Lead · Content Acquisition Lead · Audience Analytics Lead · **Editorial / Newsroom Lead** · **DRM / Content Protection Lead** |
 | `professional-services` | Resource Manager · Engagement Partner · Billing/Project Accounting Lead · Client Relationship Director · Practice Lead · **Independence & Risk Management Lead** |
 | `public-sector` | Constituent Services Director · Licensing & Permits Manager · Emergency Response Coordinator · Case Worker · IT Modernization Director |
 | `retail` | Store Operations Director · Loyalty Program Manager · Merchandising Lead · Unified Commerce/OMS Lead · Customer Care Director · **Buying / Planning Lead** · **Loss Prevention Director** |
-| `technology` | Recurring Revenue/RevOps Lead · Partner Sales Manager · Customer Success Director · Product-Led Growth Lead · Renewals Manager · **Developer Advocate / DevRel Lead** · **Platform / Marketplace Lead** · **Security / Trust Officer** |
+| `technology` | Recurring Revenue/RevOps Lead · Partner Sales Manager · Customer Success Director · Product-Led Growth Lead · Renewals Manager · **Developer Advocate / DevRel Lead** · **Platform / Marketplace Lead** · **Security / Trust Officer** · **API Platform Architect** |
 
 Files: `personas/industries/<industry-slug>/<role-slug>.md`.
 

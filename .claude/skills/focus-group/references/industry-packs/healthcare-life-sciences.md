@@ -20,6 +20,35 @@ Each industry pack contributes 3-5 industry-specific personas at `personas/indus
 - payer-network-director.md — Owns provider network strategy, contracting, and provider-data accuracy at a health plan.
 - hipaa-privacy-officer.md — Owns HIPAA compliance, BAAs, breach response, and PHI access governance.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** (a verified
+fact a panel may quote with citation) or a **TODO stub** (not yet
+verified — the rubric scores 0 for any panel claim that lands on a stub
+row). See [salesforce-crm-agentforce.md](../product-packs/salesforce-crm-agentforce.md)
+for the canonical maintainer note. HIPAA scope changes by product and
+by release; never quote a feature as HIPAA-eligible without a citation
+to a current Salesforce notice.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Health Cloud — HIPAA eligibility (high level)** | Salesforce publicly states "Health Cloud is HIPAA compliant" on the Health Cloud product page, with the platform additionally aligned to HL7 FHIR, HITRUST, FedRAMP, ASIP Santé, FDA, GDPR, and NHS DCB 0129. Customers requiring elevated protection are directed to Shield (additional encryption / audit) and Government Cloud as add-on options. | https://www.salesforce.com/products/health-cloud/overview/ | verified 2026-05-22 |
+| **Salesforce BAA — required for PHI** | A Salesforce-executed Business Associate Agreement (BAA) is required before any Salesforce service may be used to process Protected Health Information (PHI). The BAA is the legal basis under HIPAA for Salesforce acting as a Business Associate; it is not part of the standard MSA and must be requested through the customer's Salesforce account team. The BAA's product/feature scope determines what is HIPAA-eligible — features outside the BAA scope are not authorized for PHI even if technically functional. | https://www.salesforce.com/products/health-cloud/overview/ | verified 2026-05-22 (general statement; specific BAA scope is contract-level) |
+| **Marketing Cloud Engagement — HIPAA-eligible feature list** | TODO — the specific Marketing Cloud Engagement components (Email Studio, Mobile Studio, Journey Builder, Content Builder, Audience Builder, Personalization, Account Engagement / Pardot) covered under Salesforce's BAA scope must be verified against the current Salesforce HIPAA notice (Notice Concerning the Use of Salesforce Services with Protected Health Information) and the customer's executed BAA. The compliance.salesforce.com Marketing Cloud Engagement (Hyperforce) service page does not enumerate HIPAA-eligible components — it directs readers to the service-specific Security, Privacy and Architecture documentation and the customer's BAA. **Do not quote a component-level HIPAA-eligibility list without a current citation to the executed BAA or the Salesforce HIPAA notice.** | https://compliance.salesforce.com/en/services/marketing-cloud-engagement-hyperforce | TODO — verify against current Salesforce HIPAA notice and the customer's BAA |
+| **Marketing Cloud Engagement — features generally NOT HIPAA-eligible** | TODO — verify against the current Salesforce HIPAA notice. Common patterns from prior guidance: third-party advertising integrations, deliverability-add-on services that send PHI to third-party processors outside the BAA scope, and certain SMS aggregator paths can fall outside HIPAA eligibility — but the canonical list is the Salesforce HIPAA notice in effect at the time of the deal, not pattern recall. | https://compliance.salesforce.com/en/services/marketing-cloud-engagement-hyperforce | TODO — verify against current Salesforce HIPAA notice |
+| **Marketing Cloud Engagement (Hyperforce) — other certifications** | The compliance.salesforce.com page lists ISO/IEC 27017:2015, ISO/IEC 27018:2019, NEN 7510-1:2017 (Dutch healthcare ISMS), and HDS (Hébergeur de Données de Santé — French health data hosting). Salesforce EU and UK Processor Binding Corporate Rules apply. SOC 2 / FedRAMP / HITRUST / PCI status for MCE-Hyperforce specifically is not enumerated on the index page (the index shows 10 of 71 entries by default); the executed contract and SPARC documents are the authoritative source. | https://compliance.salesforce.com/en/services/marketing-cloud-engagement-hyperforce | verified 2026-05-22 |
+| **HIPAA encryption + audit logs — Shield posture** | Salesforce's general guidance is that HIPAA-eligible deployments use Shield Platform Encryption (for supported field types and file attachments) plus Field Audit Trail / Setup Audit Trail / Event Monitoring for audit-logging coverage. Specific encryption requirements, key-management posture, and audit-log retention obligations are governed by the customer's HIPAA risk analysis (HIPAA Security Rule §164.308) and the BAA — not by a Salesforce default. Government Cloud Plus also publishes a Shield Platform Encryption Architecture document (dated 2026-01-30 on the compliance index). | https://compliance.salesforce.com/en/services/salesforce-government-cloud-plus-hyperforce | verified 2026-05-22 |
+| **42 CFR Part 2 — substance use disorder records** | TODO — verify whether Salesforce treats 42 CFR Part 2 records as in-scope under the same BAA as HIPAA, or as requiring additional contractual terms. SUD records have heightened consent and re-disclosure protections beyond HIPAA; a generic BAA may not be sufficient for substance-use treatment data. | https://www.salesforce.com/products/health-cloud/overview/ | TODO — verify with Salesforce account team and counsel |
+| **Veeva Vault interoperability (pharma)** | TODO — verify the current state of Salesforce + Veeva integration patterns (data export, REST APIs, MuleSoft connectors) against current Veeva and Salesforce documentation. This is contractually sensitive territory after the Salesforce / Veeva relationship changes; do not quote integration capabilities without confirming the customer's current Veeva contract permissions. | https://www.veeva.com/products/ | TODO — verify with current Veeva and Salesforce documentation |
+
+**Maintainer note:** when a panel confidently quotes a TODO row, the
+accuracy rubric scores that claim 0/20 and flags it in the report.
+Filling stubs is the cheapest accuracy lever this pack has. HIPAA scope
+is governed by the customer's executed BAA — never claim a Marketing
+Cloud component is HIPAA-eligible from memory; cite the BAA or the
+current Salesforce HIPAA notice.
+
 ## Customer-type classifier (which sub-industry — provider, payer, or pharma?)
 
 This pack covers three structurally different sub-industries. The skill should detect which one the customer belongs to and weight the panel accordingly — a payer panel ≠ a provider panel ≠ a pharma panel even though all sit under HLS. Detection signals (case-insensitive substring match on the customer name + the prompt body):

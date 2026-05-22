@@ -526,7 +526,7 @@ When an out-of-scope URL would meaningfully improve grounding, surface it once w
 - If the customer profile signals heightened sensitivity (public-sector, healthcare with PHI, regulated finance) → ask before each URL rather than batch-auto.
 - LinkedIn / sign-in-wall / paywall URLs → respect the Step 2 short-circuit rules (never fetch; suggest local-save workaround).
 
-**Failure is non-blocking.** If `/download` finds nothing or fails for any URL, note the gap in the report header and proceed. The accuracy rubric's citation-density factor will reflect the missing sources.
+**Failure is non-blocking by default.** If `/download` finds nothing or fails for any URL, note the gap in the report header and proceed. The accuracy rubric's citation-density factor will reflect the missing sources. The exception is `--require-citations` — see the offline-failure path below.
 
 **Citation-density defensive check (post-Step 7, pre-Step 8).** Before composing persona prompts, count the `references/<slug>/meta.json` files that `/download` actually wrote for this run's in-scope URLs. If the count is **zero** AND the panel will produce factual claims (i.e., the run is not `--generic` with `--no-citations`), the orchestrator must:
 
@@ -535,6 +535,15 @@ When an out-of-scope URL would meaningfully improve grounding, surface it once w
 3. (a) and (b) are explicit user choices; never default to (b) silently. (c) aborts cleanly.
 
 Skip this check when `--no-citations` is set (the user has explicitly opted out) or when the panel is `--generic` and the prompt has no factual claims to cite (rare; usually pure persona-reception questions).
+
+**Offline-failure path under `--require-citations` (load-bearing).** Under strict mode, the cap-at-70 rule (Step 11) creates a footgun if the user is offline or every seed URL is unreachable: the run silently lands at 70 with no obvious remediation, because the standard "Tighten this report" block is suppressed (the user already opted into rigor). To prevent this, when `--require-citations` is set AND the citation-density defensive check finds zero `meta.json` files AND at least one `/download` attempt was made *and failed* (distinguishing offline from "never tried"), the orchestrator must surface this **before** dispatching the panel:
+
+> *Strict citation mode is on, but every `/download` attempt failed (probable cause: <offline / all seed URLs returned errors / DNS failure>). The accuracy score will cap at 70 and every factual claim will land in "Needs verification" — that's a low-confidence report you'd see anyway. Options:*
+> - *(a) abort and retry when network is available — recommended;*
+> - *(b) continue and accept the 70 cap (useful only if you want the panel's structural feedback regardless of citation health);*
+> - *(c) drop `--require-citations` and run with the citations you have on file (none) — the report will read like a `--no-citations` run instead of capping silently.*
+
+This makes the offline failure visible and actionable rather than a quiet score cap. Default is (a) on user approval; (b) and (c) are explicit choices.
 
 Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate every harvested artifact actually contains the expected content before any persona reads it.
 
