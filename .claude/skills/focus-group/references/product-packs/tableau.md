@@ -18,15 +18,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **Tableau Cloud vs. Tableau Server vs. Tableau Public** | Different deployment models, different security postures, different pricing — confirm which one the deal is for before any commitment | tableau.com pricing | TODO |
-| **Tableau Pulse — license and availability** | Pulse (AI-powered metric monitoring) has specific license requirements; verify the customer's edition before promising Pulse capabilities | help.tableau.com Pulse | TODO |
-| **CRM Analytics (formerly Tableau CRM / Einstein Analytics)** | A separate product from Tableau / Tableau Cloud, with a different data model (datasets, dashboards, lenses, SAQL) — do not conflate | help.salesforce.com CRM Analytics | TODO |
-| **Row-level security at scale** | RLS requires careful design (entitlement tables, user functions, data-source filters); pretending it works "out of the box" leads to leak risk | help.tableau.com RLS | TODO |
-| **Extract refresh schedules and live-query performance** | Extract refresh has specific scheduling/concurrency limits; live queries push performance into the source database — operational concerns the customer's data team owns | help.tableau.com performance | TODO |
-| **Tableau + Data Cloud (Zero Copy or query federation)** | Real but requires both products and a connector pattern the customer's data team has to operate; do not position as "free" or "automatic" | help.salesforce.com data cloud + tableau | TODO |
-| **Embedded analytics — licensing model** | Embedded usage has a separate license model (per-page-view or capacity-based) that differs from internal user licenses | tableau.com embedded analytics | TODO |
-| **Migration from Power BI / Looker / ThoughtSpot / Sigma** | Migrating dashboards is real work and should be scoped honestly; semantic-model translation rarely round-trips cleanly | salesforce.com partners | TODO |
-| **Governance — published data sources and content certification** | Best-practice deployment uses published data sources and content certification; without governance, dashboard sprawl is the typical outcome | help.tableau.com governance | TODO |
+| **Tableau Cloud vs. Tableau Server vs. Tableau Public** | Different deployment models, different security postures, different pricing — confirm which one the deal is for before any commitment | https://www.tableau.com/pricing | TODO |
+| **Tableau Pulse — license and availability** | Pulse (AI-powered metric monitoring) has specific license requirements; verify the customer's edition before promising Pulse capabilities | https://help.tableau.com/current/online/en-us/pulse_create_metrics.htm | TODO — verify slug |
+| **CRM Analytics (formerly Tableau CRM / Einstein Analytics)** | A separate product from Tableau / Tableau Cloud, with a different data model (datasets, dashboards, lenses, SAQL) — do not conflate | https://help.salesforce.com/s/articleView?id=sf.bi_overview.htm | TODO — verify slug |
+| **Row-level security at scale** | RLS requires careful design (entitlement tables, user functions, data-source filters); pretending it works "out of the box" leads to leak risk | https://help.tableau.com/current/server/en-us/rls_options_overview.htm | TODO — verify slug |
+| **Extract refresh schedules and live-query performance** | Extract refresh has specific scheduling/concurrency limits; live queries push performance into the source database — operational concerns the customer's data team owns | https://help.tableau.com/current/online/en-us/schedule_add.htm | TODO — verify slug |
+| **Tableau + Data Cloud (Zero Copy or query federation)** | Real but requires both products and a connector pattern the customer's data team has to operate; do not position as "free" or "automatic" | https://help.tableau.com/current/pro/desktop/en-us/examples_salesforce_datacloud.htm | TODO — verify slug |
+| **Embedded analytics — licensing model** | Embedded usage has a separate license model (per-page-view or capacity-based) that differs from internal user licenses | https://www.tableau.com/embedded-analytics | TODO |
+| **Migration from Power BI / Looker / ThoughtSpot / Sigma** | Migrating dashboards is real work and should be scoped honestly; semantic-model translation rarely round-trips cleanly | https://www.tableau.com/partners | TODO — pick relevant partner pages |
+| **Governance — published data sources and content certification** | Best-practice deployment uses published data sources and content certification; without governance, dashboard sprawl is the typical outcome | https://help.tableau.com/current/server/en-us/governance_overview.htm | TODO — verify slug |
 
 ## Recommended persona families
 

@@ -85,6 +85,44 @@ still gets a multi-model audit. The fallback uses `claude -p --model
 <model-id>` twice and treats each Claude model as its own channel for the
 purpose of agreement/disagreement scoring.
 
+## Anonymize caller contract — when the prompt is customer-grounded
+
+This skill implements the caller contract from
+[`../anonymize/SKILL.md` "Caller contract"](../anonymize/SKILL.md). When
+the prompt being fanned out contains customer-grounded content
+(named org, internal-source data, attendee profiles, or any content
+matching anonymize patterns), the skill MUST gate on `/anonymize`
+before fanning out — the same pattern `/focus-group` Step 8.0 uses:
+
+1. **Detect.** Run
+   `python ../anonymize/scripts/anonymize.py inspect --count-only --input <prompt>`
+   against the composed prompt. Count > 0 → the gate fires.
+2. **Verify the runtime.** Run
+   `python ../anonymize/scripts/anonymize.py --self-check`. Exit-0 with
+   `ok` → proceed. Any other result → block fan-out and surface the
+   universal install offer (Python / Node.js / cancel).
+3. **Scrub immediately before each dispatch.** Pass each per-channel
+   prompt through `anonymize.py scrub` *before* the `claude -p`,
+   `codex exec`, `gemini`, or `opencode` invocation.
+4. **Restore on the response** before adding it to the synthesis.
+5. **Record the gate decision** in the synthesis report header
+   (`**Anonymize:** pass (python) | degraded (powershell) | aborted | n/a`).
+
+When the skill is invoked **as Stage B of `/focus-group`**, the gate has
+already fired upstream at Step 8.0; the prompt arriving here is already
+scrubbed. Re-running `inspect --count-only` on a pre-scrubbed prompt
+should return 0; if it returns > 0, that signals a bug in the upstream
+caller — surface a one-line warning and re-scrub defensively.
+
+When the skill is invoked **standalone** (the user types
+`/cross-ai-review <prompt>` directly), the contract is this skill's own
+to enforce — there is no upstream gate. Default to running the gate;
+the user can override with the same `--no-anonymize` warning path
+described in [`../anonymize/SKILL.md` "Safety rules"](../anonymize/SKILL.md).
+
+The same well-known-placeholder whitelist applies — `example.com`,
+`John Doe`, `Acme Inc`, etc. won't trigger the gate spuriously.
+
 ## The workflow
 
 ### 1. Compose the prompt

@@ -60,6 +60,13 @@ pack has no verification source on file. (`--generic` mode never had a
 pack to verify against, so this is the expected score there, not a
 defect.)
 
+> *Note: as of 2026-05-22, factor 6 in `--generic` mode scores 10/20
+> instead of 20/20 — this corrects a previous default that was
+> over-generous to ungrounded platform claims. Users who run
+> `--generic` regularly will see a slightly lower headline score than
+> they did pre-2026-05-22; this is the intended behavior, not a
+> regression.*
+
 **Correction behavior:** When Stage C identifies a platform-claim mismatch, it:
 1. Corrects the claim in the final report (strikethrough original + correction)
 2. Notes which persona made the incorrect claim

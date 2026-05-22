@@ -384,13 +384,19 @@ Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate 
 
 **Step 8.0 — Anonymize pre-dispatch gate (mandatory; fires before any external CLI call).**
 
-This gate runs **before** round-robin distribution and is non-skippable
-when any of the following are true:
+**Gate trigger (mechanical, not prose-judged).** The gate fires when ANY
+of these is true:
 
 - the active org profile has `source: "internal:..."` (any `sf` / Salesforce MCP / Slack-MCP-derived data),
 - the active org profile has `customer_name` set (named org, even from public sources),
-- any panel prompt contains content that would match the `/anonymize` patterns (emails, phone numbers, money amounts ≥ 4 digits, ARR/MRR/TCV phrasing, Salesforce org IDs / sandbox aliases, etc. — see [`/anonymize` SKILL.md](../anonymize/SKILL.md)),
-- the user passed `--attendees <path>` (attendee profiles always contain personal data).
+- the user passed `--attendees <path>` (attendee profiles always contain personal data),
+- **`anonymize.py inspect --count-only` against the composed panel prompt returns > 0** — i.e., the script (not the agent's reading) detects at least one pattern match. The well-known-placeholder whitelist in [`/anonymize` SKILL.md "Not scrubbed"](../anonymize/SKILL.md) prevents spurious triggers from `example.com`, `John Doe`, `Acme Inc`, etc.
+
+The orchestrator does not re-implement the pattern list in prose — it
+calls `python <anonymize-skill>/scripts/anonymize.py inspect --count-only
+--input <prompt-file>` and uses the integer result as the trigger. This
+keeps the trigger mechanical: a maintainer who updates the patterns in
+`anonymize/SKILL.md` does not also have to update Step 8.0.
 
 **Gate logic:**
 
@@ -427,16 +433,42 @@ when any of the following are true:
    full L1+L2+L3 detection), proceed normally — the library handles
    detection.
 
-5. Every panel prompt destined for `codex`, `gemini`, `opencode`, or any
+5. **Verify-on-use, immediately before each external dispatch.** The
+   24-hour `.focus-group-cache.json` entry is fine for the *advisory*
+   report header line and the gate's coarse-grained pass/fail decision,
+   but it is **not sufficient** for the dispatch decision — a runtime
+   can be silently downgraded (e.g., Python 3.12 removed and only Python
+   3.7 left on PATH), have its venv deactivated, or be antivirus-quarantined
+   between cache time and dispatch time. Right before each `cross_ai.py`
+   dispatch (or any second-process external CLI call), the orchestrator
+   runs `python <anonymize-skill>/scripts/anonymize.py --self-check`. On
+   exit-0 with `ok` on stdout, dispatch proceeds. On non-zero exit (or
+   any other output), the gate flips to its failure path (offer (a)–(d)
+   from step 2 above) for this dispatch and any subsequent ones in the
+   run. A self-check failure also invalidates the
+   `anonymize_runtime.available` cache entry per the Step 0 invalidate-on-failure
+   rule.
+
+6. Every panel prompt destined for `codex`, `gemini`, `opencode`, or any
    second-process Claude (`claude -p --model ...` for the multi-Claude
    fallback, plus `cross_ai.py` dispatches in Stage B) **must pass through
-   `anonymize.scrub()` immediately before the dispatch call.** Local
-   `Agent`-tool subagent dispatches on the host Claude do NOT require the
-   scrub (the host model already has all the context the user authorized).
+   `anonymize.scrub()` immediately before the dispatch call** (after the
+   verify-on-use of step 5). Local `Agent`-tool subagent dispatches on
+   the host Claude do NOT require the scrub (the host model already has
+   all the context the user authorized — see footnote below).
 
-6. The orchestrator records the gate decision (`pass` / `degraded` /
+7. The orchestrator records the gate decision (`pass` / `degraded` /
    `single-ai-fallback` / `aborted`) in the report header line:
    `**Anonymize:** pass (python) | degraded (powershell) | single-ai-fallback | n/a (generic, no customer data)`.
+
+> *Footnote on the "host Claude is exempt" rule.* The exemption assumes
+> the host CLI's inference endpoint is the one the user authenticated
+> (today, claude.ai/code routes to Anthropic's endpoints — the same place
+> the user typed their prompt). A future Claude Code that supports
+> user-configurable inference proxies, or any host runtime where the
+> inference target is decoupled from the user's authentication, would
+> invalidate this assumption. Verify the host's endpoint matches what
+> the user authorized when adding new host runtimes.
 
 **Then — Step 8.1 — Distribute.** Round-robin across available channels
 (Claude, Codex, Gemini, opencode). If only Claude is available, use the
@@ -483,7 +515,31 @@ Items that fail the stage-appropriate specificity check are **rewritten** by the
 Submit the Stage-A report to a *different* model than Stage A used (Codex/Gemini/opencode, or the second Claude model if multi-Claude fallback) via `cross_ai.py`. Ask each to consolidate, flag what Stage A over- or under-weighted, and produce a deduplicated action-item list. Skip under `--single-ai`. If all channels quota-fail, skip and note.
 
 ### Step 11 — Stage C: merge + accuracy score + citations
-Merge Stage B with Stage A. Where they agree → high confidence. Where they disagree → surface, judge, decide (do not vote-count). Where Stage B caught something missed → add it, attributed. Compute the accuracy score per [references/accuracy-rubric.md](references/accuracy-rubric.md). Attach the citations block from all `references/<slug>/meta.json` files used.
+Merge Stage B with Stage A. Where they agree → high confidence. Where they disagree → surface, judge, decide (do not vote-count). Where Stage B caught something missed → add it, attributed.
+
+**Platform-fact contradiction check (mandatory).** Walk every platform
+claim in the merged report — anything that asserts a Salesforce
+governor limit, feature GA status, pricing model detail, sharing-model
+behavior, API limit, or data-volume threshold — against the active
+product pack's `## Platform Facts` table. For each claim:
+
+- **Confirms a non-TODO row** → leave the claim as-is; cite the row's
+  source URL.
+- **Contradicts a non-TODO row** → flag inline (`~~old claim~~ → corrected
+  per pack: <fact>`), note which persona made the original claim, and
+  adjust any dependent action items.
+- **Lands on a TODO-stub row** (the topic is named but not yet verified)
+  → mark the claim "unverified — check current Salesforce help / release
+  notes before quoting to a customer."
+- **Off-pack** (no row at all) → mark the claim "off-pack — verify
+  against current docs."
+
+This produces the inputs the accuracy-rubric factor 6 scores against —
+do not skip it, even when the panel's claims look obviously right
+(governor limits in particular shift across releases). See
+[references/accuracy-rubric.md](references/accuracy-rubric.md) factor 6.
+
+Compute the accuracy score per [references/accuracy-rubric.md](references/accuracy-rubric.md). Attach the citations block from all `references/<slug>/meta.json` files used.
 
 Under `--require-citations`, move under-cited claims to a "Needs verification" section and cap the accuracy score at 70 until the gap is closed.
 

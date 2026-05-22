@@ -18,15 +18,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **Legacy CPQ vs. Revenue Cloud Advanced** | These are different product generations with different data models, different APIs, and different customization patterns; treat the migration as a project, not an upgrade | salesforce.com revenue cloud | TODO |
-| **CPQ — bundle, configuration, and price-rule engine** | Pricing logic lives in CPQ-specific objects (Quote, QuoteLine, ProductOption, PriceRule, ProductRule); Apex extension is supported but most logic should be declarative | help.salesforce.com CPQ | TODO |
-| **Amendments, co-terming, ramps, renewals** | These are where CPQ projects actually live or die; verify the customer's specific scenarios before scoping a phased rollout | help.salesforce.com CPQ amendments | TODO |
-| **Revenue recognition — ASC 606 / IFRS 15** | Revenue Cloud Billing supports ASC 606 / IFRS 15 patterns but configuration is finance-led; the AE cannot wing this — bring a finance-savvy SE or partner | help.salesforce.com Revenue Cloud Billing | TODO |
-| **Billing — built-in vs. ERP integration** | Revenue Cloud Billing is not always the right call when a working ERP billing system exists; coexistence is common | salesforce.com revenue cloud | TODO |
-| **Subscription Management** | Self-service subscription management has specific patterns; verify currently shipping capabilities before promising consumer-grade self-service | salesforce.com subscription management | TODO |
-| **Partner ecosystem** | Implementation quality varies sharply by partner and is the single largest predictor of deal success — surface this honestly | salesforce.com partners | TODO |
-| **API limits — quote and order operations** | TODO — verify current limits for quote/order API calls; bulk quote operations have specific patterns | developer.salesforce.com revenue cloud APIs | TODO |
-| **Data model — Order, OrderItem, Asset, Subscription** | The standard order/asset/subscription data model has specific lifecycle states and trigger behavior — verify before scoping custom automation | help.salesforce.com order | TODO |
+| **Legacy CPQ vs. Revenue Cloud Advanced** | These are different product generations with different data models, different APIs, and different customization patterns; treat the migration as a project, not an upgrade | https://www.salesforce.com/sales/revenue-cloud/ | TODO — verify URL |
+| **CPQ — bundle, configuration, and price-rule engine** | Pricing logic lives in CPQ-specific objects (Quote, QuoteLine, ProductOption, PriceRule, ProductRule); Apex extension is supported but most logic should be declarative | https://help.salesforce.com/s/articleView?id=sf.cpq_overview.htm | TODO — verify slug |
+| **Amendments, co-terming, ramps, renewals** | These are where CPQ projects actually live or die; verify the customer's specific scenarios before scoping a phased rollout | https://help.salesforce.com/s/articleView?id=sf.cpq_subscription_management.htm | TODO — verify slug |
+| **Revenue recognition — ASC 606 / IFRS 15** | Revenue Cloud Billing supports ASC 606 / IFRS 15 patterns but configuration is finance-led; the AE cannot wing this — bring a finance-savvy SE or partner | https://help.salesforce.com/s/articleView?id=sf.blng_revenue_recognition.htm | TODO — verify slug |
+| **Billing — built-in vs. ERP integration** | Revenue Cloud Billing is not always the right call when a working ERP billing system exists; coexistence is common | https://www.salesforce.com/sales/revenue-cloud/billing/ | TODO — verify URL |
+| **Subscription Management** | Self-service subscription management has specific patterns; verify currently shipping capabilities before promising consumer-grade self-service | https://help.salesforce.com/s/articleView?id=sf.subscription_management_overview.htm | TODO — verify slug |
+| **Partner ecosystem** | Implementation quality varies sharply by partner and is the single largest predictor of deal success — surface this honestly | https://appexchange.salesforce.com/ | TODO — pick relevant partner pages |
+| **API limits — quote and order operations** | TODO — verify current limits for quote/order API calls; bulk quote operations have specific patterns | https://developer.salesforce.com/docs/atlas.en-us.cpq_dev_api.meta/cpq_dev_api/ | TODO |
+| **Data model — Order, OrderItem, Asset, Subscription** | The standard order/asset/subscription data model has specific lifecycle states and trigger behavior — verify before scoping custom automation | https://help.salesforce.com/s/articleView?id=sf.order_management.htm | TODO — verify slug |
 
 ## Recommended persona families
 

@@ -18,15 +18,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **Field Service license** | Separately licensed from Service Cloud; technician licenses, dispatcher licenses, and contractor licenses each have distinct entitlements and pricing | salesforce.com field service | TODO |
-| **Mobile app — offline support** | The Field Service mobile app supports offline work with a defined sync model; offline conflict resolution is a real engineering concern that needs design attention up front | help.salesforce.com Field Service mobile | TODO |
-| **Scheduling — optimization engine** | Optimization (multi-day, in-day, optimization service) requires clean work-rule and skill data; the engine produces poor schedules on dirty data — customers must invest in data hygiene first | help.salesforce.com Field Service scheduling | TODO |
-| **Contractor / third-party crew model** | Contractor management uses a different security/license model than employee technicians; verify before scoping multi-tier crew patterns | help.salesforce.com Field Service contractors | TODO |
-| **Parts & inventory** | Native parts/inventory tracking is usable but often needs a real WMS or ERP integration for serious operations | help.salesforce.com Field Service inventory | TODO |
-| **Maps and routing** | Built-in mapping/routing has specific limits and coverage; complex multi-stop optimization may require additional licenses or partners | help.salesforce.com Field Service maps | TODO |
-| **Service Appointment object — sharing behavior** | Sharing on Service Appointments interacts with the Account, Service Resource, and Work Order in non-obvious ways — verify before scoping access | help.salesforce.com Field Service sharing | TODO |
-| **API limits — assignment and bulk schedule operations** | TODO — verify current limits for assignment/optimization API calls before scoping integrations | developer.salesforce.com Field Service APIs | TODO |
-| **Migration from ServiceMax / IFS / Oracle** | Migration is a phased project, not a forklift; phased migration tied to a Service Cloud consolidation is the realistic answer | salesforce.com partners | TODO |
+| **Field Service license** | Separately licensed from Service Cloud; technician licenses, dispatcher licenses, and contractor licenses each have distinct entitlements and pricing | https://www.salesforce.com/service/field-service-management/pricing/ | TODO — verify URL |
+| **Mobile app — offline support** | The Field Service mobile app supports offline work with a defined sync model; offline conflict resolution is a real engineering concern that needs design attention up front | https://help.salesforce.com/s/articleView?id=sf.fs_mobile_app.htm | TODO — verify slug |
+| **Scheduling — optimization engine** | Optimization (multi-day, in-day, optimization service) requires clean work-rule and skill data; the engine produces poor schedules on dirty data — customers must invest in data hygiene first | https://help.salesforce.com/s/articleView?id=sf.fs_scheduling_optimization.htm | TODO — verify slug |
+| **Contractor / third-party crew model** | Contractor management uses a different security/license model than employee technicians; verify before scoping multi-tier crew patterns | https://help.salesforce.com/s/articleView?id=sf.fs_contractor_management.htm | TODO — verify slug |
+| **Parts & inventory** | Native parts/inventory tracking is usable but often needs a real WMS or ERP integration for serious operations | https://help.salesforce.com/s/articleView?id=sf.fs_inventory_management.htm | TODO — verify slug |
+| **Maps and routing** | Built-in mapping/routing has specific limits and coverage; complex multi-stop optimization may require additional licenses or partners | https://help.salesforce.com/s/articleView?id=sf.fs_maps.htm | TODO — verify slug |
+| **Service Appointment object — sharing behavior** | Sharing on Service Appointments interacts with the Account, Service Resource, and Work Order in non-obvious ways — verify before scoping access | https://help.salesforce.com/s/articleView?id=sf.fs_sharing_security.htm | TODO — verify slug |
+| **API limits — assignment and bulk schedule operations** | TODO — verify current limits for assignment/optimization API calls before scoping integrations | https://developer.salesforce.com/docs/atlas.en-us.field_service_dev.meta/field_service_dev/ | TODO |
+| **Migration from ServiceMax / IFS / Oracle** | Migration is a phased project, not a forklift; phased migration tied to a Service Cloud consolidation is the realistic answer | https://appexchange.salesforce.com/ | TODO — pick relevant partner page |
 
 ## Recommended persona families
 

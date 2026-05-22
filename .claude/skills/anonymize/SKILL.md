@@ -105,6 +105,17 @@ canonical reference. Headline coverage:
 - Salesforce product names and standard cloud names.
 - Generic geography (`Pacific Northwest`, `EMEA`).
 - Standard role titles without person attached (`a CIO`, `the Champion`).
+- **Well-known placeholder values** — `example.com`, `example.org`,
+  `example.net`, `localhost`, `John Doe`, `Jane Doe`, `Acme`, `Acme Inc`,
+  `Acme Corp`, `Foo Bar`, `foo@bar.com`, `user@example.com`, `+1 555-555-1234`,
+  `(555) 555-1234`, `00D000000000000` (the all-zero placeholder org ID),
+  `0011000000000000`, `Lorem Ipsum`. These appear in prompt templates,
+  documentation, and Salesforce sample code — scrubbing them produces
+  no privacy benefit and creates spurious gate triggers downstream.
+  The whitelist applies to both pattern matches (regex) and heuristic
+  proper-noun detection (L3); caller-supplied `--scrub` always wins
+  (so a caller that genuinely wants to scrub `Acme` can pass it
+  explicitly and the whitelist is overridden for that run).
 
 ## Detection layers (in order of reliability)
 
@@ -145,6 +156,22 @@ python <skill>/scripts/anonymize.py inspect
 
 # Clear the local map (start fresh for a new customer)
 python <skill>/scripts/anonymize.py reset
+
+# Scan a prompt for pattern matches without scrubbing — print just the count.
+# Used by /focus-group Step 8.0 as the gate-trigger probe: if count > 0 the
+# gate fires; if count == 0 dispatch may proceed without scrubbing.
+python <skill>/scripts/anonymize.py inspect --count-only --input prompt.md
+# → prints a single integer (e.g., "3") to stdout, nothing else
+
+# Verify the runtime can actually run a basic scrub round-trip — prints "ok"
+# and exits 0 on success; prints a one-line error and exits non-zero on
+# failure. Used by /focus-group Step 8.0 as the verify-on-use probe right
+# before each external dispatch (catches the case where the runtime cache
+# says "available" but the runtime has been silently downgraded, removed,
+# quarantined, or had its venv deactivated).
+python <skill>/scripts/anonymize.py --self-check
+# → prints "ok" on stdout, exits 0; or prints "self-check failed: <reason>"
+#   and exits 1
 ```
 
 Default map path: `.anonymize/map.json` in the working directory.

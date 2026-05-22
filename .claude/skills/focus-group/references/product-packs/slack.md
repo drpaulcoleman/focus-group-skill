@@ -18,15 +18,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **Slack editions — Free / Pro / Business+ / Enterprise Grid** | Each edition has different message-history retention defaults, different security/compliance features, and different admin capabilities — verify customer's edition before promising features | slack.com pricing | TODO |
-| **Enterprise Grid — multi-workspace** | Grid lets customers run multiple workspaces under one org with shared channels and admin controls; retention policy is per-workspace and gets messy on Grid with multiple workspaces | slack.com enterprise grid | TODO |
-| **Slack Connect — external collaboration** | Channels shared with external organizations have specific security and admin controls; verify org-level Connect policy before promising customer-collaboration patterns | slack.com slack connect | TODO |
-| **Retention policy** | Configurable per workspace (or per channel on higher editions); default behavior differs by edition — never quote a default without checking | slack.com retention | TODO |
-| **DLP / compliance partners** | Slack supports DLP partners for content scanning; this is the typical answer to InfoSec concerns about external channels and data leakage — but does not eliminate the concern | slack.com security | TODO |
-| **Salesforce + Slack apps — Sales Elevate, Sales Cloud for Slack, Service Cloud for Slack** | Each app is a separate install with its own license requirements and learning curve; not one switch — sellers should set this expectation honestly | salesforce.com slack apps | TODO |
-| **Per-message / bot cost models** | High-volume bot postings can surprise customers on usage-based downstream services (e.g., usage-priced Slack-driven workflows or downstream APIs the bot calls) | slack.com pricing | TODO |
-| **Slack AI / Agentforce-on-Slack capabilities** | The Slack AI / agent integration story is evolving — describe currently shipping capabilities, not roadmap; verify against current Slack release notes | slack.com slack ai | TODO |
-| **Workflow Builder — limits and trigger types** | TODO — verify current Workflow Builder trigger types, limits, and what requires the developer platform | api.slack.com Workflow Builder | TODO |
+| **Slack editions — Free / Pro / Business+ / Enterprise Grid** | Each edition has different message-history retention defaults, different security/compliance features, and different admin capabilities — verify customer's edition before promising features | https://slack.com/pricing | TODO |
+| **Enterprise Grid — multi-workspace** | Grid lets customers run multiple workspaces under one org with shared channels and admin controls; retention policy is per-workspace and gets messy on Grid with multiple workspaces | https://slack.com/enterprise | TODO |
+| **Slack Connect — external collaboration** | Channels shared with external organizations have specific security and admin controls; verify org-level Connect policy before promising customer-collaboration patterns | https://slack.com/connect | TODO |
+| **Retention policy** | Configurable per workspace (or per channel on higher editions); default behavior differs by edition — never quote a default without checking | https://slack.com/help/articles/203457187-Customize-message-and-file-retention-policies | TODO — verify URL |
+| **DLP / compliance partners** | Slack supports DLP partners for content scanning; this is the typical answer to InfoSec concerns about external channels and data leakage — but does not eliminate the concern | https://slack.com/security | TODO |
+| **Salesforce + Slack apps — Sales Elevate, Sales Cloud for Slack, Service Cloud for Slack** | Each app is a separate install with its own license requirements and learning curve; not one switch — sellers should set this expectation honestly | https://www.salesforce.com/sales/slack/ | TODO — pinpoint specific app pages |
+| **Per-message / bot cost models** | High-volume bot postings can surprise customers on usage-based downstream services (e.g., usage-priced Slack-driven workflows or downstream APIs the bot calls) | https://slack.com/pricing | TODO |
+| **Slack AI / Agentforce-on-Slack capabilities** | The Slack AI / agent integration story is evolving — describe currently shipping capabilities, not roadmap; verify against current Slack release notes | https://slack.com/features/ai | TODO — verify URL |
+| **Workflow Builder — limits and trigger types** | TODO — verify current Workflow Builder trigger types, limits, and what requires the developer platform | https://api.slack.com/automation | TODO |
 
 ## Recommended persona families
 

@@ -57,15 +57,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **Omni-Channel routing** | Omni-Channel routing supports skill-based, queue-based, and external routing patterns; available in Enterprise edition and above | help.salesforce.com Omni-Channel | TODO — verify current help slug |
-| **Service Cloud Voice — pricing model** | Consumption-priced on top of Service Cloud licensing; voice minutes are billed separately from CRM seats; confirm current pricing/contract before quoting | salesforce.com Service Cloud Voice | TODO |
-| **Knowledge — article publishing & permissions** | Salesforce Knowledge requires explicit user permissions and a publishing workflow; data-category visibility rules govern what each agent sees | help.salesforce.com Knowledge | TODO |
-| **Field Service overlap** | Field Service is a separately licensed product, not included in Service Cloud; confirm before scoping technician/dispatch features | salesforce.com Field Service | TODO |
-| **Agentforce Service Agent — deployment surfaces** | Embeddable in Experience Cloud, messaging channels, and the Service Console; sharing/FLS inheritance follows the agent user — see Trust Layer | help.salesforce.com Agentforce | TODO |
-| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
-| **Case assignment & escalation rules** | TODO — document current behavior, including what triggers re-evaluation and how this interacts with Omni-Channel | help.salesforce.com Case rules | TODO |
-| **CTI / partner phone integration** | TODO — confirm currently certified CTI partners and the OpenCTI vs. Service Cloud Voice tradeoffs | salesforce.com partners | TODO |
-| **Workforce Management (WFM) native vs. partner** | Native Service Cloud has limited WFM (AHT, schedule adherence, occupancy not first-class); CRM Analytics or a partner WFM product is typically required for serious contact-center ops | salesforce.com partners | TODO |
+| **Omni-Channel routing** | Omni-Channel routing supports skill-based, queue-based, and external routing patterns; available in Enterprise edition and above | https://help.salesforce.com/s/articleView?id=sf.service_presence_intro.htm | TODO — verify slug |
+| **Service Cloud Voice — pricing model** | Consumption-priced on top of Service Cloud licensing; voice minutes are billed separately from CRM seats; confirm current pricing/contract before quoting | https://www.salesforce.com/service/cloud-voice/ | TODO |
+| **Knowledge — article publishing & permissions** | Salesforce Knowledge requires explicit user permissions and a publishing workflow; data-category visibility rules govern what each agent sees | https://help.salesforce.com/s/articleView?id=sf.knowledge_about.htm | TODO — verify slug |
+| **Field Service overlap** | Field Service is a separately licensed product, not included in Service Cloud; confirm before scoping technician/dispatch features | https://www.salesforce.com/service/field-service-management/ | TODO |
+| **Agentforce Service Agent — deployment surfaces** | Embeddable in Experience Cloud, messaging channels, and the Service Console; sharing/FLS inheritance follows the agent user — see Trust Layer | https://help.salesforce.com/s/articleView?id=sf.agentforce_service_agent.htm | TODO — verify slug |
+| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_gov_limits.htm | TODO |
+| **Case assignment & escalation rules** | TODO — document current behavior, including what triggers re-evaluation and how this interacts with Omni-Channel | https://help.salesforce.com/s/articleView?id=sf.customize_caserules.htm | TODO — verify slug |
+| **CTI / partner phone integration** | TODO — confirm currently certified CTI partners and the OpenCTI vs. Service Cloud Voice tradeoffs | https://help.salesforce.com/s/articleView?id=sf.cti_overview.htm | TODO — verify slug |
+| **Workforce Management (WFM) native vs. partner** | Native Service Cloud has limited WFM (AHT, schedule adherence, occupancy not first-class); CRM Analytics or a partner WFM product is typically required for serious contact-center ops | https://appexchange.salesforce.com/ | TODO — pick relevant partner page |
 
 ## Recommended persona families
 

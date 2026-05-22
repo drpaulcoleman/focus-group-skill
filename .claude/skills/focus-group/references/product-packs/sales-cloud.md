@@ -53,15 +53,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **Forecasting — Collaborative Forecasts** | Available in Enterprise edition and above; territory-based forecasts require Enterprise Territory Management to be enabled | help.salesforce.com Collaborative Forecasts | TODO — verify current help slug |
-| **CPQ — included or add-on?** | Salesforce CPQ (formerly Steelbrick / now in the Revenue Cloud family) is separately licensed; do not assume any Sales Cloud edition includes it without checking the customer's specific entitlement | salesforce.com pricing | TODO |
-| **Pipeline Inspection — edition availability** | TODO — confirm which editions include Pipeline Inspection (was added in a specific release) | help.salesforce.com Pipeline Inspection | TODO |
-| **Sales Engagement / Einstein Activity Capture** | TODO — confirm current packaging (separate add-on vs. included) and capture limits | salesforce.com pricing | TODO |
-| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
-| **Apex governor — DML rows per transaction** | TODO — verify before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
-| **API daily request limit** | Tied to edition + active user license count; verify the customer's specific entitlement before quoting a number | help.salesforce.com API Request Limits | TODO |
-| **Reporting Snapshots vs. Tableau / CRM Analytics** | Historical pipeline / trending in Sales Cloud requires either Reporting Snapshots (configured) or a separate analytics product — confirm before promising trended pipeline reporting | help.salesforce.com Reporting Snapshots | TODO |
-| **Lead conversion — what happens to the Lead record** | Confirm current behavior on conversion (Lead becomes inactive; Account/Contact/Opportunity created; standard fields mapped, custom fields require explicit field mapping) | help.salesforce.com Lead Conversion | TODO |
+| **Forecasting — Collaborative Forecasts** | Available in Enterprise edition and above; territory-based forecasts require Enterprise Territory Management to be enabled | https://help.salesforce.com/s/articleView?id=sf.forecasts3_overview.htm | TODO — verify slug |
+| **CPQ — included or add-on?** | Salesforce CPQ (formerly Steelbrick / now in the Revenue Cloud family) is separately licensed; do not assume any Sales Cloud edition includes it without checking the customer's specific entitlement | https://www.salesforce.com/sales/cpq/ | TODO |
+| **Pipeline Inspection — edition availability** | TODO — confirm which editions include Pipeline Inspection (was added in a specific release) | https://help.salesforce.com/s/articleView?id=sf.pipeline_inspection_setup.htm | TODO — verify slug |
+| **Sales Engagement / Einstein Activity Capture** | TODO — confirm current packaging (separate add-on vs. included) and capture limits | https://help.salesforce.com/s/articleView?id=sf.einstein_activity_capture.htm | TODO — verify slug |
+| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_gov_limits.htm | TODO |
+| **Apex governor — DML rows per transaction** | TODO — verify before any panel quotes a number | https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_gov_limits.htm | TODO |
+| **API daily request limit** | Tied to edition + active user license count; verify the customer's specific entitlement before quoting a number | https://developer.salesforce.com/docs/atlas.en-us.salesforce_app_limits_cheatsheet.meta/salesforce_app_limits_cheatsheet/ | TODO |
+| **Reporting Snapshots vs. Tableau / CRM Analytics** | Historical pipeline / trending in Sales Cloud requires either Reporting Snapshots (configured) or a separate analytics product — confirm before promising trended pipeline reporting | https://help.salesforce.com/s/articleView?id=sf.data_concepts_reporting_snapshots.htm | TODO — verify slug |
+| **Lead conversion — what happens to the Lead record** | Confirm current behavior on conversion (Lead becomes inactive; Account/Contact/Opportunity created; standard fields mapped, custom fields require explicit field mapping) | https://help.salesforce.com/s/articleView?id=sf.leads_convert.htm | TODO — verify slug |
 
 ## Recommended persona families
 

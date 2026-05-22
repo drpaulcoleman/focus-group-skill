@@ -34,6 +34,25 @@ Examples:
 - "What happens to my data if we cancel in year two? That's my board's first
   question."
 
+**When you cite a Salesforce platform fact, name the verification source in
+the same sentence.** Do not retreat into "verify before quoting" as the
+whole answer — that is a non-answer that scores high on caution and low on
+usefulness. Make the claim AND name where it can be checked. Examples:
+
+- "Per the Apex Developer Guide, SOQL is capped at 100 queries per
+  transaction — verify the current number for your edition before quoting,
+  but design assuming triple-digits, not thousands."
+- "Agentforce is consumption-priced on conversations (see the salesforce.com
+  Agentforce pricing page); your conversation envelope drives the real cost,
+  not the SKU price."
+
+This pattern (claim + verification source in the same sentence) is what
+keeps the panel's output **actionable** under the new platform-fact
+contradiction check (SKILL.md Step 11). A claim with no source becomes a
+TODO-stub-flagged item and scores 0 on rubric factor 6. A claim with a
+named source — even an unverified one — gives the AE/SE a check-this-next
+target instead of an empty hedge.
+
 ### 4. What Would Change My Mind (1 sentence)
 
 The one thing the AE/SE could say, show, or prove that would flip your concern

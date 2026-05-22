@@ -18,15 +18,15 @@ for the canonical maintainer note.
 
 | Topic | Fact | Source / verified | Last verified |
 |-------|------|-------------------|---------------|
-| **vCore pricing model** | MuleSoft Anypoint is consumption-priced on vCores (CPU/memory units); bursting and reserved capacity have different cost behavior — sizing is a real ongoing finance conversation | mulesoft.com pricing | TODO — verify current model |
-| **CloudHub 2.0 vs. CloudHub 1.0** | Different runtime, different deployment model, different limits — confirm which one the customer will run on; CloudHub 2.0 is the modern path | docs.mulesoft.com CloudHub 2.0 | TODO |
-| **Composer — separate from Anypoint Studio** | Composer is the no-code/low-code surface; Anypoint Studio is the developer surface — they are different products with different limits and licensing | docs.mulesoft.com Composer | TODO |
-| **iPaaS coexistence** | Many customers already run an iPaaS; a credible pitch acknowledges coexistence rather than rip-and-replace — confirm before promising platform consolidation | salesforce.com partners | TODO |
-| **IDP / RPA / AI add-ons** | Intelligent Document Processing, RPA, and AI add-ons each have separate enablement, licensing, and limits — do not assume they are bundled | mulesoft.com platform | TODO |
-| **Anypoint API Manager — policies and rate limits** | API policies (rate-limit, OAuth, throttle) are configured per API; verify enforcement model before scoping a security-critical integration | docs.mulesoft.com API Manager | TODO |
-| **MuleSoft AI / Topic Center / Agentforce integration** | This story is evolving rapidly — sales should describe currently shipping capabilities, not future direction | salesforce.com mulesoft | TODO — verify currently shipping vs. roadmap |
-| **DataWeave language** | Mule's transformation language; verify currently supported version and any deprecations before scoping | docs.mulesoft.com DataWeave | TODO |
-| **Hybrid deployment — RTF (Runtime Fabric) and on-prem** | Customers with on-prem requirements can run via Runtime Fabric or a self-managed Mule runtime; verify support tiers and patch model | docs.mulesoft.com RTF | TODO |
+| **vCore pricing model** | MuleSoft Anypoint is consumption-priced on vCores (CPU/memory units); bursting and reserved capacity have different cost behavior — sizing is a real ongoing finance conversation | https://www.mulesoft.com/platform/api/anypoint-pricing | TODO — verify URL |
+| **CloudHub 2.0 vs. CloudHub 1.0** | Different runtime, different deployment model, different limits — confirm which one the customer will run on; CloudHub 2.0 is the modern path | https://docs.mulesoft.com/cloudhub-2/ch2-overview | TODO |
+| **Composer — separate from Anypoint Studio** | Composer is the no-code/low-code surface; Anypoint Studio is the developer surface — they are different products with different limits and licensing | https://docs.mulesoft.com/composer/ | TODO |
+| **iPaaS coexistence** | Many customers already run an iPaaS; a credible pitch acknowledges coexistence rather than rip-and-replace — confirm before promising platform consolidation | https://www.mulesoft.com/integration-solutions/ipaas | TODO |
+| **IDP / RPA / AI add-ons** | Intelligent Document Processing, RPA, and AI add-ons each have separate enablement, licensing, and limits — do not assume they are bundled | https://www.mulesoft.com/platform/ai/ | TODO |
+| **Anypoint API Manager — policies and rate limits** | API policies (rate-limit, OAuth, throttle) are configured per API; verify enforcement model before scoping a security-critical integration | https://docs.mulesoft.com/api-manager/ | TODO |
+| **MuleSoft AI / Topic Center / Agentforce integration** | This story is evolving rapidly — sales should describe currently shipping capabilities, not future direction | https://www.mulesoft.com/platform/ai/ai-chain-agent | TODO — verify currently shipping |
+| **DataWeave language** | Mule's transformation language; verify currently supported version and any deprecations before scoping | https://docs.mulesoft.com/dataweave/latest/ | TODO |
+| **Hybrid deployment — RTF (Runtime Fabric) and on-prem** | Customers with on-prem requirements can run via Runtime Fabric or a self-managed Mule runtime; verify support tiers and patch model | https://docs.mulesoft.com/runtime-fabric/ | TODO |
 
 ## Recommended persona families
 
