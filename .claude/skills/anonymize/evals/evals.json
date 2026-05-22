@@ -1,0 +1,53 @@
+{
+  "skill_name": "anonymize",
+  "evals": [
+    {
+      "id": 1,
+      "name": "scrub-typical-customer-prompt",
+      "prompt": "Scrub this text using known entities 'Providence Health' and 'Sarah Chen': 'Sarah Chen at Providence Health asked about $4.2M ARR and a 5,847 employee deal in #providence-deal-room. Email s.chen@providence.org, SF org id 00D5g0000XYZAbcDEF, linkedin.com/in/sarah-chen-12345, case OCC EA-2024-018.'",
+      "expected_output": "All 9 entities scrubbed: 1 COMPANY (Providence Health), 1 PERSON (Sarah Chen), 1 EMAIL, 1 ORG_ID, 1 REVENUE ({{REVENUE_1_ARR}}), 1 HEADCOUNT, 1 SLACK_CHANNEL, 1 LINKEDIN, 1 CASE_ID. The phrase 'employee deal' is preserved (only the number bracketed). Salesforce product names and round-bucket headcounts left alone (none present here).",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "restore-with-unknown-placeholder",
+      "prompt": "Restore this LLM response using the map from eval 1: '{{PERSON_1}} at {{COMPANY_1}} asked about ${{REVENUE_1_ARR}} and the {{HEADCOUNT_1}} employee deal. We also discussed {{ORG_ID_99}} which I have no record of.'",
+      "expected_output": "Known placeholders ({{PERSON_1}}, {{COMPANY_1}}, {{REVENUE_1_ARR}}, {{HEADCOUNT_1}}) restored to real values. The unknown {{ORG_ID_99}} (which the LLM invented) left as-is and surfaced in stderr.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "whitelist-skipped",
+      "prompt": "Scrub: 'We're proposing Service Cloud + Agentforce for the customer's Health Cloud rollout, integrating with Microsoft Dynamics on Azure.'",
+      "expected_output": "Nothing scrubbed. Salesforce, Service Cloud, Agentforce, Health Cloud, Microsoft Dynamics, Azure are all in the built-in whitelist.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "name": "round-bucket-headcount-preserved",
+      "prompt": "Scrub: 'A 25,000 employee enterprise vs. a 5,847 employee mid-market.'",
+      "expected_output": "Only 5,847 is bracketed (precise count). 25,000 is preserved (round bucket).",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "name": "no-input-error",
+      "prompt": "Run scrub with no --input and no stdin",
+      "expected_output": "Exits with error: 'no input. Pass --input <file>, ...' (the err-doctrine in action: plain-English cause + what to do).",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 6,
+      "name": "help-mode-no-scrub",
+      "prompt": "/anonymize help",
+      "expected_output": "Prints the SKILL.md walkthrough (the trick: bidirectional placeholders, when to invoke, modes, what gets scrubbed, CLI shape, library use, safety rules). Does NOT scrub anything. Does NOT prompt for input.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

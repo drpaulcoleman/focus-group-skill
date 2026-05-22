@@ -1,0 +1,45 @@
+{
+  "skill_name": "download",
+  "evals": [
+    {
+      "id": 1,
+      "name": "salesforce-help-page-js-rendered",
+      "prompt": "/download https://help.salesforce.com/s/articleView?id=sf.service_cloud_voice.htm",
+      "expected_output": "Skill detects runtime. If a headless browser is available (Playwright via Python or Node, or Edge on Windows 11, or Chrome), uses it. Saves references/help-salesforce-com-service-cloud-voice/{page.html, page.md, meta.json}. The meta.json includes retrieval date. The page.md contains real content, not a near-empty shell. If no headless browser is available, the skill says so plainly using the printed-cookbook-vs-kitchen analogy and offers the ranked install walkthrough.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "search-subject-salesforce-flavored",
+      "prompt": "/download agentforce for healthcare patient services",
+      "expected_output": "Skill detects the Salesforce-flavored topic and runs the Salesforce-aware engines (help.salesforce.com, trailhead, architect, developer.salesforce.com) in addition to the general engines (Google, Bing, Scholar). Writes references/_search/agentforce-for-healthcare-patient-services.md with engine attribution. Offers to harvest the top 3-5 results.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "pdf-preference-over-html-crawl",
+      "prompt": "/download https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_ref_guide.htm",
+      "expected_output": "Skill detects the linked PDF edition of the Apex Reference Guide and downloads the PDF instead of crawling the multi-page HTML portal. Saves references/<slug>/page.pdf + meta.json. Tells the user the PDF was preferred and why.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "name": "help-mode-no-fetch",
+      "prompt": "/download help",
+      "expected_output": "Skill prints the user-facing walkthrough: what it does, the headless-browser analogy in plain English, the runtime detection chain, every flag with a worked example, the proactive install offers, the err-doctrine close. Does NOT fetch anything. Does NOT prompt for a URL.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "name": "empty-page-no-headless-runtime",
+      "prompt": "/download https://help.salesforce.com/s/articleView?id=sf.service_cloud_voice.htm (assume no headless runtime is installed; only curl/wget are available)",
+      "expected_output": "Skill uses fetch-basic.sh, gets back a near-empty <div id='app'> shell, recognizes the result is incomplete, tells the user using the printed-cookbook-vs-kitchen analogy, and presents the ranked four-option install offer (Python+Playwright / Node+Playwright / Edge on Windows / skip-for-now / never-ask-again). Persists the answer in .install-asked.json.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

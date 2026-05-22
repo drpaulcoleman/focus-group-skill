@@ -1,0 +1,15 @@
+{
+  "_comment": "Local fallback configuration for /cross-ai-review. The /focus-group skill's config.json wins when both are present (so a /focus-group panel and a cross-AI run always use the same models). This local config exists so /cross-ai-review works standalone if /focus-group isn't installed alongside.",
+  "_policy": "Mirror the shape of /focus-group/config.json. Update model ids when new ones ship. Sentinels `deep`, `latest`, `default`, `null`, `none` mean 'let the CLI pick its own latest' -- the script passes nothing and the CLI's built-in default is used.",
+  "channel_models": {
+    "claude": "claude-opus-4-7",
+    "codex": "gpt-5.5",
+    "gemini": "gemini-3.1-pro-preview",
+    "opencode": null
+  },
+  "multi_claude_fallback": {
+    "primary": "claude-opus-4-7",
+    "secondary": "claude-sonnet-4-6"
+  },
+  "last_model_check": "2026-05-20"
+}

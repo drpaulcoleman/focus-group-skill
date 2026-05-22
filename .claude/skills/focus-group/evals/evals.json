@@ -1,0 +1,53 @@
+{
+  "skill_name": "focus-group",
+  "evals": [
+    {
+      "id": 1,
+      "name": "discovery-prep-named-prospect-healthcare",
+      "prompt": "/focus-group I'm prepping discovery for a new prospect — Providence Health, a regional hospital network on the West Coast. They've reached out about Agentforce for their patient-services team. Here are the questions I want to take into the first call: 1. What problem are you actually trying to solve in patient services? 2. How are you handling agent-assist today? 3. What's your current Service Cloud footprint? 4. What does success look like in 90 days? Tell me which ones a strong SE / Champion / Economic Buyer / HIPAA Privacy Officer would push back on, and what they'd suggest I add or drop.",
+      "expected_output": "Skill stops to ask the customer-grounding gate (Q1 name, Q2 prospect vs. current). User selects 'profile by name' and 'prospect'. Skill offers /download against providence.org public sources. Skill proposes a panel of 5 (likely SE, HIPAA Privacy Officer, Champion/Patient Services Director, CIO Economic Buyer, Industry Specialist for healthcare). Final report cites the downloaded sources, includes an accuracy score, and gives concrete suggestions on each of the 4 discovery questions, named to specific personas.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "qbr-existing-customer-financial-services",
+      "prompt": "/focus-group --product service-cloud --industry financial-services Review this QBR draft for Acme Credit Union. They're a current Service Cloud customer (Sandbox alias: acme-sb). Focus on whether I'm leading with the right wins and whether the renewal-risk page is honest about the 2 open Sev-2 cases.",
+      "expected_output": "Skill detects 'current customer' from the prompt context plus the org alias. Skill probes for sf, Salesforce MCP, Slack. If sf is installed and acme-sb is reachable, offers the per-data consent menu. If not, offers the install walkthrough. Panel composed with FinServ industry personas (Retail Banking Head, Compliance/AML Officer) plus Customer Success Manager, Champion, Solution Engineer. Report references the live data summary (user-approved).",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "generic-pitch-deck-review",
+      "prompt": "/focus-group --generic Review the executive-summary slide of this pitch deck for clarity, story arc, and one-line value-prop strength. I want it punchy but not gimmicky.",
+      "expected_output": "Skill skips the org-profile gate (--generic context implies no specific customer; or the skill explicitly asks once and accepts 'skip'). Recommends a generic panel (Pitch-Narrative Coach, Enterprise Buyer, SMB Buyer, Compliance Officer, Strategic Acquirer or Enterprise SaaS VC). Report focuses on narrative, not Salesforce specifics.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "name": "help-mode-no-panel",
+      "prompt": "/focus-group help",
+      "expected_output": "Skill prints the user-facing walkthrough from references/usage.md — what it is, how to invoke, switches table, quick-pick panels, the two up-front gate questions, the §8 install-offers trigger table, examples, privacy stance. Does NOT run a panel. Does NOT prompt for content under review.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "name": "require-citations-strict-mode",
+      "prompt": "/focus-group --require-citations Review my proposal section: 'Service Cloud's average implementation time at customers your size is 14 weeks, and TCO over 3 years is 40% lower than ServiceNow per the Forrester TEI study.' Is this defensible?",
+      "expected_output": "Skill identifies two factual claims (14 weeks; 40% lower per Forrester TEI). Under --require-citations, these claims have no meta.json source on file. The report moves them to 'Needs verification' and caps accuracy at 70. The skill offers to /download the Forrester TEI study and Salesforce's published implementation-time benchmarks first.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 6,
+      "name": "multi-claude-fallback-detection",
+      "prompt": "/focus-group --single-ai Review this discovery doc for me. (Assume only the claude CLI is installed on this machine.)",
+      "expected_output": "Skill respects --single-ai (no external CLI dispatch, no Stage B/C consolidation). Panel runs as local Claude subagents. Report is the Stage-A aggregation; the report header notes that Stage B/C was skipped per --single-ai.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

@@ -1,0 +1,2140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Focus Group Skills — AI Sales-Team Companions for Salesforce</title>
+
+<meta name="description" content="Six Claude Code / Cursor skills for Salesforce sales teams. Convene a panel of sales-savvy reviewers, ground in real Salesforce docs, fact-check across AI models, sharpen the panel report before you send it on, and never let a customer name leave your laptop. For Account Executives, Solution Engineers, Architects, Industry Specialists, and Business Value Consultants.">
+<meta name="author" content="Dr. Paul Coleman">
+<meta name="document-version" content="1.0.0"><meta name="last-modified" content="2026-05-21"><meta name="robots" content="index, follow">
+<meta name="color-scheme" content="light dark">
+
+<link rel="canonical" href="https://drpaulcoleman.github.io/focus-group-skill/">
+
+<!-- Open Graph / social share — keep in sync with the fields above -->
+<meta property="og:type" content="article">
+<meta property="og:title" content="Focus Group Skills — AI Sales-Team Companions for Salesforce">
+<meta property="og:description" content="Six Claude Code / Cursor skills for Salesforce sales teams. Convene persona panels, ground in Salesforce docs, fact-check across models, anonymize customer data, surface Slack context, sharpen the final report.">
+<meta property="og:url" content="https://drpaulcoleman.github.io/focus-group-skill/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Focus Group Skills">
+<meta name="twitter:description" content="AI sales-team companions for Salesforce: persona panels, doc grounding, cross-AI audit, anonymization, Slack context.">
+
+<!-- JSON-LD structured data for search engines and AI crawlers. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Focus Group Skills — AI Sales-Team Companions for Salesforce",
+  "description": "Six Claude Code / Cursor skills for Salesforce sales teams: /focus-group, /download, /cross-ai-review, /anonymize, /slackbot, /how-can-this-be-improved.",
+  "author": { "@type": "Person", "name": "Dr. Paul Coleman" },
+  "datePublished": "2026-05-21",
+  "dateModified": "2026-05-21",
+  "version": "1.0.0",
+  "url": "https://drpaulcoleman.github.io/focus-group-skill/",
+  "inLanguage": "en",
+  "license": "https://www.mozilla.org/en-US/MPL/2.0/"
+}
+</script>
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%235b8cff'/%3E%3Ctext x='32' y='44' font-size='38' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3ED%3C/text%3E%3C/svg%3E">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Source+Serif+4:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Syntax highlighting (Prism) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism-tomorrow.min.css">
+
+<style>
+/* ====================================================================
+   THEME TOKENS  — Anthropic/Claude warm palette, default light.
+   Subdued Salesforce-blue and Slack-aubergine accents for skill chips.
+   ==================================================================== */
+:root,
+html[data-theme="light"]{
+  --bg-deepest:#EFE9DA; --bg:#FAF6EC; --bg-card:#FFFFFF; --bg-elev:#F5EFE0;
+  --border:#E3D9C4; --border-soft:#EDE4D0;
+  --text:#2A2520; --text-soft:#5C544A; --text-faint:#8A8276;
+  --accent:#C15F3C; --accent-soft:#F1D7C9; --accent-text:#7E3B1F;
+  --salesforce:#0B5CAB; --slack:#4A154B;
+  --good:#4A7C2A; --warn:#B47F1A; --bad:#B23A2E;
+  --code-bg:#F1EAD8; --highlight:rgba(193,95,60,.16); --flash:rgba(193,95,60,.24);
+  --shadow:0 8px 24px rgba(60,40,20,.10);
+}
+html[data-theme="dark"]{
+  --bg-deepest:#15110D; --bg:#1F1B15; --bg-card:#28231C; --bg-elev:#2E281F;
+  --border:#3B3329; --border-soft:#2E281F;
+  --text:#F4EFE3; --text-soft:#C5BCA9; --text-faint:#8A8276;
+  --accent:#D67A52; --accent-soft:#3A2419; --accent-text:#F4C9B5;
+  --salesforce:#4D9DE0; --slack:#B57FB6;
+  --good:#67B040; --warn:#D6A13A; --bad:#E07466;
+  --code-bg:#1A1611; --highlight:rgba(214,122,82,.22); --flash:rgba(214,122,82,.30);
+  --shadow:0 8px 30px rgba(0,0,0,.45);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  background:var(--bg-deepest); color:var(--text);
+  line-height:1.6; -webkit-font-smoothing:antialiased; overflow:hidden;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code,kbd,pre{font-family:'JetBrains Mono',ui-monospace,SFMono-Regular,Consolas,monospace}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.skip-link{position:absolute;left:-999px;top:0;z-index:200;background:var(--accent);
+  color:#fff;padding:8px 14px;border-radius:0 0 8px 0}
+.skip-link:focus{left:0}
+
+/* ---- Header -------------------------------------------------------- */
+#header{
+  position:fixed;top:0;left:0;right:0;height:56px;z-index:60;
+  display:flex;align-items:center;gap:14px;padding:0 16px;
+  background:var(--bg);border-bottom:1px solid var(--border);
+}
+#header .brand{display:flex;align-items:center;gap:9px;font-weight:800;white-space:nowrap}
+#header .brand .logo{width:26px;height:26px;border-radius:7px;background:var(--accent);
+  display:grid;place-items:center;color:#fff;font-weight:800;font-size:15px}
+#header .brand .title{font-size:14.5px;max-width:34vw;overflow:hidden;text-overflow:ellipsis}
+#header .ver{font-size:11px;color:var(--text-faint);font-weight:600;
+  border:1px solid var(--border);border-radius:20px;padding:2px 8px}
+#header .ver-meta{font-size:11px;color:var(--text-faint);font-weight:500;
+  margin-left:8px;letter-spacing:.01em;white-space:nowrap}
+#header .ver-meta b{font-weight:600;color:var(--text-soft)}
+@media (max-width:760px){#header .ver-meta{display:none}}
+#header .spacer{flex:1}
+.search-wrap{position:relative;display:flex;align-items:center}
+#search{background:var(--bg-elev);border:1px solid var(--border);color:var(--text);
+  border-radius:8px;padding:7px 30px 7px 30px;font-size:13px;width:230px;outline:none}
+#search:focus{border-color:var(--accent)}
+.search-wrap .ico{position:absolute;left:9px;opacity:.5;font-size:13px;pointer-events:none}
+#search-count{position:absolute;right:8px;font-size:10.5px;color:var(--text-faint)}
+.search-wrap.no-results #search{border-color:var(--bad)}
+.tool-btn{background:var(--bg-elev);border:1px solid var(--border);color:var(--text-soft);
+  border-radius:7px;width:32px;height:32px;cursor:pointer;font-size:14px;
+  display:grid;place-items:center}
+.tool-btn:hover{color:var(--text);border-color:var(--accent)}
+.zoom-grp{display:flex;align-items:center;gap:4px}
+#zoom-level{font-size:11px;color:var(--text-faint);min-width:34px;text-align:center}
+
+/* ---- View tabs (exec / tech) -------------------------------------- */
+#view-tabs{display:flex;gap:3px;background:var(--bg-elev);border:1px solid var(--border);
+  border-radius:8px;padding:3px}
+.view-tab{background:transparent;border:0;color:var(--text-faint);cursor:pointer;
+  font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px}
+.view-tab.active{background:var(--accent);color:#fff}
+
+/* ---- Sidebar ------------------------------------------------------- */
+#sidebar{
+  position:fixed;top:56px;left:0;bottom:0;width:248px;z-index:50;
+  background:var(--bg);border-right:1px solid var(--border);
+  overflow-y:auto;padding:14px 10px 40px;
+}
+#sidebar .nav-group{font-size:10.5px;font-weight:700;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--text-faint);margin:16px 10px 6px}
+#sidebar a{display:block;color:var(--text-soft);font-size:13px;
+  padding:6px 10px;border-radius:7px;border-left:2px solid transparent}
+#sidebar a:hover{background:var(--bg-elev);color:var(--text);text-decoration:none}
+#sidebar a.active{background:var(--accent-soft);color:var(--accent-text);
+  border-left-color:var(--accent);font-weight:600}
+#sidebar a .badge{float:right;font-size:9.5px;background:var(--accent-soft);
+  color:var(--accent-text);border-radius:10px;padding:1px 6px;font-weight:700}
+
+/* ---- Viewport + canvas -------------------------------------------- */
+#viewport{
+  position:fixed;top:56px;left:248px;right:0;bottom:0;
+  overflow:auto;scroll-behavior:smooth;background:var(--bg-deepest);
+}
+#canvas{transform-origin:top center;transition:transform .12s ease;
+  padding:30px 28px 120px;margin:0 auto;max-width:1000px}
+body[data-layout="canvas"] #viewport{cursor:grab}
+body[data-layout="canvas"] #viewport.panning{cursor:grabbing;scroll-behavior:auto}
+body[data-layout="canvas"] #canvas{max-width:1700px}
+
+/* ---- Cards --------------------------------------------------------- */
+.card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:14px;
+  padding:26px 30px;margin:0 0 22px;box-shadow:var(--shadow);
+  scroll-margin-top:30px;
+}
+.card.match{outline:1px solid var(--accent)}
+.card.dim{opacity:.32;filter:saturate(.4)}
+.card.hero{background:linear-gradient(135deg,var(--bg-elev),var(--bg-card));
+  border-color:var(--accent)}
+.card.hero h1{font-size:30px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
+.card.hero .subject{color:var(--accent-text);font-weight:600;font-size:15px;margin-top:6px}
+.meta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:12.5px;
+  color:var(--text-soft)}
+.meta-row b{color:var(--text);font-weight:600}
+
+h2{font-size:21px;font-weight:700;margin:2px 0 12px;letter-spacing:-.005em}
+h3{font-size:16px;font-weight:600;margin:20px 0 8px;color:var(--text)}
+.card p{margin:10px 0;color:var(--text-soft)}
+.card p strong,.card li strong{color:var(--text)}
+.card ul,.card ol{margin:10px 0 10px 22px;color:var(--text-soft)}
+.card li{margin:5px 0}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:6px}
+
+/* paragraph-level deep-link / bookmark anchor */
+.anchored{position:relative}
+.anchor-link{position:absolute;left:-22px;top:3px;opacity:0;font-size:14px;
+  color:var(--text-faint);text-decoration:none;transition:opacity .12s}
+.anchored:hover .anchor-link{opacity:1}
+.anchor-link:hover{color:var(--accent)}
+
+/* highlight flashes */
+.flash{animation:flash 3s ease}
+@keyframes flash{0%,55%{background:var(--flash)}100%{background:transparent}}
+:target{scroll-margin-top:30px}
+
+/* callouts */
+.callout{border-left:3px solid var(--accent);background:var(--bg-elev);
+  border-radius:0 9px 9px 0;padding:12px 16px;margin:14px 0}
+.callout.warn{border-left-color:var(--warn)}
+.callout.disclaimer{border-left-color:var(--bad)}
+.callout .lead{font-weight:700;color:var(--text);font-size:12px;
+  text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+
+/* code + tables */
+pre[class*="language-"]{border:1px solid var(--border);border-radius:9px;
+  margin:12px 0;font-size:12.5px}
+:not(pre)>code{background:var(--code-bg);border:1px solid var(--border-soft);
+  border-radius:5px;padding:1px 5px;font-size:.88em}
+table{border-collapse:collapse;width:100%;margin:14px 0;font-size:13px}
+th,td{border:1px solid var(--border);padding:8px 11px;text-align:left}
+th{background:var(--bg-elev);color:var(--text);font-weight:600}
+
+/* checklist */
+.checklist{list-style:none;margin-left:0}
+.checklist li{display:flex;gap:9px;align-items:flex-start;margin:7px 0}
+.checklist input{margin-top:4px;accent-color:var(--accent);width:15px;height:15px}
+
+/* Mermaid */
+pre.mermaid{background:var(--bg-elev);border:1px solid var(--border);
+  border-radius:10px;padding:16px;text-align:center;overflow:auto}
+.diagram-caption{font-size:12px;color:var(--text-faint);text-align:center;margin-top:-8px}
+
+/* ---- References (APA) --------------------------------------------- */
+.apa-refs{list-style:none;margin-left:42px}
+.apa-refs li{font-size:13px;line-height:1.55;margin-bottom:11px;padding-left:0;
+  position:relative}
+.apa-refs li .ref-marker{position:absolute;left:-42px;width:36px;text-align:right;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  color:var(--accent)}
+.apa-refs li em{color:var(--text)}
+.apa-refs li .retrieved{color:var(--text-faint);font-style:italic}
+.apa-refs li:target{background:var(--highlight);border-radius:6px;
+  outline:1px solid var(--warn);padding:6px 8px;margin-left:-8px}
+/* in-text citation marker */
+.cite{font-weight:600}
+sup .cite,a.cite{border-bottom:1px dotted var(--accent)}
+a.cite:hover{text-decoration:none;background:var(--accent-soft);border-radius:3px}
+
+/* ---- Minimap (canvas mode only) ----------------------------------- */
+#minimap{position:fixed;right:14px;top:70px;width:120px;height:170px;z-index:55;
+  background:var(--bg);border:1px solid var(--border);border-radius:10px;
+  padding:6px;display:none;box-shadow:var(--shadow)}
+body[data-layout="canvas"] #minimap{display:block}
+#minimap canvas{width:100%;height:100%;cursor:pointer;border-radius:6px}
+#minimap .mm-label{font-size:9px;color:var(--text-faint);text-align:center;
+  margin-bottom:3px;font-weight:700;letter-spacing:.06em}
+
+/* ---- AI-coach widget ---------------------------------------------- */
+#ai-coach-btn{position:fixed;z-index:58;background:var(--accent);color:#fff;
+  border:0;border-radius:24px;padding:11px 17px;font-size:13px;font-weight:700;
+  cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;gap:7px}
+#ai-coach-btn:hover{filter:brightness(1.1)}
+/* single layout -> bottom-right */
+body[data-layout="single"] #ai-coach-btn{right:22px;bottom:22px}
+/* canvas layout -> top-right, under the toolbar (minimap occupies upper-right) */
+body[data-layout="canvas"] #ai-coach-btn{right:148px;top:70px;padding:8px 13px;font-size:12px}
+#ai-coach-panel{position:fixed;z-index:59;width:330px;max-width:92vw;
+  background:var(--bg-card);border:1px solid var(--accent);border-radius:14px;
+  box-shadow:var(--shadow);padding:16px;display:none}
+body[data-layout="single"] #ai-coach-panel{right:22px;bottom:74px}
+body[data-layout="canvas"] #ai-coach-panel{right:148px;top:112px}
+#ai-coach-panel.open{display:block}
+#ai-coach-panel .ac-head{display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:4px}
+#ai-coach-panel .ac-head b{font-size:13px}
+#ai-coach-panel .ac-ctx{font-size:11px;color:var(--text-faint);margin-bottom:10px}
+.ac-prompt{display:block;width:100%;text-align:left;background:var(--bg-elev);
+  border:1px solid var(--border);color:var(--text-soft);border-radius:8px;
+  padding:9px 11px;font-size:12px;margin-bottom:7px;cursor:pointer}
+.ac-prompt:hover{border-color:var(--accent);color:var(--text)}
+.ac-close{background:none;border:0;color:var(--text-faint);cursor:pointer;font-size:16px}
+.ac-note{font-size:10.5px;color:var(--text-faint);margin-top:4px}
+
+/* ---- Footer -------------------------------------------------------- */
+.doc-footer{text-align:center;color:var(--text-faint);font-size:12px;
+  padding:20px 0 0;border-top:1px solid var(--border);margin-top:10px}
+.doc-footer a{color:var(--text-soft)}
+
+/* visibility by view mode */
+body[data-view="exec"] [data-view-only="tech"]{display:none}
+body[data-view="tech"] [data-view-only="exec"]{display:none}
+
+/* ---- Responsive ---------------------------------------------------- */
+#sidebar-toggle{display:none}
+@media (max-width:900px){
+  #sidebar{transform:translateX(-100%);transition:transform .2s}
+  body.nav-open #sidebar{transform:translateX(0)}
+  #viewport{left:0}
+  #sidebar-toggle{display:grid}
+  #header .brand .title{max-width:48vw}
+  #search{width:150px}
+}
+
+/* ---- Print --------------------------------------------------------- */
+@media print{
+  body{overflow:visible}
+  #header,#sidebar,#minimap,#ai-coach-btn,#ai-coach-panel,#view-tabs,
+  .search-wrap,.zoom-grp,.anchor-link{display:none!important}
+  #viewport{position:static;overflow:visible;inset:auto}
+  #canvas{max-width:none;transform:none!important;padding:0}
+  .card{break-inside:avoid;box-shadow:none;border-color:#999}
+  body[data-view="exec"] [data-view-only="tech"],
+  body[data-view="tech"] [data-view-only="exec"]{display:revert}
+  a[href^="http"]::after{content:" (" attr(href) ")";font-size:10px;color:#555}
+}
+
+
+/* ---- brochure-pass overrides --------------------------------------- */
+.hero{padding-bottom:8px}
+.hero h1{font-family:'Source Serif 4','Source Serif Pro',Georgia,serif;
+  font-weight:600;font-size:36px;line-height:1.18;letter-spacing:-0.015em;
+  margin:14px 0 18px}
+.hero .eyebrow{color:var(--salesforce);letter-spacing:.12em}
+.hero .hero-lift{font-size:21px;line-height:1.45;color:var(--text);
+  max-width:780px;margin:8px 0 16px;font-weight:600;letter-spacing:-.005em}
+.hero .subject{font-size:16.5px;line-height:1.6;color:var(--text-soft);
+  max-width:760px;margin-bottom:22px}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.btn-primary,.btn-secondary{display:inline-block;padding:10px 18px;
+  border-radius:8px;font-weight:600;font-size:14px;text-decoration:none;
+  transition:transform .08s ease,box-shadow .12s ease;cursor:pointer}
+.btn-primary{background:var(--accent);color:#fff;
+  box-shadow:0 1px 0 rgba(0,0,0,.06),0 4px 12px rgba(193,95,60,.25)}
+.btn-primary:hover{transform:translateY(-1px);text-decoration:none;
+  box-shadow:0 1px 0 rgba(0,0,0,.06),0 6px 16px rgba(193,95,60,.32)}
+.btn-secondary{background:transparent;color:var(--text);
+  border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);text-decoration:none;
+  color:var(--accent)}
+.hero-foot{font-size:12.5px;color:var(--text-faint);display:flex;flex-wrap:wrap;gap:6px}
+.hero-foot .dot{opacity:.6}
+
+/* Orient strip -- three quick-read columns under the hero so a visitor
+   knows what this is, what it isn't, and where to jump. */
+.orient-strip{padding:18px 22px 16px}
+.orient-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px}
+.orient-cell{font-size:13.5px;line-height:1.55;color:var(--text-soft)}
+.orient-cell p{margin:4px 0 0}
+.orient-cell strong{color:var(--text);font-weight:600}
+.orient-cell a{color:var(--accent);font-weight:600;text-decoration:none;
+  border-bottom:1px solid transparent;padding-bottom:1px;
+  transition:border-color .12s ease}
+.orient-cell a:hover{border-bottom-color:var(--accent)}
+.orient-label{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--accent);margin-bottom:2px}
+
+/* Why-cards: three benefit cards */
+.why-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:16px;margin:18px 0 4px}
+.why-card{background:var(--bg-card);border:1px solid var(--border-soft);
+  border-radius:12px;padding:22px;position:relative;overflow:hidden}
+.why-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent);opacity:.85}
+.why-icon{font-size:30px;line-height:1;margin-bottom:8px}
+.why-card h3{font-size:17px;margin:4px 0 8px;font-weight:600}
+.why-card p{font-size:14px;line-height:1.55;color:var(--text-soft);margin:0}
+
+/* Skill cards */
+.skill-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:16px;margin:18px 0}
+.skill-card{background:var(--bg-card);border:1px solid var(--border-soft);
+  border-radius:12px;padding:20px 22px;border-top:4px solid var(--accent);
+  position:relative}
+.skill-card.fg{border-top-color:var(--accent)}
+.skill-card.dl{border-top-color:#6B9F4A}
+.skill-card.xa{border-top-color:#C99A2F}
+.skill-card.an{border-top-color:var(--salesforce)}
+.skill-card.sl{border-top-color:var(--slack)}
+.skill-card.hc{border-top-color:#8E5BB0}
+.skill-head{display:flex;align-items:center;gap:10px;margin-bottom:2px}
+.skill-icon{font-size:22px;line-height:1}
+.skill-card h3{margin:0;font-size:16px}
+.skill-card h3 code{font-size:15px;background:transparent;padding:0;color:inherit}
+.skill-tag{font-weight:700;color:var(--text);font-size:14px;margin:8px 0 6px}
+.skill-card p{font-size:13.5px;line-height:1.55;color:var(--text-soft);margin:4px 0}
+.skill-when{font-size:13px;color:var(--text);margin-top:10px;
+  padding-top:10px;border-top:1px dashed var(--border-soft)}
+.skill-try{font-size:12px;color:var(--text-faint);margin-top:8px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;
+  word-wrap:break-word;overflow-wrap:break-word}
+.skill-try code{background:var(--code-bg);padding:1px 5px;border-radius:4px;
+  font-size:11.5px}
+
+/* Day-in-the-life narrative */
+.day-narrative{position:relative;margin:20px 0;padding-left:22px;
+  border-left:2px solid var(--border-soft)}
+.day-step{margin:0 0 18px;padding-left:8px}
+.day-step .time{display:inline-block;font-weight:700;color:var(--accent);
+  font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--accent-soft);padding:3px 10px;border-radius:11px;
+  margin-bottom:8px;margin-left:-30px}
+.day-step p{margin:6px 0;line-height:1.6}
+.day-cmd{background:var(--code-bg);border:1px solid var(--border-soft);
+  border-radius:8px;padding:10px 12px;font-size:13px;line-height:1.55;
+  margin:8px 0;white-space:pre-wrap;word-wrap:break-word;overflow-wrap:break-word}
+.day-aside{background:var(--bg-elev);border-left:3px solid var(--salesforce);
+  padding:14px 18px;border-radius:0 8px 8px 0;margin-top:20px}
+.day-aside p{margin:6px 0;font-size:14px;color:var(--text-soft)}
+.quiet-list{margin:8px 0 8px 22px;color:var(--text-soft);font-size:14px}
+.quiet-list li{margin:4px 0}
+
+/* Install paths */
+.install-paths{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:16px;margin:16px 0 24px}
+.install-path{background:var(--bg-card);border:1px solid var(--border-soft);
+  border-radius:12px;padding:20px}
+.install-tag{display:inline-block;font-size:10.5px;
+  font-weight:700;letter-spacing:.08em;color:var(--text-faint);
+  background:var(--bg-elev);padding:3px 9px;border-radius:10px;
+  margin:0 0 12px;text-transform:uppercase}
+.install-tag.recommended{color:var(--accent);background:var(--accent-soft)}
+.install-path h4{margin:0 0 8px;font-size:16px;font-weight:600;line-height:1.3}
+.install-path p{font-size:13.5px;color:var(--text-soft);margin:4px 0 10px}
+
+/* Examples */
+.cmd-table{width:100%;border-collapse:collapse;font-size:14px;margin:10px 0;
+  table-layout:auto}
+.cmd-table th,.cmd-table td{border-bottom:1px solid var(--border-soft);
+  padding:8px 10px;vertical-align:top;text-align:left}
+.cmd-table th{color:var(--text-soft);font-weight:600;font-size:12.5px;
+  text-transform:uppercase;letter-spacing:.04em}
+.cmd-table code{background:var(--code-bg);padding:1px 5px;border-radius:4px;
+  font-size:12.5px}
+.cmd-table td:first-child,.cmd-table th:first-child{
+  white-space:nowrap;min-width:11em;width:1%}
+ul.bullets{margin:10px 0 10px 22px}
+ul.bullets li{margin:6px 0}
+ol.numbered{margin:10px 0 10px 22px}
+ol.numbered li{margin:8px 0}
+.example{background:var(--bg-elev);border:1px solid var(--border-soft);
+  border-radius:10px;padding:16px 18px;margin:14px 0}
+.example .example-outcome{font-size:14.5px;font-weight:700;color:var(--text);
+  margin-bottom:10px;display:block}
+.example .example-outcome::before{content:'→ ';color:var(--accent)}
+.example pre{background:var(--code-bg);border:1px solid var(--border-soft);
+  border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.55;
+  margin:0 0 8px;max-width:100%;
+  white-space:pre-wrap !important;word-wrap:break-word !important;
+  overflow-wrap:break-word !important;word-break:break-word !important;
+  overflow-x:hidden}
+.example pre code{white-space:pre-wrap !important;word-wrap:break-word !important;
+  overflow-wrap:break-word !important;font-family:'JetBrains Mono',ui-monospace,monospace}
+.example p{margin:8px 0 0;font-size:13.5px;color:var(--text-soft);line-height:1.55}
+.example p.chain{font-size:12.5px;color:var(--text-faint);
+  padding:8px 10px;background:var(--bg-card);border-radius:6px;margin-top:10px}
+.muted{color:var(--text-faint);font-size:12.5px}
+.lead{font-size:15px;color:var(--text-soft);margin:0 0 14px;line-height:1.6}
+kbd{background:var(--bg-elev);border:1px solid var(--border);border-radius:4px;
+  padding:1px 5px;font-size:12px;font-family:'JetBrains Mono',monospace}
+
+/* Section card spacing breathing room */
+.card{margin-bottom:22px}
+.card h2{font-family:'Source Serif 4','Source Serif Pro',Georgia,serif;
+  font-weight:600;letter-spacing:-0.01em;font-size:26px;margin:6px 0 14px}
+.card h3{font-size:18px;margin:18px 0 8px;font-weight:600}
+
+/* Hide template fallback toggles if any survived */
+#view-tabs{display:none !important}
+
+/* Panel-suggestion mockup -- larger than the install shots, with more padding */
+figure.suggest-shot{max-width:740px;margin:18px 0;padding:8px;
+  background:var(--bg-elev);border:1px solid var(--border-soft);
+  border-radius:10px}
+figure.suggest-shot svg{width:100%;height:auto;display:block}
+figure.suggest-shot figcaption{font-size:12px;color:var(--text-faint);
+  padding:8px 12px 6px;font-style:italic;line-height:1.5}
+figure.suggest-shot figcaption code{font-style:normal;background:var(--code-bg);
+  padding:1px 5px;border-radius:4px;font-size:11.5px}
+
+/* Install-path code blocks must wrap (URLs were overflowing the card) */
+.install-path pre{white-space:pre-wrap !important;word-wrap:break-word !important;
+  overflow-wrap:break-word !important;word-break:break-word !important;
+  max-width:100%;overflow-x:hidden;font-size:12.5px;line-height:1.5;
+  background:var(--code-bg);border:1px solid var(--border-soft);
+  border-radius:6px;padding:10px 12px;margin:8px 0}
+.install-path pre code{white-space:pre-wrap !important;word-wrap:break-word !important;
+  overflow-wrap:break-word !important;font-family:'JetBrains Mono',ui-monospace,monospace}
+/* SVG install screenshots: keep them centered, scaled, with a soft caption */
+figure.install-shot{margin:10px 0 12px;padding:0;background:var(--bg-elev);
+  border:1px solid var(--border-soft);border-radius:8px;overflow:hidden}
+figure.install-shot svg{width:100%;height:auto;display:block;padding:8px}
+figure.install-shot figcaption{font-size:11.5px;color:var(--text-faint);
+  padding:6px 12px 10px;font-style:italic;line-height:1.4}
+
+/* Install-path numbered lists: match the surrounding paragraph size, not the
+   page-default ol size which renders much larger inside the card. */
+.install-path ol.numbered{font-size:13.5px;line-height:1.55;
+  margin:8px 0 8px 22px}
+.install-path ol.numbered li{margin:6px 0}
+.install-path ol.numbered code,.install-path ol.numbered kbd{font-size:12px}
+.install-path p{font-size:13.5px;line-height:1.55}
+.install-path > p:not(.muted){margin:6px 0 10px}
+
+/* Screenshot figures -- real captures from the IDE, dropped into
+   docs/screenshots/. Light card frame so the dark screenshot reads
+   cleanly against the warm-off-white page. */
+figure.screenshot-figure{margin:18px 0 12px;padding:8px;
+  background:var(--bg-elev);border:1px solid var(--border-soft);
+  border-radius:10px;overflow:hidden}
+figure.screenshot-figure img{display:block;width:100%;height:auto;
+  border-radius:6px;max-width:760px;margin:0 auto}
+figure.screenshot-figure figcaption{font-size:12px;color:var(--text-faint);
+  padding:10px 12px 4px;font-style:italic;line-height:1.5}
+figure.screenshot-figure figcaption code{font-style:normal;
+  background:var(--code-bg);padding:1px 5px;border-radius:4px;
+  font-size:11.5px}
+
+/* Chat-style mocks -- match what Claude Code actually renders in the
+   conversation pane: a numbered text prompt, no floating dialog. */
+figure.chat-mock-figure{margin:18px 0 12px;padding:0}
+.chat-mock{background:var(--bg-elev);border-left:3px solid var(--accent);
+  border-radius:0 10px 10px 0;padding:16px 20px;
+  box-shadow:0 1px 0 rgba(0,0,0,.04)}
+.chat-mock-label{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--accent);margin-bottom:10px}
+.chat-mock-body{color:var(--text);font-family:'Inter',system-ui,sans-serif;
+  font-size:13.5px;line-height:1.6}
+.chat-mock-body p{margin:0 0 8px}
+.chat-mock-body ol{margin:8px 0 10px 24px;padding:0}
+.chat-mock-body ol li{margin:4px 0;line-height:1.55}
+.chat-mock-body code{background:var(--code-bg);padding:1px 5px;
+  border-radius:4px;font-size:12px}
+.chat-mock-input{margin-top:10px;padding:9px 14px;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:6px;color:var(--text-faint);
+  font-style:italic;font-size:12.5px}
+figure.chat-mock-figure figcaption{font-size:12px;color:var(--text-faint);
+  padding:8px 4px 0;font-style:italic;line-height:1.5}
+figure.chat-mock-figure figcaption code{font-style:normal;background:var(--code-bg);
+  padding:1px 5px;border-radius:4px;font-size:11.5px}
+
+/* AskUserQuestion-dialog mockup -- rendered DARK to match the actual
+   Claude Code screenshot. Uses its own self-contained palette so it
+   stays dark regardless of the surrounding page theme. */
+.ask-mock{--am-bg:#1F1E1B;--am-row:#2E2B27;--am-accent:#FF6A39;
+  --am-text:#F2F0EA;--am-soft:#A8A39B;--am-faint:#8E8B84;--am-line:#3A3733;
+  background:var(--am-bg);border:1px solid #3A3733;border-radius:10px;
+  padding:0;font-family:'Inter',system-ui,sans-serif;
+  box-shadow:0 6px 22px rgba(0,0,0,.25);overflow:hidden;color:var(--am-text)}
+.ask-mock-tabs{display:flex;gap:2px;padding:10px 14px 0;
+  border-bottom:1px solid var(--am-line);background:var(--am-bg)}
+.ask-mock-tab{font-size:12px;color:var(--am-soft);padding:6px 10px 8px;
+  border-bottom:2px solid transparent;font-weight:600}
+.ask-mock-tab.active{color:var(--am-text);border-bottom-color:var(--am-accent)}
+.ask-mock-question{padding:14px 18px 8px;color:var(--am-text);
+  font-size:13.5px;line-height:1.55;font-weight:600}
+.ask-mock-options{list-style:none;margin:0;padding:4px 8px 8px}
+.ask-mock-options li{display:flex;align-items:flex-start;gap:10px;
+  padding:9px 12px;border-radius:6px;color:var(--am-text);font-size:13px;
+  line-height:1.5}
+.ask-mock-options li.active{background:var(--am-row)}
+.ask-mock-options .dot{flex:0 0 12px;width:12px;height:12px;border-radius:50%;
+  border:2px solid #5C5851;margin-top:3px;background:var(--am-bg)}
+.ask-mock-options li.active .dot{border-color:var(--am-accent);
+  background:radial-gradient(circle,var(--am-accent) 42%,var(--am-bg) 46%)}
+.ask-mock-footer{display:flex;justify-content:space-between;padding:10px 18px;
+  border-top:1px solid var(--am-line);background:var(--am-bg);
+  font-size:11.5px;color:var(--am-faint)}
+.ask-mock-footer kbd{background:var(--am-row);border:1px solid #4A4641;
+  border-radius:4px;padding:1px 6px;font-size:11px;font-family:inherit;
+  color:var(--am-text);margin-right:4px}
+
+/* Unified dark IDE-pane mockup -- used when the AskUserQuestion overflows
+   the 4-option harness limit and the prompt is rendered inline in the
+   chat output above the regular Claude Code input field. Self-contained
+   dark palette so it reads as a screenshot regardless of page theme. */
+.ide-mock{--im-bg:#1F1E1B;--im-bg2:#262420;--im-accent:#FF6A39;
+  --im-text:#F2F0EA;--im-soft:#A8A39B;--im-faint:#8E8B84;--im-line:#3A3733;
+  background:var(--im-bg);border:1px solid var(--im-line);border-radius:10px;
+  overflow:hidden;box-shadow:0 6px 22px rgba(0,0,0,.25);
+  font-family:'Inter',system-ui,sans-serif;color:var(--im-text)}
+.ide-mock-output{padding:16px 20px 8px}
+.ide-mock-label{display:flex;align-items:center;gap:8px;font-size:11.5px;
+  font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--im-accent);margin-bottom:10px}
+.ide-mock-glyph{font-size:14px;line-height:1}
+.ide-mock-body{font-size:13.5px;line-height:1.6;color:var(--im-text)}
+.ide-mock-body p{margin:0 0 8px}
+.ide-mock-body ol{margin:8px 0 4px 24px;padding:0}
+.ide-mock-body ol li{margin:4px 0;line-height:1.55;color:var(--im-text)}
+.ide-mock-body i{color:var(--im-soft)}
+.ide-mock-input{padding:12px 14px 10px;background:var(--im-bg);
+  border:1.5px solid var(--im-accent);border-radius:10px;
+  margin:0 14px 14px}
+.ide-mock-input-text{font-size:13.5px;color:var(--im-text);min-height:22px;
+  padding:2px 0 10px;line-height:1.5}
+.ide-mock-input-text .ide-cursor{display:inline-block;color:var(--im-accent);
+  font-weight:400;margin-left:1px;animation:blink 1s steps(2,start) infinite}
+@keyframes blink{to{visibility:hidden}}
+.ide-mock-input-bar{display:flex;align-items:center;gap:10px;
+  padding-top:8px;font-size:12px;color:var(--im-soft)}
+/* Flat-glyph icon style (matches the actual Claude Code prompt bar -- no
+   borders or boxes, just the glyph with subtle hover affordance). */
+.ide-ci-icon{display:inline-flex;align-items:center;justify-content:center;
+  width:20px;height:20px;font-weight:600;color:var(--im-soft);font-size:14px}
+.ide-ci-icon.ide-ci-accent{color:var(--im-accent)}
+.ide-ci-sep{color:var(--im-line);margin:0 2px;font-weight:300}
+.ide-ci-ctx{font-size:11.5px;color:var(--im-faint);padding:2px 4px}
+.ide-ci-spacer{flex:1}
+.ide-ci-mode{font-size:11.5px;color:var(--im-faint);display:inline-flex;
+  align-items:center;gap:5px}
+.ide-ci-send{display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:5px;
+  background:rgba(255,106,57,.35);color:var(--im-text);font-weight:600;
+  font-size:14px}
+
+/* Install-path CTA link -- gives each install card a clear, direct
+   click-through to the relevant GitHub page beyond the SVG mock. */
+.install-cta{display:inline-block;font-weight:700;color:var(--accent);
+  text-decoration:none;border-bottom:2px solid var(--accent);
+  padding-bottom:1px;font-size:13.5px}
+.install-cta:hover{background:var(--bg-elev)}
+
+/* =================== PIZZAZZ PASS =================== */
+
+/* --- Top-border scroll progress indicator ---
+   Thin coral bar pinned to the top of the viewport, width tracks how
+   far down the page the reader has scrolled. */
+#scroll-progress{position:fixed;top:0;left:0;height:3px;width:0;
+  background:linear-gradient(90deg,var(--accent) 0%,#E08A66 70%,#F0A982 100%);
+  z-index:200;pointer-events:none;will-change:width;
+  box-shadow:0 1px 6px rgba(193,95,60,.35);transition:width .12s linear}
+
+/* --- Floating Claude glyph layer (dynamic particle system) ---
+   A fixed back-layer of low-opacity SVG sparkles + pixel-robot icons.
+   A JS spawner adds new floaters at random horizontal positions,
+   random sizes, random opacities, random durations -- each drifts
+   slowly upward off the top of the viewport and is then removed,
+   while new ones keep spawning at the bottom. Pure decoration:
+   pointer-events disabled, z-index above cards but below header /
+   sidebar / scroll-progress / AI-coach surface. */
+/* Glyphs sit BELOW content cards (z-index 1) so they only show in the
+   gutters around / between cards, ducking behind any opaque content
+   surface. The .card rule below promotes cards into their own
+   stacking context so this actually works against static <section>s. */
+#claude-glyphs{position:fixed;inset:0;pointer-events:none;z-index:1;
+  overflow:hidden;contain:strict}
+.card{position:relative;z-index:2}
+#claude-glyphs .floater{position:absolute;bottom:-80px;color:var(--accent);
+  opacity:0;will-change:transform,opacity;
+  animation:glyph-drift-up linear forwards}
+#claude-glyphs .floater svg{display:block;width:100%;height:100%}
+@keyframes glyph-drift-up{
+  0%   {transform:translate3d(0,0,0) rotate(0deg);opacity:0}
+  6%   {opacity:var(--g-op,.1)}
+  20%  {transform:translate3d(calc(var(--sway,18px) * -1),-22vh,0) rotate(calc(var(--rot,12deg) * -.4))}
+  40%  {transform:translate3d(var(--sway,18px),-44vh,0) rotate(calc(var(--rot,12deg) * .3))}
+  60%  {transform:translate3d(calc(var(--sway,18px) * -.6),-66vh,0) rotate(calc(var(--rot,12deg) * -.2))}
+  80%  {transform:translate3d(calc(var(--sway,18px) * .8),-88vh,0) rotate(calc(var(--rot,12deg) * .6))}
+  94%  {opacity:var(--g-op,.1)}
+  100% {transform:translate3d(0,-115vh,0) rotate(var(--rot,12deg));opacity:0}
+}
+@media (prefers-reduced-motion: reduce){
+  #claude-glyphs{display:none}
+}
+
+/* --- Hero typography moment ---
+   The H1 was the same scale as body. Now it does work: large serif,
+   tight tracking, gentle fade-in on load, single coral underline accent
+   on the operative word. */
+.hero h1{font-size:clamp(34px,5.5vw,68px);line-height:1.05;
+  letter-spacing:-.018em;margin:6px 0 14px;font-weight:700;
+  opacity:0;transform:translateY(8px);
+  animation:hero-rise .7s cubic-bezier(.2,.6,.2,1) .1s forwards}
+.hero h1 .accent-word{position:relative;display:inline-block;color:var(--text)}
+.hero h1 .accent-word::after{content:"";position:absolute;
+  left:0;right:0;bottom:.04em;height:.18em;
+  background:var(--accent);opacity:.28;border-radius:3px;
+  transform:scaleX(0);transform-origin:left;
+  animation:underline-grow .6s cubic-bezier(.2,.6,.2,1) .8s forwards}
+.hero .hero-lift{opacity:0;transform:translateY(6px);
+  animation:hero-rise .6s cubic-bezier(.2,.6,.2,1) .35s forwards}
+.hero .subject{opacity:0;transform:translateY(4px);
+  animation:hero-rise .6s cubic-bezier(.2,.6,.2,1) .55s forwards}
+.hero .hero-cta{opacity:0;
+  animation:hero-rise .6s cubic-bezier(.2,.6,.2,1) .75s forwards}
+@keyframes hero-rise{ to{opacity:1;transform:translateY(0)} }
+@keyframes underline-grow{ to{transform:scaleX(1)} }
+@media (prefers-reduced-motion: reduce){
+  .hero h1,.hero .hero-lift,.hero .subject,.hero .hero-cta{
+    opacity:1;transform:none;animation:none}
+  .hero h1 .accent-word::after{transform:scaleX(1);animation:none}
+}
+
+/* --- Stat row ---
+   Five numbers right after the hero, count up when scrolled into view. */
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:18px;padding:22px 24px;margin:-6px 0 0;background:transparent}
+.stat-cell{text-align:center}
+.stat-num{font-size:36px;font-weight:700;color:var(--accent);
+  font-family:'Source Serif 4',Georgia,serif;letter-spacing:-.02em;
+  line-height:1}
+.stat-label{font-size:12px;color:var(--text-soft);font-weight:600;
+  text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
+
+/* --- Skill-card hover lift (carries the orient-strip micro-interaction
+       through to the main panel section) --- */
+.skill-card{transition:transform .18s cubic-bezier(.2,.6,.2,1),
+                       box-shadow .18s cubic-bezier(.2,.6,.2,1)}
+.skill-card:hover{transform:translateY(-3px);
+  box-shadow:0 6px 22px rgba(42,37,32,.07),0 2px 4px rgba(42,37,32,.04)}
+.skill-card .skill-head{transition:transform .18s ease}
+.skill-card:hover .skill-head{transform:translateX(2px)}
+
+/* Why-cards get the same lift */
+.why-card{transition:transform .18s cubic-bezier(.2,.6,.2,1),
+                     box-shadow .18s cubic-bezier(.2,.6,.2,1)}
+.why-card:hover{transform:translateY(-3px);
+  box-shadow:0 6px 22px rgba(42,37,32,.06),0 2px 4px rgba(42,37,32,.03)}
+
+/* --- Before/after artifact card ---
+   The single most-requested missing element from the QA reviews:
+   concrete proof of what /focus-group actually does to a sales draft. */
+.ba-card{padding:24px 24px 18px}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  margin:14px 0 8px}
+.ba-side{background:var(--bg-elev);border:1px solid var(--border);
+  border-radius:10px;padding:16px 18px;font-size:13.5px;line-height:1.55;
+  color:var(--text)}
+.ba-side.ba-before{border-left:3px solid #B89D7C}
+.ba-side.ba-after{border-left:3px solid var(--accent)}
+.ba-head{display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:10px}
+.ba-tag{font-size:10.5px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--text-faint)}
+.ba-tag.ba-tag-before{color:#8E6E45}
+.ba-tag.ba-tag-after{color:var(--accent)}
+.ba-meta{font-size:10.5px;color:var(--text-faint)}
+.ba-side p{margin:0 0 8px}
+.ba-side p:last-child{margin-bottom:0}
+.ba-strike{color:#8E6E45;background:rgba(184,157,124,.16);
+  text-decoration:line-through;text-decoration-color:rgba(142,110,69,.55);
+  text-decoration-thickness:1.5px;padding:0 3px;border-radius:3px}
+.ba-add{color:#3D6E3D;background:rgba(110,165,110,.14);padding:0 3px;
+  border-radius:3px;font-weight:600}
+.ba-cite{color:var(--accent);font-weight:600;font-size:11.5px;
+  vertical-align:super;line-height:0}
+.ba-score{display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;color:var(--text-soft);margin-top:10px}
+.ba-score-num{font-size:14px;font-weight:700;color:var(--accent)}
+.ba-cite-list{margin:14px 0 0;padding:12px 14px;font-size:11.5px;
+  color:var(--text-soft);background:var(--bg-elev);border-radius:8px;
+  border-left:3px solid var(--accent)}
+.ba-cite-list b{color:var(--text);font-size:11px;display:block;
+  margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+@media (max-width:780px){
+  .ba-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+
+<body data-layout="single" data-view="tech">
+<a class="skip-link" href="#hero">Skip to content</a>
+
+<!-- Top-border scroll progress indicator -->
+<div id="scroll-progress" aria-hidden="true"></div>
+
+<!-- Floating Claude glyph background layer is now inside #viewport
+     (see below) so it shares the cards' stacking context. -->
+
+<!-- =================== HEADER =================== -->
+<header id="header">
+  <button class="tool-btn" id="sidebar-toggle" title="Toggle navigation" aria-label="Toggle navigation">☰</button>
+  <div class="brand">
+    <span class="logo" aria-hidden="true">F</span>
+    <span class="title">Claude AI Skills: a Virtual Focus Group</span>
+    <span class="ver" id="ver-badge">v1.0.0</span>
+    <span class="ver-meta" id="last-mod-badge"><b>Last Modified</b> 2026-05-21</span>
+  </div>
+  <div class="spacer"></div>
+
+  <div class="search-wrap" id="search-wrap">
+    <span class="ico" aria-hidden="true">⌕</span>
+    <input id="search" type="search" placeholder="Search  ( / )" aria-label="Search the document" autocomplete="off">
+    <span id="search-count"></span>
+  </div>
+
+  <div class="zoom-grp">
+    <button class="tool-btn" id="zoom-out" title="Zoom out" aria-label="Zoom out">−</button>
+    <span id="zoom-level">100%</span>
+    <button class="tool-btn" id="zoom-in" title="Zoom in" aria-label="Zoom in">+</button>
+  </div>
+  <button class="tool-btn" id="theme-toggle" title="Toggle light / dark" aria-label="Toggle theme">◐</button>
+  <a class="tool-btn" id="repo-link" href="https://github.com/drpaulcoleman/focus-group-skill"
+     title="Open the source repository" target="_blank" rel="noopener" aria-label="Source repository">⌥</a>
+</header>
+
+<!-- =================== SIDEBAR / TOC =================== -->
+<aside id="sidebar">
+  <nav aria-label="Table of contents">
+    <div class="nav-group">Welcome</div>
+    <a href="#hero">Why you're here</a>
+    <a href="#why">What changes for you</a>
+
+    <div class="nav-group">Tour</div>
+    <a href="#panel">Meet the panel</a>
+
+    <div class="nav-group">Try it</div>
+    <a href="#install">Get started in 3 min</a>
+    <a href="#examples">Prompt examples</a>
+
+    <div class="nav-group">When you want more</div>
+    <a href="#skills-reference">Skill reference</a>
+    <a href="#industry-personas">Industry persona library</a>
+    <a href="#customize">Make it your own</a>
+    <a href="#references">Related links</a>
+  </nav>
+</aside>
+
+<!-- =================== MINIMAP (canvas layout only) =================== -->
+<div id="minimap" aria-hidden="true">
+  <div class="mm-label">MAP</div>
+  <canvas id="minimap-canvas" width="216" height="290"></canvas>
+</div>
+
+<!-- =================== AI-COACH WIDGET =================== -->
+<button id="ai-coach-btn" title="Get AI help with this section">✦ Ask AI</button>
+<div id="ai-coach-panel" role="dialog" aria-label="AI coach">
+  <div class="ac-head">
+    <b>✦ Ask AI about this section</b>
+    <button class="ac-close" id="ai-coach-close" aria-label="Close">✕</button>
+  </div>
+  <div class="ac-ctx" id="ai-coach-ctx">Section: —</div>
+  <div id="ai-coach-prompts"></div>
+  <div class="ac-note">Copies the prompt <em>and</em> a context line (this page's URL + section) so any AI can ground its answer.</div>
+</div>
+
+<!-- =================== MAIN CONTENT =================== -->
+<div id="viewport">
+<!-- Floating Claude glyph background layer -- the JS spawner fills it.
+     Inside #viewport so it shares the cards' stacking context: glyphs at
+     z-index 1 sit BENEATH cards (z-index 2 below) but ABOVE the viewport
+     background, so they're visible in the left/right gutters and pass
+     behind cards as they drift up. -->
+<div id="claude-glyphs" aria-hidden="true"></div>
+<main id="canvas">
+
+      <!-- HERO -->
+  <section class="card hero" id="hero">
+    <div class="eyebrow">AI for Salesforce Sales Teams</div>
+    <h1>Your <span class="accent-word">toughest</span> reviewers, already in the room.</h1>
+    <p class="hero-lift">Walk into every call having already heard the SE, the CIO, the Champion, and the InfoSec officer push back.</p>
+    <p class="subject">Five tough viewpoints on every draft you write — grounded in your real Salesforce docs and account data. Customer names never leave your laptop.</p>
+    <div class="hero-cta">
+      <a href="#install" class="btn-primary">Get started in 3 minutes →</a>
+      <a href="#panel" class="btn-secondary">Tour the six skills</a>
+      <a href="#examples" class="btn-secondary">See the prompt examples</a>
+    </div>
+    <div class="hero-foot">
+      <span>Built for Account Executives · Solution Engineers · Architects · Industry Specialists · Business Value Consultants</span>
+      <span class="dot">·</span>
+      <span>Free &amp; open source (MPL-2.0) · No telemetry · No account required</span>
+      <span class="dot">·</span>
+      <span>v1.0.0 · Last Modified 2026-05-21</span>
+    </div>
+  </section>
+
+  <!-- STAT ROW: five numbers, count up when scrolled into view -->
+  <section class="card stat-row" aria-label="At a glance">
+    <div class="stat-cell"><div class="stat-num" data-count-to="177">0</div><div class="stat-label">Personas</div></div>
+    <div class="stat-cell"><div class="stat-num" data-count-to="6">0</div><div class="stat-label">Skills</div></div>
+    <div class="stat-cell"><div class="stat-num" data-count-to="19">0</div><div class="stat-label">Industry packs</div></div>
+    <div class="stat-cell"><div class="stat-num" data-count-to="3" data-suffix=" min">0 min</div><div class="stat-label">To install</div></div>
+  </section>
+
+  <!-- ORIENT STRIP: what this is, what it isn't, skip-ahead by role -->
+  <section class="card orient-strip" aria-label="What this is and where to start">
+    <div class="orient-row">
+      <div class="orient-cell">
+        <div class="orient-label">What this is</div>
+        <p>Six skill files for <strong>Claude Code</strong> or <strong>Cursor</strong>. You drop them in a folder; the slash commands appear in autocomplete.</p>
+      </div>
+      <div class="orient-cell">
+        <div class="orient-label">What it isn't</div>
+        <p>Not a CRM plugin, not a Salesforce add-on, not a paid service. Nothing to provision, no account to create, nothing to wire into your org.</p>
+      </div>
+      <div class="orient-cell">
+        <div class="orient-label">Where to start</div>
+        <p>By role — jump to the example that fits how you sell:
+          <a href="#examples">Account Executive →</a> ·
+          <a href="#examples">Solution Engineer →</a> ·
+          <a href="#examples">Architect →</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY -->
+  <section class="card" id="why">
+    <div class="eyebrow">What changes for you</div>
+    <h2>What changes for you — three things you walk in with</h2>
+    <div class="why-cards">
+      <div class="why-card">
+        <div class="why-icon">🎯</div>
+        <h3>Their tough questions, raised in writing first.</h3>
+        <p>The Economic Buyer asking <em>"and the ROI in our numbers?"</em> · the InfoSec officer asking <em>"who actually sees the data?"</em> · the Board Treasurer asking <em>"what does year three cost?"</em> · the Champion's manager asking <em>"is this what we approved?"</em> — in your inbox before the meeting, with time to answer them well.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📚</div>
+        <h3>You sound prepared because you are.</h3>
+        <p>When a customer asks "what's the actual difference between X and Y?", you have it — cited to the real doc. The skills do the product reading you don't have time for, so every claim in your draft is backed by a source you can point to.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🛡️</div>
+        <h3>Customer trust, built into the workflow.</h3>
+        <p>The skills scrub identifiable customer data before any AI sees it — safe by default, even when you forget to think about it. You move faster <em>and</em> protect the relationships and the legal posture that make the deals worth winning.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- BEFORE / AFTER -- concrete proof of what the panel actually does -->
+  <section class="card ba-card" aria-label="Before and after a focus-group review">
+    <div class="eyebrow">What the deliverable looks like</div>
+    <h2>Before the panel · After the panel</h2>
+    <p class="lead">A paragraph from a real QBR draft, before and after one <code>/focus-group</code> run. The flagged words on the left are what the panel pushed back on. The right is the version the skill handed back, with citations and a score.</p>
+
+    <div class="ba-grid">
+      <div class="ba-side ba-before">
+        <div class="ba-head">
+          <span class="ba-tag ba-tag-before">⚠ Before</span>
+          <span class="ba-meta">QBR §3 · Pacific Grants Alliance · v1 draft</span>
+        </div>
+        <p>Agentforce will <span class="ba-strike">dramatically improve</span> donor engagement across the portfolio. Our <span class="ba-strike">deep integration</span> with Nonprofit Cloud means a <span class="ba-strike">significant lift in conversion</span> on the donor portal — early customers are seeing <span class="ba-strike">around 22%</span>. The implementation is <span class="ba-strike">straightforward</span> and we expect <span class="ba-strike">minimal disruption</span> to the Q3 appeal.</p>
+      </div>
+      <div class="ba-side ba-after">
+        <div class="ba-head">
+          <span class="ba-tag ba-tag-after">✓ After · /focus-group</span>
+          <span class="ba-meta">5 personas · 6 min · 3 models</span>
+        </div>
+        <p>Agentforce supports donor-experience workflows in Nonprofit Cloud. <span class="ba-add">Two early adopters report donor-portal conversion gains in the high-teens to low-20s percent range over a single appeal cycle</span><span class="ba-cite">[1]</span>. Implementation typically takes <span class="ba-add">6–10 weeks for a foundation of your scale</span><span class="ba-cite">[2]</span>; usage spikes during peak appeals can <span class="ba-add">3–5× consumption</span>, so we recommend pricing an envelope before the Q3 cutover.</p>
+        <div class="ba-score">Accuracy: <span class="ba-score-num">84/100</span> · 4 of 5 personas signed off · 2 claims tightened, 1 risk added</div>
+      </div>
+    </div>
+
+    <div class="ba-cite-list">
+      <b>Citations attached to the rewrite</b>
+      [1] Salesforce Help — Nonprofit Cloud · Donor Portal Engagement Patterns · retrieved 2026-05-21<br>
+      [2] Salesforce Architect — Nonprofit Cloud Reference Architecture · Implementation Timeline · retrieved 2026-05-21
+    </div>
+  </section>
+
+  <!-- MEET THE PANEL -->
+  <section class="card" id="panel">
+    <div class="eyebrow">Meet the panel</div>
+    <h2>Meet the panel — six skills, one workflow</h2>
+    <p class="lead">Each skill earns its keep on its own. Together they take you from cold prospect research to a draft your customer's InfoSec officer can't pick apart.</p>
+
+    <div class="skill-cards">
+      <div class="skill-card fg">
+        <div class="skill-head"><span class="skill-icon">👥</span><h3><code>/focus-group</code></h3></div>
+        <p class="skill-tag">The headliner.</p>
+        <p>Pressure-test your draft against the five people who'll hear it first. The skill picks a panel sized to your customer — Solution Engineer, Champion, Economic Buyer, InfoSec, Industry Specialist — each reacts from their own seat, then a synthesis pass hands you a ranked action list with citations.</p>
+        <div class="skill-when"><b>Reach for it when</b> you have a draft and a call coming up.</div>
+        <div class="skill-try">Try: <code>/focus-group review my discovery questions for Acme Credit Union</code></div>
+      </div>
+
+      <div class="skill-card dl">
+        <div class="skill-head"><span class="skill-icon">📖</span><h3><code>/download</code></h3></div>
+        <p class="skill-tag">The librarian.</p>
+        <p>Stop guessing what the docs actually say. The skill pulls in the real Salesforce Help, Trailhead, Architect decision guides, and developer.salesforce.com pages on your topic, stores them locally, and lets the panel cite them in its review.</p>
+        <div class="skill-when"><b>Reach for it when</b> you don't trust the AI to remember a product detail.</div>
+        <div class="skill-try">Try: <code>/download agentforce data cloud for healthcare patient services</code></div>
+      </div>
+
+      <div class="skill-card xa">
+        <div class="skill-head"><span class="skill-icon">⚖️</span><h3><code>/cross-ai-review</code></h3></div>
+        <p class="skill-tag">Two or three sets of eyes, not one.</p>
+        <p>Two or three AI models read your draft side-by-side. What they all flag is probably real; what only one flags is where the deal-killers usually hide. You get an accuracy score before you send.</p>
+        <div class="skill-when"><b>Reach for it when</b> the draft is going to a customer and one model's word isn't enough.</div>
+        <div class="skill-try">Try: <code>/cross-ai-review --prompt-file ./proposal-section-3.md --require-citations</code></div>
+      </div>
+
+      <div class="skill-card an">
+        <div class="skill-head"><span class="skill-icon">🔐</span><h3><code>/anonymize</code></h3></div>
+        <p class="skill-tag">The guardrail.</p>
+        <p>Talk to AI about your real customers without the legal blast radius. Names, emails, ARR figures, and account IDs become typed placeholders before any model sees them — and get restored in the final report. The token map stays on your laptop.</p>
+        <div class="skill-when"><b>Reach for it when</b> you'd be uncomfortable seeing the raw text in a public AI's logs.</div>
+        <div class="skill-try">Auto-runs inside the other skills. Or standalone: <code>/anonymize &lt;paste&gt;</code></div>
+      </div>
+
+      <div class="skill-card sl">
+        <div class="skill-head"><span class="skill-icon">💬</span><h3><code>/slackbot</code></h3></div>
+        <p class="skill-tag">The team radar.</p>
+        <p>Pull the freshest team intel before a customer call. The skill surfaces recent mentions of the account across the channels you're already in — deal rooms, customer Slack Connect, ops threads — and routes everything through <code>/anonymize</code> on the way out. Never DMs, never channels you aren't a member of.</p>
+        <div class="skill-when"><b>Reach for it when</b> you're prepping a status call and want the latest internal context.</div>
+        <div class="skill-try">Try: <code>/slackbot Acme Credit Union</code></div>
+      </div>
+
+      <div class="skill-card hc">
+        <div class="skill-head"><span class="skill-icon">✨</span><h3><code>/how-can-this-be-improved</code></h3></div>
+        <p class="skill-tag">The sharpening pass.</p>
+        <p>Catches the hedges, the buried bottom line, the audience the panel didn't cover — before they reach a customer. Point it at the report your <code>/focus-group</code> run just produced, or any draft, and you get a sharper version back.</p>
+        <div class="skill-when"><b>Reach for it when</b> the panel just finished and you want a fresh-eye pass before you send anything on.</div>
+        <div class="skill-try">Try: <code>/how-can-this-be-improved .scratch/focus-group/2026-05-21-acme-qbr.md</code></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTALL -->
+  <section class="card" id="install">
+    <div class="eyebrow">Get started</div>
+    <h2>Get started in 3 minutes</h2>
+    <p class="lead">You need <strong>Claude Code</strong> or <strong>Cursor</strong>. That's it for the basics. The skills will offer optional upgrades (Salesforce command-line tool, a second AI model, a headless browser for richer downloads) at the moments they would help — never automatically, never repeatedly.</p>
+
+    <h3>Pick the install path that fits how you work</h3>
+
+    <div class="install-paths">
+      <div class="install-path">
+        <div class="install-tag recommended">RECOMMENDED</div>
+        <h4>🆕 Use this git repo as template</h4>
+        <p>Best when you want your own repo that you can evolve over time.</p>
+        <figure class="install-shot" aria-label="Screenshot mockup of the GitHub Use this template button">
+          <svg viewBox="0 0 320 90" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="path-a-title">
+            <title id="path-a-title">GitHub repo header showing the green "Use this template" button</title>
+            <!-- repo header bar -->
+            <rect x="0" y="0" width="320" height="90" rx="6" fill="#FAF6EC" stroke="#E3D9C4"/>
+            <!-- repo name -->
+            <text x="14" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#5C544A">drpaulcoleman / focus-group-skill</text>
+            <!-- tabs row -->
+            <text x="14" y="46" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#8A8276">Code  ·  Issues  ·  Pull requests  ·  Actions</text>
+            <line x1="0" y1="54" x2="320" y2="54" stroke="#EDE4D0"/>
+            <!-- USE TEMPLATE button (highlighted, green) -->
+            <rect x="14" y="64" width="118" height="22" rx="6" fill="#2DA44E"/>
+            <text x="73" y="79" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">▼ Use this template</text>
+            <!-- arrow pointing to it -->
+            <path d="M 152 75 L 178 75" stroke="#C15F3C" stroke-width="2" fill="none"/>
+            <polygon points="148,75 156,71 156,79" fill="#C15F3C"/>
+            <text x="184" y="79" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#C15F3C">Click this</text>
+          </svg>
+          <figcaption>Top of your GitHub repo page — the green button is what you're after.</figcaption>
+        </figure>
+        <ol class="numbered">
+          <li>On this repo's GitHub page, click the green <b>Use this template</b> button → <b>Create a new repository</b>.</li>
+          <li>Pick a name (e.g., <code>my-focus-group</code>), private if you want, click <b>Create</b>.</li>
+          <li>Clone it: <code>git clone &lt;your-new-repo-url&gt;</code></li>
+          <li>Open the folder in Claude Code or Cursor. Type <code>/focus-group help</code>.</li>
+        </ol>
+        <p><a class="install-cta" href="https://github.com/drpaulcoleman/focus-group-skill/generate" target="_blank" rel="noopener">Open the "Use this template" page on GitHub →</a></p>
+      </div>
+
+      <div class="install-path">
+        <div class="install-tag">NO GIT</div>
+        <h4>📦 Download the ZIP</h4>
+        <p>Best when you're just trying it out and don't want to install anything new.</p>
+        <figure class="install-shot" aria-label="Screenshot mockup of the GitHub Code button showing the Download ZIP option">
+          <svg viewBox="0 0 380 150" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="path-b-title">
+            <title id="path-b-title">GitHub repo's Code button with the Download ZIP option highlighted</title>
+            <!-- repo header bar -->
+            <rect x="0" y="0" width="380" height="56" rx="6" fill="#FAF6EC" stroke="#E3D9C4"/>
+            <text x="14" y="22" font-family="Inter, system-ui, sans-serif" font-size="11" fill="#5C544A">drpaulcoleman / focus-group-skill</text>
+            <text x="14" y="40" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#8A8276">Code  ·  Issues  ·  Pull requests</text>
+            <!-- CODE button (green) -->
+            <rect x="300" y="20" width="68" height="22" rx="6" fill="#2DA44E"/>
+            <text x="334" y="35" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#FFFFFF" text-anchor="middle">&lt;&gt; Code ▼</text>
+            <!-- dropdown panel (widened so the HTTPS · SSH · GitHub CLI line sits inside the white) -->
+            <rect x="184" y="62" width="190" height="84" rx="6" fill="#FFFFFF" stroke="#E3D9C4"/>
+            <line x1="184" y1="84" x2="374" y2="84" stroke="#EDE4D0"/>
+            <line x1="184" y1="104" x2="374" y2="104" stroke="#EDE4D0"/>
+            <text x="194" y="77" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#5C544A">HTTPS · SSH · GitHub command-line tool</text>
+            <text x="194" y="98" font-family="Inter, system-ui, sans-serif" font-size="10" fill="#5C544A">📂 Open with Desktop</text>
+            <!-- Download ZIP item (highlighted) -->
+            <rect x="186" y="111" width="186" height="22" fill="#F1D7C9"/>
+            <text x="194" y="125" font-family="Inter, system-ui, sans-serif" font-size="10" font-weight="700" fill="#7E3B1F">⬇ Download ZIP</text>
+            <!-- arrow -->
+            <path d="M 168 122 L 184 122" stroke="#C15F3C" stroke-width="2" fill="none"/>
+            <polygon points="164,122 172,118 172,126" fill="#C15F3C"/>
+            <text x="14" y="125" font-family="Inter, system-ui, sans-serif" font-size="11" font-weight="600" fill="#C15F3C">Click this</text>
+          </svg>
+          <figcaption>The "Code" button opens a small menu — pick "Download ZIP" at the bottom.</figcaption>
+        </figure>
+        <ol class="numbered">
+          <li>On this repo's GitHub page, click <b>&lt; &gt; Code</b> → <b>Download ZIP</b>.</li>
+          <li>Unzip anywhere — your Desktop is fine.</li>
+          <li>Open the folder in Claude Code or Cursor. Type <code>/focus-group help</code>.</li>
+        </ol>
+        <p><a class="install-cta" href="https://github.com/drpaulcoleman/focus-group-skill/archive/refs/heads/main.zip">Download the ZIP directly →</a> &nbsp;<span class="muted">or <a href="https://github.com/drpaulcoleman/focus-group-skill" target="_blank" rel="noopener">open the repo page</a> for the Code menu.</span></p>
+        <p class="muted">Want updates later? Install <code>git</code> (5–10 minutes). The skills will walk you through it the first time it helps.</p>
+      </div>
+
+      <div class="install-path">
+        <div class="install-tag">command-line tool</div>
+        <h4>⌨️ <code>git clone</code></h4>
+        <p>Best when you're comfortable on the command line.</p>
+        <pre><code>git clone https://github.com/drpaulcoleman/focus-group-skill.git
+cd focus-group-skill</code></pre>
+        <p><a class="install-cta" href="https://github.com/drpaulcoleman/focus-group-skill" target="_blank" rel="noopener">Open the repo on GitHub →</a></p>
+      </div>
+    </div>
+
+    <h3>Where to put the skills — project-local vs global</h3>
+    <p><b>Just for one project</b> (recommended while trying it): keep the folder as-is. The <code>.claude/</code> and <code>.cursor/</code> subfolders are picked up automatically when you open that folder.</p>
+    <p><b>For every Claude Code / Cursor session</b> (once you like it): copy each folder inside <code>.claude/skills/</code> into your global skills folder. Your OS:</p>
+    <table class="cmd-table">
+      <thead><tr><th>Your OS</th><th>Global skills folder</th></tr></thead>
+      <tbody>
+        <tr><td>Windows</td><td><code>C:\Users\&lt;your-name&gt;\.claude\skills\</code></td></tr>
+        <tr><td>macOS</td><td><code>~/.claude/skills/</code> &nbsp; <span class="muted">(in Finder: <kbd>⇧ ⌘ G</kbd> → paste <code>~/.claude/skills</code>)</span></td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- EXAMPLES -->
+  <section class="card" id="examples">
+    <div class="eyebrow">Examples</div>
+    <h2>Prompt examples</h2>
+    <p class="lead">Copy any of these into Claude Code or Cursor. They're organized from quick gut checks to multi-skill chains that prep a full onsite. Read each one as: <em>"the moment I'd reach for this"</em>, then <em>"what I get back."</em></p>
+
+    <h3>The default flow: four quick questions the first time, then mostly cached</h3>
+    <p>When you invoke <code>/focus-group</code> cold for the first time in a workspace, the skill walks you through four short questions — each a one-second tap on a Cursor / Claude Code chat option. The first question is the one that shapes everything that follows: <strong>what's your role?</strong> The final report gets framed in <em>your</em> job's language — talk tracks for an Account Executive, demo-flow gotchas for a Solution Engineer, ROI math for a Business Value Consultant, integration sequencing for an Architect.</p>
+
+    <ol class="numbered">
+      <li><b>Your role.</b> Account Executive · Solution Engineer · Industry Specialist · Enterprise / Technical Architect · Business Value Consultant · Lead Engagement · Customer Success Manager · Partner Account Manager · Other. <em>Asked once and remembered (with your consent) — see the bottom mockup.</em></li>
+      <li><b>The subject.</b> A file in this repo · pasted block of text · URL to fetch first · described scenario · other. <em>Asked every time — different content each run.</em></li>
+      <li><b>Product / industry context.</b> Default <code>salesforce-crm-agentforce</code>; you can switch packs or layer an industry on top. <em>Remembers your last pick; skipped on subsequent runs unless you say otherwise.</em></li>
+      <li><b>The customer.</b> Profile by name · profile by culture &amp; size · skip. <em>Saved per workspace; refreshed only after 14 days or when you ask.</em></li>
+    </ol>
+
+    <p>Here's what each of those prompts actually looks like in the chat pane — first the role question, then (after subject / product / customer are settled) the panel-recommendation prompt:</p>
+
+    <figure class="chat-mock-figure" aria-label="Mockup of the focus-group role-question dialog">
+      <div class="ask-mock" role="group">
+        <div class="ask-mock-tabs">
+          <span class="ask-mock-tab active">Your role</span>
+          <span class="ask-mock-tab">Save role?</span>
+        </div>
+        <div class="ask-mock-question">What's your role? This shapes how the panel's feedback gets framed back to you.</div>
+        <ul class="ask-mock-options">
+          <li class="active"><span class="dot"></span><b>Account Executive</b> — deal cycle, MEDDPICC, talk tracks</li>
+          <li><span class="dot"></span><b>Solution Engineer</b> — demo-ability, feasibility, governor-limit risk</li>
+          <li><span class="dot"></span><b>Industry Specialist</b> — vertical fit, regulatory landscape</li>
+          <li><span class="dot"></span><b>Enterprise / Technical Architect</b> — integration patterns, multi-cloud sequencing</li>
+          <li><span class="dot"></span><b>Other</b> — describe in one sentence</li>
+        </ul>
+        <div class="ask-mock-footer"><span><kbd>1</kbd> Submit answers</span><span><kbd>Esc</kbd> to cancel</span></div>
+      </div>
+    </figure>
+
+    <p>After Steps 2–4 (subject, product/industry, customer) are settled, the skill assembles a 5-persona panel and asks for your sign-off. Same chat-text format — type a number to swap or drop someone, or just say "OK":</p>
+
+    <figure class="chat-mock-figure" aria-label="Mockup of the focus-group panel-suggestion prompt rendered in the IDE chat pane">
+      <div class="ide-mock">
+        <div class="ide-mock-output">
+          <div class="ide-mock-label"><span class="ide-mock-glyph">✻</span> Focus Group · Step 5 of 12</div>
+          <div class="ide-mock-body">
+            <p><b>Panel recommendation</b></p>
+            <p>Based on your QBR for Pacific Grants Alliance, here are the five customer-side seats the panel will read it from. Reply with <b>approved</b> to approve, <b>1–7</b> to swap or drop a specific role, or describe what you'd change in your own words.</p>
+            <ol>
+              <li><b>Executive Director</b> — Economic Buyer. Mission-first lens; wants outcomes, not feature lists.</li>
+              <li><b>Director of Development</b> — Champion candidate. Donor-facing; reads for fundraising-narrative fit.</li>
+              <li><b>Program Manager</b> — Frontline operations view; flags anything that adds work without saving time.</li>
+              <li><b>Board Treasurer</b> — Fiduciary lens. Reads financials and risk language; will push back on anything fuzzy.</li>
+              <li><b>IT Director</b> — Capacity and continuity lens. Cares about staff-time impact more than tech specs.</li>
+              <li><i>Or pick a pre-built panel:</i> Buyer · Tech · Discovery · Demo Readiness · Architecture Review · Everyone</li>
+              <li><i>Or describe a change in your own words.</i></li>
+            </ol>
+          </div>
+        </div>
+        <div class="ide-mock-input" aria-hidden="true">
+          <div class="ide-mock-input-text">approved<span class="ide-cursor">|</span></div>
+          <div class="ide-mock-input-bar">
+            <span class="ide-ci-icon">+</span>
+            <span class="ide-ci-icon">/</span>
+            <span class="ide-ci-icon ide-ci-accent">◐</span>
+            <span class="ide-ci-sep">|</span>
+            <span class="ide-ci-ctx">⌀ pacific-grants-qbr.md</span>
+            <span class="ide-ci-spacer"></span>
+            <span class="ide-ci-mode">✋ Ask before edits</span>
+            <span class="ide-ci-send">↑</span>
+          </div>
+        </div>
+      </div>
+    </figure>
+
+    <div class="callout" style="margin:18px 0 8px;background:var(--bg-elev);border-left:3px solid var(--accent);padding:14px 18px;border-radius:0 8px 8px 0">
+      <div class="lead" style="font-weight:700;font-size:15px;color:var(--text);margin:0 0 6px">Set it once. After that, usually one question.</div>
+      <p style="margin:0;font-size:13.5px;line-height:1.55;color:var(--text-soft)">The pipeline has 12 steps — preflight, research, persona dispatch, synthesis, citations, save — and most run silently. Only a few <em>ask</em> you anything. First run: typically four prompts (role, product pack, customer profile, panel approval). Every run after that, the panel is already shaped around your role, your usual product, and the customer on file — and the skill just asks <em>what do you want me to review?</em></p>
+    </div>
+
+    <p>The examples below assume that first-run setup is done.</p>
+
+    <h3>Quick wins — one skill, one purpose</h3>
+
+    <div class="example">
+      <div class="example-outcome">When you want a fast gut check</div>
+      <pre><code>/focus-group help me understand a SE and a CIO Economic Buyer's perspective on Agentforce for contact-center deflection</code></pre>
+      <p>Runs a two-persona panel on a generic prompt — no customer named, no downloads. Five-second framing pass; useful while you're getting your own argument straight.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">When the call is tomorrow and you haven't pre-researched</div>
+      <pre><code>/focus-group next-call prep on Service Cloud Voice for a mid-market retail customer — attendees are an AE, an SE, the customer's VP Customer Care (Champion), and a CIO Economic Buyer</code></pre>
+      <p>The skill asks once whether to profile by name or by culture/size. Pick "by culture &amp; size" for the wizard. Five-minute pass.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">When you don't trust the AI to remember a product detail</div>
+      <pre><code>/download agentforce data cloud grounding for healthcare patient services</code></pre>
+      <p>Because the topic mentions Salesforce, the skill automatically searches <code>help.salesforce.com</code>, Trailhead, Architect, and <code>developer.salesforce.com</code> alongside the general web. Writes a ranked list of sources you can pick from, and offers to grab the top few in full.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Errors-and-omissions audit before a claim goes out</div>
+      <pre><code>/cross-ai-review --prompt "Salesforce Health Cloud has native FHIR R4 support that maps Patient and Encounter objects without custom code. Is this accurate as of today?"</code></pre>
+      <p>You find out before your customer does whether the claim holds up — and what you <em>didn't</em> say that the customer would expect to hear. Two or three AI models compare notes; the report flags errors (claims that don't hold up) and omissions (context they'd expect to see). If you only have Claude installed, it runs Opus + Sonnet in parallel. Comes with an accuracy score so you know how much to trust it.</p>
+    </div>
+
+    
+    <h3>Want a specific panel?</h3>
+    <p class="lead">Just name it. A quick-pick panel by name (<code>with the Buyer panel</code>), an industry pack as a switch (<code>--industry healthcare-life-sciences</code>), or natural-language guidance (<code>--personas "must include HIPAA Privacy Officer; keep it to 4"</code>). The skill biases its recommendation, then still asks you to confirm before the panel runs.</p>
+
+    <div class="example">
+      <div class="example-outcome">Custom panel, industry-loaded, in one line</div>
+      <pre><code>/focus-group review my Health Cloud + Agentforce demo flow --industry healthcare-life-sciences --personas "must include HIPAA Privacy Officer, Director of Patient Experience; skip the investor family"</code></pre>
+      <p>Loads the healthcare-life-sciences pack (CMO, Patient Experience Director, Clinical Trials Ops, Payer Network Director, HIPAA Privacy Officer) and biases the recommendation toward the seats you named. Quick-pick panels available out of the box: Buyer, Tech, Discovery, Demo Readiness, Architecture Review, Industry Deep-Dive, Everyone. <a href="#industry-personas">Browse all 19 industry packs →</a></p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Non-Salesforce work — the <code>--generic</code> escape hatch</div>
+      <pre><code>/focus-group --generic --personas "Solution Architect, AI/Agent Architect, Security Reviewer, Beta Tester, Customer Success Manager" pressure-test my plan to build a contract-renewal-prediction model for any mid-market B2B SaaS</code></pre>
+      <p><code>--generic</code> bypasses Salesforce product + industry grounding entirely. Personas use only their generic lens — no Salesforce framing, no Salesforce-customer questions. Useful when you're prepping non-Salesforce work (a side project, a tool evaluation, an internal proposal) and you still want the panel's deliberative spread without the framing assuming Salesforce CRM. The customer-grounding gate is skipped too, so you go straight to panel composition.</p>
+    </div>
+
+    <h3>Sharper plays — two skills, a named customer</h3>
+
+    <div class="example">
+      <div class="example-outcome">Discovery prep for a named prospect</div>
+      <pre><code>/focus-group I have discovery on Wednesday with Acme Credit Union — they're a prospect; here are my draft discovery questions: ...</code></pre>
+      <p>Stops at Step 3, asks "profile by name" → you say yes, "prospect or current customer?" → you say prospect. Offers <code>/download</code> against Acme's public sources (About, IR, LinkedIn company page, Crunchbase) and proposes a panel of 5 sized to the org: Solution Engineer, Industry Specialist (Financial Services), Champion (VP Member Experience), CIO Economic Buyer, Business Value Consultant.</p>
+      <p class="chain"><b>Chain:</b> <code>/focus-group</code> → <code>/download</code> (public sources) → <code>/anonymize</code> (every persona prompt) → <code>/cross-ai-review</code> (cross-model check) → restored final report with citations.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Quarterly Business Review review for an existing customer (Slack-grounded)</div>
+      <pre><code>/focus-group review this QBR draft for Pacific Grants Alliance @QBR-draft.pdf</code></pre>
+      <p>Step 3 → "by name" → "current customer". The skill detects Slack Model Context Protocol and offers <code>/slackbot Pacific Grants Alliance</code> as one of the data-source boxes (alongside <code>sf</code> account / opps / cases / activity). On approval, queries the channels you're in, summarizes the open threads and recent sentiment, anonymizes the whole thing, presents the summary for your final OK — <em>then</em> hands it onward to the panel.</p>
+      <p class="chain"><b>Chain:</b> <code>/focus-group</code> → <code>/slackbot</code> → Salesforce account data → <code>/anonymize</code> → panel runs → <code>/cross-ai-review</code> cross-check → <code>/anonymize restore</code> → final report.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Strict-citation review for a written proposal</div>
+      <pre><code>/focus-group --require-citations review proposal-section-3.md for accuracy and FUD bait</code></pre>
+      <p>Any factual claim without a <code>/download</code>-backed source goes into a "Needs verification" section. Accuracy score caps at 70 until the gaps close. The skill offers to run <code>/download</code> against a seed list from the active product/industry pack to fill them.</p>
+    </div>
+
+    <h3>The big plays — multi-skill chains, real account context</h3>
+
+    <div class="example">
+      <div class="example-outcome">"How do I approach this existing customer with Agentforce?"</div>
+      <pre><code>/focus-group How should I approach the New South Wales Department of Education about Agentforce for their student-services contact centre? They're already on Service Cloud + Education Cloud, four years in. Champion is the Director of Student Wellbeing. Here's my current talk track: ...</code></pre>
+      <p>This is the bread-and-butter play. The skill walks through:</p>
+      <ol class="numbered">
+        <li><b>Customer grounding</b> — picks up NSW Department of Education by name; you confirm current customer; consent menu for <code>sf</code> data; offers <code>/slackbot</code> for recent context. Everything routes through <code>/anonymize</code>.</li>
+        <li><b>Topic grounding</b> — <code>/download</code> seed list for Agentforce + Education Cloud (Agentforce overview, Education Cloud articles, a Trailhead module on Atlas reasoning).</li>
+        <li><b>Panel composition</b> — recommends 5 personas sized to the customer: Solution Engineer (Service Cloud + Education Cloud), Industry Specialist (Education / Public Sector), Privacy Officer (Australian Privacy Principles &amp; state data law), Champion (Director of Student Wellbeing), Business Value Consultant. Swap as you like.</li>
+        <li><b>Run + pull together</b> — spread across your available AI command-line tools in parallel; a synthesis pass aggregates the persona feedback, a second model cross-checks it, and the final write-up arrives with an accuracy score.</li>
+        <li><b>Final report</b> — real names and account context restored; cites the 4–6 sources <code>/download</code> harvested; flags persona divergence and under-cited claims.</li>
+      </ol>
+      <p class="chain">Typical run: 6–10 minutes elapsed. Saved to <code>.scratch/focus-group/&lt;date&gt;-nsw-education-agentforce.md</code> for next time.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Cross-cloud whitespace — sequence the right cloud first</div>
+      <pre><code>/focus-group This customer is heavy on Sales Cloud but has no Service Cloud, no Marketing Cloud, and no Data Cloud yet — and they need at least two of those. Help me sequence the conversation so I land the right one first without losing the others. Customer: BankCo Regional. Champion: VP Retail Banking.</code></pre>
+      <p>Layers the <code>financial-services</code> industry pack on top of the default <code>salesforce-crm-agentforce</code> product pack. The skill notices the cross-cloud framing and adds: <em>Enterprise Architect</em> (sequencing), <em>Customer Success Manager</em> (adoption risk), <em>Cost &amp; Budget Owner</em> (total cost of ownership across clouds) on top of the standard Solution Engineer / Champion / Economic Buyer. The write-up is explicit about which cloud to lead with and why, with dissenting voices preserved.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">"Art of the Possible" onsite visit plan</div>
+      <pre><code>/focus-group --everyone plan an Art-of-the-Possible onsite for Mountain Region Community Foundation: 4-hour session, audience is the Executive Director + CIO + 3 program directors + Director of Development. Demo flow touches Agentforce, Data Cloud, and Nonprofit Cloud with grants-and-programs integration as the through-line. Here are last month's customer notes and the sf account snapshot: ...</code></pre>
+      <p><code>--everyone</code> broadens the panel for an onsite of this scale. Expect 10–14 personas: Solution Engineer × 2 (Service Cloud and Data Cloud), Enterprise Architect, Industry Specialist (Healthcare), HIPAA Privacy Officer, CMIO equivalent, Patient Experience Director, Business Value Consultant, Implementation Partner (delivery reality), AppExchange ISV partner (data-grounding partners), Customer Success Manager. The write-up warns it's broader-but-shallower; produces a sequenced agenda with named demo slots, talk-track suggestions per persona, and the risks to pre-empt.</p>
+      <p class="chain"><b>Chain:</b> full stack — <code>/focus-group</code> → <code>/slackbot</code> (last month) → Salesforce account pull (active opportunities + open cases, via Model Context Protocol) → <code>/anonymize</code> → <code>/download</code> (Agentforce + Data Cloud + Nonprofit Cloud overviews + 1–2 customer references) → panel × 12 → first pass, cross-check, and final write-up → final restored report. 20–40 minutes elapsed for an onsite that matters.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Vibe-coding a demo spec</div>
+      <pre><code>/focus-group help me sketch a demo build spec for a Nonprofit Cloud + Agentforce vibe-code that shows a program-intake assistant routing a new beneficiary request from a phone summary to the right case worker. Customer is Northwest Watershed Conservancy; demo is Friday.</code></pre>
+      <p>Recommends a <em>vibe-coding</em> quick-pick: Solution Engineer, Technical Architect, AI/Agent Architect, Beta Tester, Customer Success Manager — plus the Champion to keep the demo grounded in their actual workflow. The first pass drafts the spec itself (objects, prompt template shapes, governor-limit concerns, HITL placement, what to fake vs build). The cross-model check catches gaps before you start building.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Standalone fact-check before a customer email</div>
+      <pre><code>/anonymize "Sarah Patel at Mountain Region Community Foundation asked about Agentforce limits for their 8,400-volunteer engagement program with $620K in annual subscription spend."
+
+/cross-ai-review --prompt-file ./email-draft.md --require-citations</code></pre>
+      <p>Two-step: sanitize the draft so the customer's name and ARR don't leak to the cross-AI side-by-side check. Then run the audit on the anonymized text. The accuracy score and citations land in <code>~/.claude/cross-ai-runs/&lt;run-id&gt;/report.md</code>; restore with <code>/anonymize restore</code> before pasting back.</p>
+    </div>
+
+    <div class="example">
+      <div class="example-outcome">Industry deep-dive briefing</div>
+      <pre><code>/focus-group --industry public-sector --product service-cloud Brief me on the top 3 objections a State CIO would raise to a Service Cloud + Agentforce constituent-services pitch. Use the State of Oregon as a thinking proxy.</code></pre>
+      <p>Loads the <code>public-sector</code> industry pack — Constituent Services Director, Licensing &amp; Permits Manager, Emergency Response Coordinator, Case Worker, IT Modernization Director — plus standard Salesforce-sales personas. The "thinking proxy" framing keeps the prompt generic so no real customer data is involved.</p>
+    </div>
+
+
+    <div class="example">
+      <div class="example-outcome">"Run by every AI you have" final check</div>
+      <pre><code>/cross-ai-review --prompt-file ./proposal-final.md --require-citations --attach customer-account-snapshot.md</code></pre>
+      <p>If you have Claude + Codex + Gemini installed, fans the proposal to all three in parallel. If only Claude, runs Opus + Sonnet. The Accuracy score and Citations block tell you whether you've grounded enough to send. The attached snapshot gives every model the same customer context (already anonymized).</p>
+    </div>
+
+  </section>
+
+  <!-- SKILL REFERENCE -->
+  <section class="card" id="skills-reference">
+    <div class="eyebrow">For the curious</div>
+    <h2>Skill reference — commands, switches, and the persona library at a glance</h2>
+    <p class="lead">Every slash command, the common switches each accepts, and where the canonical <code>SKILL.md</code> lives. Below the command table: the persona library family-count breakdown so you know what's in the pool a panel is drawn from.</p>
+
+    <h3>Commands &amp; switches</h3>
+    <table class="cmd-table">
+      <thead><tr><th>Command</th><th>Common switches</th><th>SKILL.md</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>/focus-group</code></td>
+          <td><code>--product &lt;slug&gt;</code> · <code>--industry &lt;slug&gt;</code> · <code>--generic</code> · <code>--single-ai</code> · <code>--personas "&lt;NL&gt;"</code> · <code>--everyone</code> · <code>--org-profile</code> · <code>--no-org-profile</code> · <code>--require-citations</code> · <code>--&lt;channel&gt;-model &lt;m&gt;</code> · <code>help</code> · <code>config</code></td>
+          <td><code>.claude/skills/focus-group/SKILL.md</code></td>
+        </tr>
+        <tr>
+          <td><code>/download</code></td>
+          <td><code>&lt;url&gt;</code> · <code>&lt;subject&gt;</code> · <code>help</code></td>
+          <td><code>.claude/skills/download/SKILL.md</code></td>
+        </tr>
+        <tr>
+          <td><code>/cross-ai-review</code></td>
+          <td><code>--prompt</code> · <code>--prompt-file</code> · <code>--attach</code> · <code>--label</code> · <code>--fast</code> · <code>--only &lt;chans&gt;</code> · <code>--skip &lt;chans&gt;</code> · <code>--multi-claude</code> · <code>--require-citations</code> · <code>--no-citations</code> · <code>--clean-room</code> · <code>--&lt;channel&gt;-model &lt;m&gt;</code> · <code>--check</code> · <code>help</code></td>
+          <td><code>.claude/skills/cross-ai-review/SKILL.md</code></td>
+        </tr>
+        <tr>
+          <td><code>/anonymize</code></td>
+          <td><code>scrub --input &lt;f&gt; --scrub &lt;ent&gt; ...</code> · <code>restore --input &lt;f&gt;</code> · <code>inspect</code> · <code>reset</code> · <code>help</code></td>
+          <td><code>.claude/skills/anonymize/SKILL.md</code></td>
+        </tr>
+        <tr>
+          <td><code>/slackbot</code></td>
+          <td><code>&lt;customer-name&gt;</code> · <code>inspect &lt;customer&gt;</code> · <code>help</code> <span class="muted">(requires Slack MCP)</span></td>
+          <td><code>.claude/skills/slackbot/SKILL.md</code></td>
+        </tr>
+        <tr>
+          <td><code>/how-can-this-be-improved</code></td>
+          <td><code>&lt;path-to-file&gt;</code> · <code>&lt;skill-name&gt;</code> · <code>(no arg)</code> · <code>help</code></td>
+          <td><code>.claude/skills/how-can-this-be-improved/SKILL.md</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Persona library — what's in the pool</h3>
+    <p>A panel is drawn from a library of 177 personas — sales-side seats, buyer-side seats, partner-ecosystem seats, and industry-specific voices. The skill picks a panel of five sized to your customer; <code>--everyone</code> opts into the full set for the active packs.</p>
+    <table class="cmd-table">
+      <thead><tr><th>Family</th><th>Count</th><th>Examples</th></tr></thead>
+      <tbody>
+        <tr><td>Generic — Technical</td><td>12</td><td>Backend Engineer, Salesforce Platform Developer, Security Reviewer, AI/Agent Architect, Cloud Architect, ...</td></tr>
+        <tr><td>Generic — Stakeholder</td><td>3</td><td>Compliance Officer, Product Owner, Cost &amp; Budget Owner</td></tr>
+        <tr><td>Generic — Customer</td><td>5</td><td>Enterprise Buyer, SMB Buyer, Security-Anxious Skeptic, ...</td></tr>
+        <tr><td>Generic — Investor</td><td>4</td><td>Enterprise SaaS VC, Strategic Acquirer, Diligence / Risk Analyst, Pitch-Narrative Coach</td></tr>
+        <tr><td>Generic — Executive</td><td>17</td><td>CEO, COO, CFO, CIO, CTO, CMO, CRO, CISO, Chief Data Officer, ...</td></tr>
+        <tr><td>Salesforce — Sales</td><td>9</td><td>AE, SE, Industry Specialist, Enterprise / Technical Architect, Business Value Consultant, ...</td></tr>
+        <tr><td>Salesforce — Customer</td><td>9</td><td>Economic Buyer, Champion, Champion's Manager, Technical Decision-Maker, InfoSec / Privacy, Legal, Procurement, ...</td></tr>
+        <tr><td>Salesforce — Partner</td><td>4</td><td>Implementation Partner, GSI Partner Lead, Boutique SI, AppExchange ISV</td></tr>
+        <tr><td>Industry-specific</td><td>114</td><td>19 industry packs ranging from 3 to 8 personas each (public-sector ships 13: state/local + federal/DoD + international) — see the breakdown in the Industry persona library section below</td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- INDUSTRY PERSONA LIBRARY (its own section so the nav scroll-spy can highlight it) -->
+  <section class="card" id="industry-personas">
+    <div class="eyebrow">Personas by industry</div>
+    <h2>Industry persona library</h2>
+    <p class="lead">Loading an industry pack with <code>--industry &lt;slug&gt;</code> brings these persona files into the panel-selection pool. They sit alongside the Salesforce-Sales, Salesforce-Customer, and Salesforce-Partner families so the panel can mix vertical expertise with role coverage. Packs ship 3–8 personas depending on how many sub-verticals the industry needs to serve; public sector ships thirteen (state/local + federal/DoD + international).</p>
+    <table class="cmd-table">
+      <thead><tr><th>Industry pack</th><th>Industry-specific personas (3–8 per pack)</th></tr></thead>
+      <tbody>
+        <tr><td><code>aec-construction</code></td><td>Capital Projects Director · Field Service Coordinator · <b>VDC / BIM Lead</b> · <b>Preconstruction &amp; Estimating Director</b></td></tr>
+        <tr><td><code>airlines-air-travel</code></td><td>Airline Operations Control Center Lead · Reservations &amp; Booking Director · Ancillary Revenue Manager · <b>Revenue Management &amp; Pricing Scientist</b></td></tr>
+        <tr><td><code>automotive</code></td><td>Dealer Network Director · Fleet Operations Manager · Connected-Vehicle Product Lead · Aftersales / Service Director · Brand &amp; Loyalty Lead · <b>OEM Digital &amp; CX VP</b></td></tr>
+        <tr><td><code>commercial-real-estate</code></td><td>Facilities Operations Lead · Property Manager · Tenant Experience Lead · <b>Capital Markets &amp; Acquisitions Director</b></td></tr>
+        <tr><td><code>communications</code></td><td>Network Operations Lead · Service Provisioning Manager · B2B Sales Director · CX / Care Director · Wholesale &amp; Carrier Relations Lead · <b>BSS/OSS Architect</b></td></tr>
+        <tr><td><code>consumer-goods</code></td><td>Trade Promotion Manager · D2C / E-commerce Lead · Field Sales Director · Brand Manager · Supply Chain Lead · <b>Retailer Buyer / Category Manager</b></td></tr>
+        <tr><td><code>education</code></td><td>Provost / VP Academic Affairs · Director of Enrollment · Student Success Advisor · CIO / IT Director · Advancement &amp; Alumni Officer · <b>K-12 Superintendent</b> · <b>Faculty Senate Chair</b></td></tr>
+        <tr><td><code>energy-utilities</code></td><td>Customer Care Director · Billing &amp; Metering Lead · Renewables Transition PM · Field Operations Manager · Regulatory Affairs Lead · <b>NERC/CIP Cybersecurity Lead</b> · <b>Grid Ops / ISO-RTO Coordinator</b> · <b>Renewables Developer VP</b></td></tr>
+        <tr><td><code>financial-services</code></td><td>Retail Banking Head · Wealth Advisor · Underwriting Officer · Compliance &amp; AML Officer · Insurance Claims Lead</td></tr>
+        <tr><td><code>freight-logistics-transportation</code></td><td><b>Network Operations Director</b> · <b>Revenue Assurance &amp; Pricing Lead</b> · <b>Compliance &amp; Safety Officer</b> · <b>Shipper Experience Director</b> · <b>Driver &amp; Dispatcher Front-Line</b></td></tr>
+        <tr><td><code>healthcare-life-sciences</code></td><td>Chief Medical Officer · Director of Patient Experience · Clinical Trial Operations Lead · Payer Network Director · HIPAA Privacy Officer</td></tr>
+        <tr><td><code>hotels-hospitality</code></td><td>Guest Loyalty Lead · Guest Experience Director · <b>Revenue Management &amp; Pricing Scientist</b></td></tr>
+        <tr><td><code>manufacturing</code></td><td>Channel Partner Manager · Warranty Operations Lead · Dealer Network Director · Plant Operations Lead · Aftermarket Service Director · <b>Supply Chain / S&amp;OP Lead</b></td></tr>
+        <tr><td><code>media</code></td><td>Ad Sales Director · Rights &amp; Licensing Manager · Subscriber Experience Lead · Content Acquisition Lead · Audience Analytics Lead · <b>Editorial / Newsroom Lead</b></td></tr>
+        <tr><td><code>nonprofit</code></td><td>Executive Director · Director of Development · Program Manager · Grants Officer · Board Treasurer</td></tr>
+        <tr><td><code>professional-services</code></td><td>Resource Manager · Engagement Partner · Billing &amp; Project Accounting Lead · Client Relationship Director · Practice Lead · <b>Independence &amp; Risk Management Lead</b></td></tr>
+        <tr><td><code>public-sector</code></td><td><b>State/local:</b> Constituent Services Director · Licensing &amp; Permits Manager · Emergency Response Coordinator · Case Worker · IT Modernization Director · State CIO · City/County Manager. <b>Federal/DoD:</b> Federal CIO · Federal Authorizing Official · Federal Contracting Officer · DoD Mission Owner · Inspector General / Auditor. <b>International:</b> International Public-Sector Officer (UN agencies · EU institutions · MDBs · non-US national governments).</td></tr>
+        <tr><td><code>retail</code></td><td>Store Operations Director · Loyalty Program Manager · Merchandising Lead · Unified Commerce / Order Management Lead · Customer Care Director · <b>Buying / Planning Lead</b> · <b>Loss Prevention Director</b></td></tr>
+        <tr><td><code>technology</code></td><td>Recurring Revenue / RevOps Lead · Partner Sales Manager · Customer Success Director · Product-Led Growth Lead · Renewals Manager · <b>Developer Advocate / DevRel Lead</b> · <b>Platform / Marketplace Lead</b> · <b>Security / Trust Officer</b></td></tr>
+      </tbody>
+    </table>
+
+  </section>
+
+  <!-- MAKE IT YOUR OWN -->
+  <section class="card" id="customize">
+    <div class="eyebrow">Customization</div>
+    <h2>Make it your own — sound like <em>your</em> customers</h2>
+    <p class="lead">The skills ship with generic Salesforce coverage — solid, but generic. Your deals are narrower: a specific role, a specific vertical, the customers you actually sit across from. Sharpening the skills to <em>your</em> work is itself a Claude prompt away.</p>
+
+    <div class="example">
+      <div class="example-outcome">Make a persona push back the way your real customers do</div>
+      <pre><code>Sharpen the HIPAA Privacy Officer persona to push back the way the privacy officers I sell to actually do — Epic / Cerner integration risk, Hyperforce data residency for PHI, the EHR-to-Service-Cloud round-trip latency conversations. Show me the diff before you save.</code></pre>
+      <p>Claude reads the persona file, proposes targeted edits with diff preview, and lets you accept or revise. You walk away with a persona that argues like the privacy officers <em>you</em> see — not a stock placeholder.</p>
+    </div>
+
+    <p>Same pattern works for anything else you'd want to tune: add a K-12 variant of the education pack, build a "Renewal" quick-pick panel for your team's motion, layer in APAC procurement context, or add a coaching-mode that swaps the toughest critics for mentor versions. Ask Claude what you want; review the diff; ship it.</p>
+
+    <p class="lead">For a second pass on any of these edits, run <code>/how-can-this-be-improved &lt;path-to-skill&gt;</code> — it audits the skill for drift, edge cases, and consistency with the rest of the suite. Local-only; never calls external models on its own.</p>
+  </section>
+
+  <!-- REFERENCES -->
+    <section class="card" id="references">
+    <div class="eyebrow">Related links</div>
+    <h2>Related links — where to go next</h2>
+    <p class="lead">The skill specs themselves are the canonical reference once you start using them — open the <code>SKILL.md</code> in any of the six skill folders.</p>
+
+    <h3>This repository</h3>
+    <ul class="bullets">
+      <li><a href="https://github.com/drpaulcoleman/focus-group-skill">Source repository on GitHub</a></li>
+      <li><a href="./README.md">README.md</a> — the install paths and the six-skill summary in plain markdown</li>
+    </ul>
+
+    <h3>The hosts the skills run in</h3>
+    <ul class="bullets">
+      <li><a href="https://docs.anthropic.com/claude-code">Anthropic Claude Code</a> — primary host, where slash commands and skill folders live</li>
+      <li><a href="https://cursor.com">Cursor IDE</a> — alternative host; the <code>.cursor/</code> shim layer delegates to the same skill content</li>
+      <li><a href="https://modelcontextprotocol.io/">Model Context Protocol</a> — the protocol the Salesforce-MCP and Slack-MCP integrations use</li>
+    </ul>
+
+    <p class="muted" style="margin-top:18px;font-size:11.5px;line-height:1.5">
+      Trademarks: "Salesforce", "Agentforce", "Sales Cloud", "Service Cloud", "Slack", "Tableau", "MuleSoft", "Heroku" and related marks belong to Salesforce, Inc. "Cursor" belongs to Anysphere. "Claude" and "Claude Code" belong to Anthropic. Released under the Mozilla Public License 2.0.
+    </p>
+  </section>
+
+
+  <footer class="doc-footer">
+    <span>© 2026 Dr. Paul Coleman.</span>
+    Built from the
+    <a href="https://github.com/drpaulcoleman/documentation-template" target="_blank" rel="noopener">documentation-template</a>.
+    &nbsp;·&nbsp; <a href="#hero">Back to top ↑</a>
+  </footer>
+
+</main>
+</div>
+
+<!-- Machine-readable section index for AI crawlers and search engines. -->
+<script type="application/json" id="ai-content-map">
+{
+  "title": "Focus Group Skills",
+  "url": "https://drpaulcoleman.github.io/focus-group-skill/",
+  "sections": [
+    {"id": "hero",       "title": "Your toughest reviewers, already in the room"},
+    {"id": "why",        "title": "What changes for you"},
+    {"id": "panel",      "title": "Meet the panel \u2014 the six skills"},
+    {"id": "install",    "title": "Get started in 3 minutes"},
+    {"id": "examples",   "title": "Prompt examples \u2014 default flow, quick wins, naming your panel"},
+    {"id": "skills-reference", "title": "Skill reference \u2014 commands, switches, and persona library breakdown"},
+    {"id": "industry-personas", "title": "Industry persona library \u2014 19 packs, per-pack persona breakdown"},
+    {"id": "customize",         "title": "Make it your own \u2014 customization and config"},
+    {"id": "references", "title": "Related links"}
+  ]
+}
+</script>
+
+<!-- =================== LIBRARIES =================== -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+
+<!-- =================== APPLICATION SCRIPT =================== -->
+<script>
+(function () {
+  "use strict";
+  var $  = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+
+  var html     = document.documentElement;
+  var body     = document.body;
+  var viewport = $("#viewport");
+  var canvas   = $("#canvas");
+
+  /* ---------- Theme ------------------------------------------------ */
+  // Light is the default view on every load; toggle flips for the
+  // session only (no persistence across reloads).
+  function applyTheme(t) {
+    html.setAttribute("data-theme", t);
+  }
+  applyTheme("light");
+  $("#theme-toggle").addEventListener("click", function () {
+    applyTheme(html.getAttribute("data-theme") === "dark" ? "light" : "dark");
+    drawMinimap();
+  });
+
+  /* ---------- Mermaid (view-aware lazy render) --------------------- */
+  if (window.mermaid) {
+    mermaid.initialize({ startOnLoad: false, theme: "dark", securityLevel: "loose",
+      fontFamily: "Inter, sans-serif", flowchart: { curve: "basis", useMaxWidth: true } });
+  }
+  function captureMermaid() {
+    $$("pre.mermaid").forEach(function (pre) {
+      if (!pre.dataset.src) pre.dataset.src = pre.textContent;
+    });
+  }
+  function renderMermaid() {
+    if (!window.mermaid || !mermaid.run) return;
+    var targets = $$("pre.mermaid").filter(function (pre) {
+      if (pre.offsetParent === null) return false;          // skip hidden
+      if (pre.dataset.done === "1") return false;
+      if (pre.dataset.src) { pre.textContent = pre.dataset.src; }
+      pre.removeAttribute("data-processed");
+      return true;
+    });
+    if (!targets.length) return;
+    try {
+      mermaid.run({ nodes: targets }).then(function () {
+        targets.forEach(function (p) { if (p.querySelector("svg")) p.dataset.done = "1"; });
+        drawMinimap();
+      }).catch(function (e) { console.warn("Mermaid:", e); });
+    } catch (e) { console.warn("Mermaid:", e); }
+  }
+  captureMermaid();
+
+  /* ---------- View mode (exec / tech) ------------------------------ */
+  function setView(mode, silent) {
+    if (mode !== "exec" && mode !== "tech") mode = "tech";
+    body.setAttribute("data-view", mode);
+    $$(".view-tab").forEach(function (b) {
+      var on = b.dataset.view === mode;
+      b.classList.toggle("active", on);
+      b.setAttribute("aria-selected", on ? "true" : "false");
+    });
+    try { sessionStorage.setItem("doc-view", mode); } catch (e) {}
+    requestAnimationFrame(function () { setTimeout(renderMermaid, 40); });
+    if (!silent) drawMinimap();
+  }
+  $$(".view-tab").forEach(function (b) {
+    b.addEventListener("click", function () {
+      if (body.getAttribute("data-view") === b.dataset.view) return;
+      setView(b.dataset.view);
+      pushHistory(currentHashId());
+    });
+  });
+  try {
+    var sv = sessionStorage.getItem("doc-view");
+    if (sv === "exec") setView("exec", true);
+  } catch (e) {}
+
+  /* ---------- Scroll + smooth navigation --------------------------- */
+  function headerOffset() { return 20; }
+
+  /* Custom #viewport scroller means the browser's native scroll
+     restoration on refresh doesn't apply. Take it over ourselves so
+     `index.html#examples` survives a reload. */
+  if ("scrollRestoration" in history) {
+    try { history.scrollRestoration = "manual"; } catch (e) {}
+  }
+
+  function scrollToEl(el, opts) {
+    if (!el) return;
+    opts = opts || {};
+    var top = el.getBoundingClientRect().top - viewport.getBoundingClientRect().top
+              + viewport.scrollTop - headerOffset();
+    viewport.scrollTo({ top: Math.max(0, top),
+                        behavior: opts.instant ? "auto" : "smooth" });
+    if (opts.instant) return;
+    el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+    setTimeout(function () { el.classList.remove("flash"); }, 3100);
+  }
+
+  /* ---------- History-aware deep linking --------------------------- */
+  var suppress = false, lastId = null;
+
+  function currentHashId() { return (location.hash || "").slice(1) || null; }
+
+  function pushHistory(id) {
+    if (suppress) return;
+    var url = location.pathname + location.search + (id ? "#" + id : "");
+    if (id === lastId && (location.hash || "").slice(1) === (id || "")) return;
+    suppress = true;
+    try {
+      history.pushState({ view: body.getAttribute("data-view"), id: id }, "", url);
+    } catch (e) {}
+    suppress = false;
+    lastId = id;
+  }
+
+  function navigateTo(id, opts) {
+    opts = opts || {};
+    var el = document.getElementById(id);
+    if (!el) return false;
+    scrollToEl(el);
+    if (!opts.skipHistory) pushHistory(id);
+    lastId = id;
+    activeId = id;
+    setActiveNav(id);
+    return true;
+  }
+
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a) return;
+    var id = a.getAttribute("href").slice(1);
+    if (!id) return;
+    if (navigateTo(id)) e.preventDefault();
+  }, true);
+
+  window.addEventListener("popstate", function (e) {
+    if (suppress) return;
+    var id = (e.state && e.state.id) || currentHashId();
+    var v  = e.state && e.state.view;
+    if (v && v !== body.getAttribute("data-view")) setView(v, true);
+    if (id) navigateTo(id, { skipHistory: true });
+    else viewport.scrollTo({ top: 0, behavior: "smooth" });
+    lastId = id;
+  });
+
+  (function seedHistory() {
+    var id = currentHashId();
+    try { history.replaceState({ view: body.getAttribute("data-view"), id: id }, "",
+          location.pathname + location.search + (location.hash || "")); } catch (e) {}
+    lastId = id;
+  })();
+
+  /* ---------- Paragraph bookmark handles --------------------------- */
+  $$(".anchored[id]").forEach(function (p) {
+    var a = document.createElement("a");
+    a.className = "anchor-link"; a.href = "#" + p.id;
+    a.textContent = "¶"; a.title = "Bookmark / copy link to this paragraph";
+    a.setAttribute("aria-label", "Link to this paragraph");
+    p.insertBefore(a, p.firstChild);
+  });
+
+  /* ---------- Scroll-spy + debounced scroll-history ---------------- */
+  /* Add/rename sections freely — spy watches all .card[id] elements   */
+  /* automatically; nav links just need a matching href="#section-id". */
+  var navLinks = $$('#sidebar nav a[href^="#"]');
+  function setActiveNav(id) {
+    navLinks.forEach(function (l) {
+      l.classList.toggle("active", l.getAttribute("href") === "#" + id);
+    });
+  }
+
+  var sections = $$(".card[id]");
+  var activeId = null;        // currently-active section id (also read by AI coach)
+  var scrollHistTimer = null;
+  var visible = {};
+  sections.forEach(function (s) { visible[s.id] = false; });
+
+  function activateSection(id) {
+    if (!id || id === activeId) return;
+    activeId = id;
+    setActiveNav(id);
+    clearTimeout(scrollHistTimer);
+    scrollHistTimer = setTimeout(function () { pushHistory(id); }, 3000);
+    /* If the AI-coach panel is open, swap its prompts to the new section
+       so the questions match what the reader is actually looking at. */
+    var cp = document.getElementById("ai-coach-panel");
+    if (cp && cp.classList.contains("open") && typeof renderCoach === "function") {
+      renderCoach();
+    }
+  }
+
+  /* IntersectionObserver: reliable across zoom, CSS transforms, and layout
+     modes — no offsetTop arithmetic needed. rootMargin keeps the "active zone"
+     in the upper third of the viewport so the section being read is highlighted. */
+  if (window.IntersectionObserver) {
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) { visible[e.target.id] = e.isIntersecting; });
+      for (var i = 0; i < sections.length; i++) {
+        if (visible[sections[i].id]) { activateSection(sections[i].id); break; }
+      }
+    }, { root: viewport, rootMargin: "-10% 0px -55% 0px", threshold: 0 });
+    sections.forEach(function (s) { spy.observe(s); });
+  }
+
+  /* Scroll listener: redraws minimap; also runs offsetTop fallback spy
+     for the rare browser without IntersectionObserver support. */
+  var rafPending = false;
+  viewport.addEventListener("scroll", function () {
+    if (rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(function () {
+      rafPending = false;
+      if (!window.IntersectionObserver) {
+        var line = viewport.scrollTop + 140;
+        var cur = null;
+        sections.forEach(function (s) {
+          if (s.offsetParent !== null && s.offsetTop <= line) cur = s;
+        });
+        if (cur) activateSection(cur.id);
+      }
+      /* At-bottom override: when the viewport is scrolled to the very
+         bottom, the IntersectionObserver's upper-third "active zone"
+         can't reach the last section -- it sits below the zone. Force
+         the last section active so the nav doesn't stick on the
+         second-to-last item. 6px epsilon for sub-pixel rounding. */
+      if (viewport.scrollTop + viewport.clientHeight >= viewport.scrollHeight - 6) {
+        var last = sections[sections.length - 1];
+        if (last) activateSection(last.id);
+      }
+      /* Top-border scroll progress bar -- width tracks how far through
+         the page the reader has scrolled. */
+      var bar = document.getElementById("scroll-progress");
+      if (bar) {
+        var max = viewport.scrollHeight - viewport.clientHeight;
+        var pct = max > 0 ? (viewport.scrollTop / max) * 100 : 0;
+        bar.style.width = pct.toFixed(2) + "%";
+      }
+      drawMinimap();
+    });
+  }, { passive: true });
+
+  /* --- Stat-row count-up: animate the big numbers from 0 to their
+         target when the row scrolls into view. Runs once per element. */
+  (function () {
+    var nums = $$(".stat-num[data-count-to]");
+    if (!nums.length) return;
+    function animate(el) {
+      if (el.dataset.counted === "1") return;
+      el.dataset.counted = "1";
+      var target = parseInt(el.dataset.countTo, 10) || 0;
+      var suffix = el.dataset.suffix || "";
+      if (target === 0) { el.textContent = "0" + suffix; return; }
+      var dur = 1100, start = performance.now();
+      function tick(now) {
+        var t = Math.min(1, (now - start) / dur);
+        // ease-out cubic
+        var v = Math.round(target * (1 - Math.pow(1 - t, 3)));
+        el.textContent = v + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+    if (window.IntersectionObserver) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { animate(e.target); io.unobserve(e.target); }
+        });
+      }, { root: viewport, threshold: 0.3 });
+      nums.forEach(function (n) { io.observe(n); });
+    } else {
+      nums.forEach(animate);
+    }
+  })();
+
+  /* ---------- Full-text search ------------------------------------- */
+  var search = $("#search"), searchWrap = $("#search-wrap"),
+      searchCount = $("#search-count");
+  var matches = [], matchIdx = -1;
+
+  function runSearch(q) {
+    matches = []; matchIdx = -1;
+    if (!q) {
+      sections.forEach(function (c) { c.classList.remove("dim", "match"); });
+      searchWrap.classList.remove("no-results");
+      searchCount.textContent = "";
+      return;
+    }
+    sections.forEach(function (c) {
+      if (c.offsetParent === null) { c.classList.remove("dim", "match"); return; }
+      var hit = (c.textContent || "").toLowerCase().indexOf(q) !== -1;
+      c.classList.toggle("match", hit);
+      c.classList.toggle("dim", !hit);
+      if (hit) matches.push(c);
+    });
+    searchWrap.classList.toggle("no-results", matches.length === 0);
+    if (matches.length) {
+      matchIdx = 0; searchCount.textContent = "1/" + matches.length;
+      scrollToEl(matches[0]);
+    } else {
+      searchCount.textContent = "0";
+    }
+  }
+  function cycleSearch(fwd) {
+    if (!matches.length) return;
+    matchIdx = (matchIdx + (fwd ? 1 : -1) + matches.length) % matches.length;
+    searchCount.textContent = (matchIdx + 1) + "/" + matches.length;
+    scrollToEl(matches[matchIdx]);
+  }
+  search.addEventListener("input", function (e) {
+    runSearch(e.target.value.toLowerCase().trim());
+  });
+  search.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") { e.preventDefault(); cycleSearch(!e.shiftKey); }
+    else if (e.key === "Escape") { e.preventDefault(); search.value = ""; runSearch(""); search.blur(); }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && e.target.tagName !== "INPUT" && e.target.tagName !== "TEXTAREA") {
+      e.preventDefault(); search.focus();
+    }
+  });
+
+  /* ---------- Checklist persistence -------------------------------- */
+  $$('input[type="checkbox"][id^="ck-"]').forEach(function (box) {
+    var key = "doc-ck:" + box.id;
+    try { if (localStorage.getItem(key) === "1") box.checked = true; } catch (e) {}
+    box.addEventListener("change", function () {
+      try {
+        if (box.checked) localStorage.setItem(key, "1");
+        else localStorage.removeItem(key);
+      } catch (e) {}
+    });
+  });
+
+  /* ---------- Zoom ------------------------------------------------- */
+  var zoom = 1;
+  function setZoom(z) {
+    zoom = Math.max(0.5, Math.min(1.8, Math.round(z * 100) / 100));
+    canvas.style.transform = "scale(" + zoom + ")";
+    $("#zoom-level").textContent = Math.round(zoom * 100) + "%";
+    drawMinimap();
+  }
+  $("#zoom-in").addEventListener("click", function () { setZoom(zoom + 0.1); });
+  $("#zoom-out").addEventListener("click", function () { setZoom(zoom - 0.1); });
+  document.addEventListener("keydown", function (e) {
+    if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+    if (e.key === "+" || e.key === "=") setZoom(zoom + 0.1);
+    else if (e.key === "-") setZoom(zoom - 0.1);
+    else if (e.key === "0") setZoom(1);
+  });
+
+  /* ---------- Drag-to-pan (canvas layout) -------------------------- */
+  var panning = false, panX = 0, panY = 0, startX = 0, startY = 0;
+  viewport.addEventListener("mousedown", function (e) {
+    if (body.getAttribute("data-layout") !== "canvas") return;
+    if (e.target.closest("a,button,input,textarea,select,pre,.card a")) return;
+    panning = true; viewport.classList.add("panning");
+    startX = e.clientX; startY = e.clientY;
+    panX = viewport.scrollLeft; panY = viewport.scrollTop;
+  });
+  window.addEventListener("mousemove", function (e) {
+    if (!panning) return;
+    viewport.scrollLeft = panX - (e.clientX - startX);
+    viewport.scrollTop  = panY - (e.clientY - startY);
+  });
+  window.addEventListener("mouseup", function () {
+    panning = false; viewport.classList.remove("panning");
+  });
+
+  /* ---------- Minimap (canvas layout) ------------------------------ */
+  var mmCanvas = $("#minimap-canvas");
+  function drawMinimap() {
+    if (body.getAttribute("data-layout") !== "canvas" || !mmCanvas) return;
+    var ctx = mmCanvas.getContext("2d");
+    var W = mmCanvas.width, H = mmCanvas.height;
+    var docH = viewport.scrollHeight || 1, docW = viewport.scrollWidth || 1;
+    var sx = W / docW, sy = H / docH;
+    var cs = getComputedStyle(html);
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = cs.getPropertyValue("--bg-elev").trim() || "#1d2636";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = cs.getPropertyValue("--accent-soft").trim() || "#243154";
+    sections.forEach(function (s) {
+      if (s.offsetParent === null) return;
+      ctx.fillRect(2, s.offsetTop * sy, W - 4, Math.max(2, s.offsetHeight * sy - 2));
+    });
+    ctx.strokeStyle = cs.getPropertyValue("--accent").trim() || "#5b8cff";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(viewport.scrollLeft * sx, viewport.scrollTop * sy,
+                   viewport.clientWidth * sx, viewport.clientHeight * sy);
+  }
+  if (mmCanvas) {
+    mmCanvas.addEventListener("click", function (e) {
+      var r = mmCanvas.getBoundingClientRect();
+      var fy = (e.clientY - r.top) / r.height;
+      viewport.scrollTo({ top: fy * viewport.scrollHeight - viewport.clientHeight / 2,
+                          behavior: "smooth" });
+    });
+  }
+
+  /* ---------- Diagram click navigation ----------------------------- */
+  window.diagramNav = function (id) {
+    if (!id) return;
+    var el = document.getElementById(id)
+          || document.getElementById(String(id).toLowerCase().replace(/\s+/g, "-"));
+    if (el) navigateTo(el.id);
+  };
+
+  /* ---------- AI-coach widget --------------------------------------
+     Per-section prompt index. Each section gets prompts that actually
+     help a Salesforce sales-team reader engage with THAT section --
+     not the template's generic "summarise this in three sentences."
+     Falls back to DEFAULT_PROMPTS for any section without an entry. */
+  var coachBtn   = $("#ai-coach-btn");
+  var coachPanel = $("#ai-coach-panel");
+  var coachCtx   = $("#ai-coach-ctx");
+  var coachList  = $("#ai-coach-prompts");
+
+  var DEFAULT_PROMPTS = [
+    "Summarise this section in three plain-language sentences.",
+    "What is the single most important takeaway here?",
+    "What should I do next based on this section?"
+  ];
+
+  var SECTION_PROMPTS = {
+    "hero": [
+      "Help me decide: would these skills fit how I sell at Salesforce?",
+      "Compare this to just using ChatGPT or Claude.ai for the same work — what do I gain?",
+      "Who is this NOT a good fit for?",
+      "What's the catch? Where do these skills fall short?"
+    ],
+    "why": [
+      "Translate these three outcomes into what I'd actually see in my week.",
+      "Which of the three is the most realistic to expect in week one?",
+      "Give me a concrete before/after example for an AE prepping a QBR."
+    ],
+    "panel": [
+      "Which of the six skills should I try first, given that I sell [your role / product / vertical]?",
+      "Walk through a real deal where all six skills get used in sequence.",
+      "Which two skills could I skip and still get the core value?",
+      "How is /focus-group different from just brainstorming with one AI?"
+    ],
+    "install": [
+      "Walk me through the install for my OS (Windows / macOS / Linux), step by step.",
+      "I'm on a managed corporate laptop — what might block the install?",
+      "Where exactly should the skills folder live so Claude Code / Cursor finds it?",
+      "What's the minimum I need installed to try /focus-group right now?"
+    ],
+    "examples": [
+      "Pick the right example for a Salesforce AE prepping a QBR for a financial-services customer.",
+      "Adapt one of these examples to my actual deal — I'll paste my context next.",
+      "What's the simplest thing I could try in the next five minutes?",
+      "Which example chain (focus-group → download → cross-ai-review) is the highest-leverage to learn first?"
+    ],
+    "skills-reference": [
+      "Which persona families should be on the panel for my industry?",
+      "Build me a custom panel for [paste your customer profile].",
+      "What's the difference between Salesforce-Sales and Salesforce-Customer personas?",
+      "Recommend a quick-pick panel for a renewal motion at a mid-market customer."
+    ],
+    "industry-personas": [
+      "Show me which industry pack fits my customer best — I'll describe them.",
+      "Mix-and-match: build a panel using two industry packs (e.g., financial-services + public-sector).",
+      "What's missing from the public-sector pack for an APAC government customer?",
+      "Which industry pack is closest to higher education (university) sales?"
+    ],
+    "customize": [
+      "Give me a prompt I can run inside this folder to add a custom persona for my [industry] deals.",
+      "Sharpen an existing persona to match how my real customers push back.",
+      "Add a 'Renewal' quick-pick panel for my team's motion.",
+      "What should I change first to make this fit my actual deals?"
+    ],
+    "references": [
+      "Give me a 3-day learning plan to get fluent with these skills.",
+      "What's the next thing I should read to go deeper?",
+      "Where do I file a feature request or bug?"
+    ]
+  };
+
+  function currentSection() {
+    return (activeId && document.getElementById(activeId)) || sections[0] || null;
+  }
+  function sectionTitle(sec) {
+    var h = sec && sec.querySelector("h1,h2");
+    return h ? h.textContent.trim() : "this document";
+  }
+  function promptsFor(sec) {
+    return (sec && SECTION_PROMPTS[sec.id]) || DEFAULT_PROMPTS;
+  }
+  function buildPayload(prompt, sec) {
+    var canonical = ($('link[rel="canonical"]') || {}).href || location.href;
+    var anchor = sec && sec.id ? "#" + sec.id : "";
+    return "Context: I am reading the document at " + canonical + anchor +
+      ", currently in the section titled \"" + sectionTitle(sec) + "\". " +
+      "Please read that page (or that section) before answering, then ground your " +
+      "reply in the document.\n\n" + prompt;
+  }
+  function renderCoach() {
+    var sec = currentSection();
+    coachPanel.dataset.coachSectionId = sec ? sec.id : "";
+    coachCtx.textContent = "Section: " + sectionTitle(sec);
+    coachList.innerHTML = "";
+    promptsFor(sec).forEach(function (p) {
+      var b = document.createElement("button");
+      b.className = "ac-prompt"; b.textContent = p;
+      b.addEventListener("click", function () {
+        var payload = buildPayload(p, sec);
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(payload).then(function () {
+            b.textContent = "✓ Copied — paste into your AI assistant";
+            setTimeout(function () { b.textContent = p; }, 1800);
+          });
+        }
+      });
+      coachList.appendChild(b);
+    });
+  }
+  coachBtn.addEventListener("click", function () {
+    var open = coachPanel.classList.toggle("open");
+    if (open) renderCoach();
+  });
+  $("#ai-coach-close").addEventListener("click", function () {
+    coachPanel.classList.remove("open");
+  });
+
+  /* ---------- Sidebar toggle (mobile) ------------------------------ */
+  $("#sidebar-toggle").addEventListener("click", function () {
+    body.classList.toggle("nav-open");
+  });
+  $$('#sidebar nav a').forEach(function (a) {
+    a.addEventListener("click", function () { body.classList.remove("nav-open"); });
+  });
+
+  /* ---------- Floating Claude-glyph spawner ------------------------
+     Bubble-rise particle layer. Spawns SVG sparkles + pixel-robot
+     icons at random horizontal positions, sizes, opacities, and
+     durations; each drifts upward off the screen with a gentle
+     horizontal sway and is removed on animationend. The horizontal
+     range is clamped to the area to the RIGHT of the sidebar
+     (~16-96% of viewport width) so glyphs don't get hidden under
+     the sidebar's opaque background. Capped at 12 simultaneous
+     floaters to keep paint cost negligible. Pure decoration: skipped
+     under prefers-reduced-motion (the CSS already hides the layer). */
+  (function () {
+    if (window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var container = document.getElementById('claude-glyphs');
+    if (!container) return;
+
+    var SPARKLE = '<svg viewBox="-50 -50 100 100" fill="currentColor"><path d="M0,-46 L8,-12 L42,-22 L14,-6 L46,8 L12,12 L24,42 L4,16 L-12,46 L-8,14 L-42,28 L-14,8 L-46,-4 L-12,-10 L-30,-38 L-4,-16 Z"/></svg>';
+    var ROBOT = '<svg viewBox="0 0 12 10" fill="currentColor" shape-rendering="crispEdges"><rect x="2" y="1" width="8" height="6"/><rect x="3" y="3" width="1" height="1" fill="none"/><rect x="4" y="3" width="1" height="1" fill="none"/><rect x="7" y="3" width="1" height="1" fill="none"/><rect x="8" y="3" width="1" height="1" fill="none"/><rect x="1" y="7" width="2" height="2"/><rect x="4" y="7" width="2" height="2"/><rect x="6" y="7" width="2" height="2"/><rect x="9" y="7" width="2" height="2"/></svg>';
+
+    var MAX_ACTIVE = 12;
+    var active = 0;
+    var rand = function (lo, hi) { return lo + Math.random() * (hi - lo); };
+
+    /* Pick a horizontal spawn position INSIDE the visible gutters --
+       the bands of viewport background that aren't covered by the
+       sidebar or by the centered #canvas (max-width 1000px). We
+       measure both elements' bounding rects so this stays correct on
+       resize and on screens too narrow for gutters at all. */
+    function gutterX() {
+      var vw = window.innerWidth;
+      var canvas = document.getElementById('canvas');
+      if (!canvas) return rand(4, 96);
+      var cr = canvas.getBoundingClientRect();
+      var sidebar = document.getElementById('sidebar');
+      var sbRight = sidebar ? Math.max(0, sidebar.getBoundingClientRect().right) : 0;
+
+      var leftBand  = Math.max(0, cr.left - sbRight - 14);  // px between sidebar and canvas
+      var rightBand = Math.max(0, vw - cr.right - 14);      // px between canvas and viewport-right
+
+      // If neither gutter is wide enough to hold a glyph, scatter freely.
+      if (leftBand < 24 && rightBand < 24) return rand(4, 96);
+
+      // Pick side weighted by actual gutter width.
+      var pickRight = Math.random() * (leftBand + rightBand) < rightBand;
+      var px;
+      if (pickRight) {
+        px = cr.right + 8 + Math.random() * Math.max(8, rightBand);
+      } else {
+        px = sbRight + 8 + Math.random() * Math.max(8, leftBand);
+      }
+      return (px / vw) * 100;
+    }
+
+    function spawn() {
+      if (active >= MAX_ACTIVE) return;
+      var isRobot = Math.random() < 0.38;
+      var el = document.createElement('div');
+      el.className = 'floater';
+      el.innerHTML = isRobot ? ROBOT : SPARKLE;
+      var size = Math.round(rand(18, 58));
+      el.style.width  = size + 'px';
+      el.style.height = (isRobot ? Math.round(size * 0.83) : size) + 'px';
+      el.style.left = gutterX().toFixed(2) + '%';
+      el.style.setProperty('--g-op', rand(0.08, 0.20).toFixed(3));
+      el.style.setProperty('--sway', Math.round(rand(8, 26)) + 'px');
+      el.style.setProperty('--rot',  Math.round(rand(-25, 25)) + 'deg');
+      el.style.animationDuration = rand(18, 34).toFixed(1) + 's';
+      container.appendChild(el);
+      active++;
+      el.addEventListener('animationend', function () {
+        if (el.parentNode) el.parentNode.removeChild(el);
+        active = Math.max(0, active - 1);
+      });
+    }
+
+    // Initial burst so the page isn't empty on first paint.
+    for (var i = 0; i < 5; i++) setTimeout(spawn, i * 700);
+    // Random-interval spawn loop, 1.6-4.2s between spawns.
+    (function loop () {
+      spawn();
+      setTimeout(loop, rand(1600, 4200));
+    })();
+  })();
+
+  /* ---------- Init ------------------------------------------------- */
+  function init() {
+    /* Sync the visible "Last Modified" badges to the meta tag, so the
+       maintainer only updates the date in one place (the meta tag). */
+    (function syncLastModified () {
+      var m = document.querySelector('meta[name="last-modified"]');
+      if (!m) return;
+      var dt = m.getAttribute('content');
+      if (!dt) return;
+      var hdr = document.getElementById('last-mod-badge');
+      if (hdr) hdr.innerHTML = '<b>Last Modified</b> ' + dt;
+      document.querySelectorAll('.hero-foot span').forEach(function (s) {
+        if (/v\d+\.\d+\.\d+/.test(s.textContent)) {
+          s.textContent = s.textContent.replace(/Last Modified [\d-]+/, 'Last Modified ' + dt);
+        }
+      });
+    })();
+    renderMermaid();
+    onScroll();
+    drawMinimap();
+    /* Anchor restoration on refresh / first paint. Run several passes:
+       images, fonts, and Mermaid renders all shift layout AFTER init, so
+       a single scroll can land at the wrong position. Instant on first
+       pass (no animation flicker on refresh), smooth on later passes. */
+    var id = currentHashId();
+    if (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        scrollToEl(el, { instant: true });
+        setActiveNav(id);
+        lastId = id; activeId = id;
+        setTimeout(function () { scrollToEl(el, { instant: true }); setActiveNav(id); }, 250);
+        setTimeout(function () { scrollToEl(el, { instant: true }); setActiveNav(id); }, 800);
+      }
+    }
+    /* Catch the case where images / fonts finish loading after init. */
+    window.addEventListener("load", function () {
+      var hid = currentHashId();
+      if (!hid) return;
+      var hel = document.getElementById(hid);
+      if (hel) { scrollToEl(hel, { instant: true }); setActiveNav(hid); }
+    });
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else { init(); }
+  window.addEventListener("resize", drawMinimap);
+})();
+</script>
+</body>
+</html>

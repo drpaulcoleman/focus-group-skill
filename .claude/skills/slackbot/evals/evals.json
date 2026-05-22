@@ -1,0 +1,53 @@
+{
+  "skill_name": "slackbot",
+  "evals": [
+    {
+      "id": 1,
+      "name": "named-customer-with-mcp-detected",
+      "prompt": "/slackbot Providence Health (assume Slack MCP is configured and the user belongs to 2 channels that mention Providence)",
+      "expected_output": "Skill calls MCP conversations.list (is_member=true), searches the 2 matching channels for 'Providence', assembles the raw profile at .org-profile-raw/providence-health/slack.md, runs anonymize.py scrub with --scrub 'Providence Health' and the detected person names, produces .org-profile-raw/providence-health/slack.anonymized.md, presents the approval summary with placeholders, asks the user to approve/edit/reject.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "no-slack-mcp-routes-to-install-offer",
+      "prompt": "/slackbot Acme Credit Union (assume no Slack MCP server configured in the user's MCP config)",
+      "expected_output": "Skill stops; presents the four-option install menu from /focus-group references/usage.md §8 (walk through Slack MCP setup / skip for this run / etc.). Does not attempt to query anything. Records the answer in .install-asked.json.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "no-mentions-found",
+      "prompt": "/slackbot Obscure Customer (MCP is configured but no channels the user belongs to mention this customer)",
+      "expected_output": "Skill reports plainly: 'no mentions of Obscure Customer in any channel you're a member of in the last 30 days.' Offers to widen the window to 90 or 180 days, or skip. Does not invent mentions.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 4,
+      "name": "anonymize-failure-blocks-output",
+      "prompt": "/slackbot Providence Health (MCP works, but anonymize.py script is missing)",
+      "expected_output": "Raw profile saved to .org-profile-raw/.../slack.md (local-only, as designed). Anonymize call fails. Skill refuses to hand the profile onward to /focus-group and tells the user the anonymize layer is required for any model-bound use. Suggests installing the /anonymize skill folder.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 5,
+      "name": "help-mode-no-query",
+      "prompt": "/slackbot help",
+      "expected_output": "Prints SKILL.md walkthrough (what it is, when to invoke, prerequisites, the 5-step workflow, privacy posture, install path). Does NOT query Slack. Does NOT prompt for a customer name.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 6,
+      "name": "scope-respects-member-only",
+      "prompt": "/slackbot CustomerX (MCP is configured; the user is NOT a member of #customerx-deal-room but the channel exists)",
+      "expected_output": "Skill does NOT surface anything from #customerx-deal-room. The query is constrained to is_member=true. The summary may note 'A channel named #customerx-deal-room exists but you are not a member of it.' (informational only, no contents disclosed).",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

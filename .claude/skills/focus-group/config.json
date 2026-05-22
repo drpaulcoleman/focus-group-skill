@@ -1,0 +1,21 @@
+{
+  "_comment": "Persistent /focus-group + /cross-ai-review configuration. 'channel_models' sets the default model for each cross-AI channel so it need not be passed on every invocation. A per-invocation --<channel>-model switch overrides it. Edit via `/focus-group config set <channel>-model <value>` or by hand. 'last_model_check' drives the monthly model-freshness gate (see the /focus-group skill, section 'Model freshness gate'). 'multi_claude_fallback' lists the Claude models used when only the claude CLI is available (Opus + Sonnet by default).",
+  "_policy": "channel_models holds the CURRENT inferred latest/deepest model for each CLI as concrete model IDs -- NOT keywords (`deep`, `latest`, `default` are sentinels, not model names; the provider APIs reject them). This is an inference to refresh as new models ship, not a fixed constant. How to re-infer the latest per CLI: claude -> newest Opus (Claude Code CLI accepts the rolling `opus` alias or a versioned id such as `claude-opus-4-7`). codex -> the `model` value in `~/.codex/config.toml` is the Codex CLI's own current default. gemini -> GET generativelanguage.googleapis.com/v1beta/models and pick the newest `*-pro` id, or use the rolling `gemini-pro-latest` alias. opencode -> opencode --model (or read ~/.config/opencode/config.json). A per-invocation --<channel>-model switch overrides this file.",
+  "channel_models": {
+    "claude": "claude-opus-4-7",
+    "codex": "gpt-5.5",
+    "gemini": "gemini-3.1-pro-preview",
+    "opencode": null
+  },
+  "multi_claude_fallback": {
+    "primary": "claude-opus-4-7",
+    "secondary": "claude-sonnet-4-6"
+  },
+  "install_prompts": "on",
+  "user_role": null,
+  "_user_role_options": "Set via /focus-group config set user-role <slug> OR asked at first run (a two-tab AskUserQuestion: tab 1 picks the role, tab 2 asks for consent to save). Slugs: ae | se | industry-specialist | enterprise-architect | technical-architect | bvc | lead-engagement | csm | partner-am | other. The report framing and persona-recommendation bias adapt to this. Null means: ask again on next run.",
+  "last_product_pack": "salesforce-crm-agentforce",
+  "last_industry_pack": null,
+  "_pack_caching": "Skill remembers the user's last product/industry pack pick so Step 3 can skip the question on subsequent runs. Override per-run with --product <slug> / --industry <slug>; clear with /focus-group config clear last-product-pack / last-industry-pack.",
+  "last_model_check": "2026-05-20"
+}

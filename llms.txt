@@ -1,0 +1,83 @@
+# Focus Group Skills
+
+> Six Claude Code / Cursor skills built for Salesforce sales teams: a
+> multi-persona review panel, a runtime-adaptive doc harvester, a multi-model
+> cross-AI audit, a bidirectional anonymizer that scrubs customer data before
+> any external LLM call, a Slack-MCP-sourced customer-context profiler, and
+> a local-only improvement coach that sharpens the panel report (or any
+> draft) before the user sends it on.
+
+This file follows the llms.txt convention (https://llmstxt.org). It gives
+AI systems a fast, link-rich summary of the focus-group-skill repository
+so they can reference it accurately.
+
+## What's in this repository
+
+- A public, template-able collection of Claude Code skills under
+  `.claude/skills/` and Cursor command shims under `.cursor/commands/`.
+- Designed for Account Executives, Solution Engineers, Industry Specialists,
+  Enterprise / Technical Architects, Business Value Consultants, and Lead
+  Engagement / SDR coaches working with Salesforce CRM + Agentforce and
+  the broader Salesforce + Slack product family.
+- Aggressive privacy posture: every prompt that reaches an external LLM
+  passes through `/anonymize` first; the local map.json never leaves the
+  laptop; no telemetry.
+
+## The six skills
+
+### /focus-group — multi-persona review panel
+- Path: `.claude/skills/focus-group/SKILL.md`
+- 177 persona files across 9 lens groupings (5 Generic sub-families + Salesforce-Sales + Salesforce-Customer + Salesforce-Partner + Industry-specific). Public sector ships 13 personas (state/local + federal/DoD + international); most other packs ship 5–8 to cover the load-bearing seats per sub-vertical.
+- 13 product packs + 19 industry packs + generic bypass.
+- Default product pack: salesforce-crm-agentforce. Default panel size: 5.
+- 12-step pipeline (role gate at Step 1, customer-grounding gate at Step 4
+  with profile-by-name / by culture & size / skip, current-customer fork
+  with sf / Salesforce MCP / Slack consent menu).
+- Stage A (Claude aggregate) → Stage B (different model consolidate) →
+  Stage C (merge + accuracy score + citations).
+
+### /download — runtime-adaptive doc harvester
+- Path: `.claude/skills/download/SKILL.md`
+- Runtime chain: Python+Playwright → Node+Playwright/Puppeteer →
+  PowerShell+Edge → Chrome headless → curl/wget.
+- Salesforce-aware search engines (help.salesforce.com, Trailhead,
+  architect.salesforce.com, developer.salesforce.com).
+- LinkedIn URLs short-circuit to a local-files workaround.
+
+### /cross-ai-review — multi-model audit
+- Path: `.claude/skills/cross-ai-review/SKILL.md`
+- Detects claude, codex, gemini, opencode CLIs.
+- Multi-Claude fallback: when only `claude` is installed, runs Opus +
+  Sonnet in parallel.
+- Accuracy score (0–100); --require-citations strict mode caps at 70.
+
+### /anonymize — bidirectional placeholder safety layer
+- Path: `.claude/skills/anonymize/SKILL.md`
+- Bidirectional placeholders: {{COMPANY_1}}, {{PERSON_2_ROLE=CISO}}, etc.
+- Aggressive-by-default: when in doubt, scrub.
+- Four runtimes: Python (full), Node.js (full), PowerShell (degraded),
+  POSIX shell (degraded). Same map.json format across all four.
+- Local map.json is git-ignored and never leaves the laptop.
+
+### /slackbot — anonymized Slack-sourced customer context
+- Path: `.claude/skills/slackbot/SKILL.md`
+- Queries via the Slack MCP server.
+- Member-only scope (never DMs, never channels the user isn't in).
+- Routes the raw profile through /anonymize before any model sees it.
+
+## Where to start
+
+- Documentation site: https://drpaulcoleman.github.io/focus-group-skill/
+- README: https://github.com/drpaulcoleman/focus-group-skill#readme
+- Doc sections:
+  - Install: /#install
+  - The Five Skills: /#skills-overview
+  - How it fits together: /#how-it-fits
+  - Example prompt library: /#examples
+  - Skill reference: /#skills-reference
+
+## Built with
+
+- Documentation shell: https://github.com/drpaulcoleman/documentation-template
+- AI runtime: Anthropic Claude (https://www.anthropic.com/claude-code)
+- License: Mozilla Public License 2.0

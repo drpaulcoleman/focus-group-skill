@@ -1,0 +1,83 @@
+---
+description: Ambient grounding for the three Salesforce sales-team skills (/focus-group, /download, /cross-ai-review). Loaded as always-on context in Cursor so the agent has shared vocabulary even when no slash command is invoked.
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Salesforce Sales-Team Skills — Ambient Grounding
+
+This workspace ships three Cursor commands and three corresponding Claude
+Code skills. They live under `.claude/skills/` (canonical) with `.cursor/`
+shims that delegate to the same source files. The slash commands are:
+
+- `/focus-group` — multi-persona, multi-model review panel for Salesforce
+  sales conversations. Default product pack: Salesforce CRM + Agentforce.
+  13 product packs + 19 industry packs + a `--generic` bypass. See
+  [`.claude/skills/focus-group/SKILL.md`](.claude/skills/focus-group/SKILL.md)
+  and
+  [`.claude/skills/focus-group/references/persona-roster.md`](.claude/skills/focus-group/references/persona-roster.md).
+
+- `/download` — runtime-adaptive harvester for Salesforce help /
+  Trailhead / Architect / developer.salesforce.com and any other URL.
+  Saves citations under `references/<slug>/`. See
+  [`.claude/skills/download/SKILL.md`](.claude/skills/download/SKILL.md).
+
+- `/cross-ai-review` — fans one prompt across whichever AI CLIs are
+  installed (Claude, Codex, Gemini, opencode), with a multi-Claude
+  fallback (Opus + Sonnet) when only Claude is present. See
+  [`.claude/skills/cross-ai-review/SKILL.md`](.claude/skills/cross-ai-review/SKILL.md).
+
+- `/anonymize` — bidirectional placeholder anonymization for LLM-bound
+  text. Scrub customer names, PII, financial figures into placeholders
+  before sending to any external LLM; restore real values after the
+  response comes back. Library called by the other three skills; also
+  usable standalone. Aggressive-by-default. Local map never leaves the
+  laptop. See
+  [`.claude/skills/anonymize/SKILL.md`](.claude/skills/anonymize/SKILL.md).
+
+- `/slackbot` — build an anonymized customer profile from the user's
+  Slack workspace via the Slack MCP (member-only scope, never DMs).
+  Output runs through `/anonymize` before any persona prompt sees it.
+  See
+  [`.claude/skills/slackbot/SKILL.md`](.claude/skills/slackbot/SKILL.md).
+
+## When to invoke each one
+
+| User intent | Skill to invoke |
+|-------------|-----------------|
+| "Review my discovery questions for an Acme call" | `/focus-group` |
+| "What would an SE / Champion / CIO say about this draft?" | `/focus-group` |
+| "Pull the Salesforce docs on Service Cloud Voice" | `/download` |
+| "Capture this customer's About page and IR materials" | `/download` |
+| "Fact-check this proposal across two or three AIs" | `/cross-ai-review` |
+| "Did I get any claims here wrong?" | `/cross-ai-review` |
+
+These skills are **explicit-trigger**: invoke them when the user runs
+the slash command or explicitly asks for the behavior. Do not
+auto-activate them from adjacent conversation about reviews, feedback,
+decks, or personas.
+
+## Customer-grounding gate (load-bearing for /focus-group)
+
+When `/focus-group` is invoked and the user's prompt does not name a
+specific customer or include explicit cultural/scale signals, **stop
+and ask** before doing any research. The two-question gate is
+specified in
+[`.claude/skills/focus-group/references/org-profile-schema.md`](.claude/skills/focus-group/references/org-profile-schema.md).
+The skill never silently produces a generic answer to a question that
+obviously concerns a real customer.
+
+## Voice rule (applies everywhere)
+
+Plain, professional, neutral. No slang. No labels for the reader
+(`noob`, `newbie`, `non-technical`, `layperson`). No jokes at the
+reader's expense. The skills read the same whether the user is a
+brand-new AE or a 20-year architect — only the depth of explanation
+flexes, never the tone.
+
+## Errors
+
+Apply the err-doctrine at
+[`.claude/skills/focus-group/references/err-doctrine.md`](.claude/skills/focus-group/references/err-doctrine.md):
+four-line shape — cause / what-was-done / next-steps / *"If you'd
+like, paste the screen you see and I'll translate it."*
