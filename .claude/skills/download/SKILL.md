@@ -155,6 +155,13 @@ fetching by hand:
   `https://developer.salesforce.com/docs/atlas.en-us.apexref.meta/apexref/apex_ref_guide.htm`
   has a linked consolidated PDF — fetch the PDF, not the hundreds of `.htm` pages.
 
+**Salesforce PDF shortcut map.** See
+[references/salesforce-pdf-shortcuts.md](references/salesforce-pdf-shortcuts.md)
+for a table of known doc sets with PDF versions. The correct workflow is:
+fetch the HTML entry point → parse the PDF link from the page footer (the
+release number changes 3x/year) → download the resolved PDF. Never hardcode
+PDF URLs across sessions.
+
 ## Searching a subject
 
 When given a subject/topic instead of a URL, gather candidate sources, then

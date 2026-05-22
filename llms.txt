@@ -86,7 +86,7 @@ so they can reference it accurately.
 - README: https://github.com/drpaulcoleman/focus-group-skill#readme
 - Doc sections:
   - Install: /#install
-  - The Five Skills: /#skills-overview
+  - The Seven Skills: /#skills-overview
   - How it fits together: /#how-it-fits
   - Example prompt library: /#examples
   - Skill reference: /#skills-reference
