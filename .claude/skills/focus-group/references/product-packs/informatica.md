@@ -8,6 +8,26 @@ IDMC is a multi-service cloud platform; customers do not buy "Informatica" as on
 
 The three most common honest objections: (1) "we are moving to a lakehouse-native stack (Snowflake / Databricks / dbt) and do not need a legacy data integration vendor" — sometimes correct for greenfield analytics, but MDM and data quality remain weak spots in those stacks; (2) "IDMC is expensive and the IPU model is hard to predict" — legitimate; sizing requires real workload analysis; (3) "what happens to our investment after the Salesforce acquisition closes" — fair question that sellers should answer honestly: contracts continue, the product roadmap continues, and any unification will be a multi-year journey. The complexities that get glossed: IPU consumption can vary widely by job design and source complexity; MDM implementations are organizational change projects that frequently take 9-18 months to first value; and the overlap with MuleSoft (application integration), with Data Cloud (customer 360 and data unification), and potentially with Tableau Prep is real and creates buyer confusion that sales has to address with a clear "who does what" story.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **IDMC (Intelligent Data Management Cloud) — IPU pricing** | Consumption-priced on Informatica Processing Units (IPUs); IPU consumption varies widely by job design and source complexity — sizing requires real workload analysis, not a back-of-envelope estimate | informatica.com pricing | TODO |
+| **Salesforce acquisition — contract continuity** | Existing IDMC contracts continue; the product roadmap continues; any unification with Data Cloud / MuleSoft will be a multi-year journey — answer this honestly when customers ask | salesforce.com newsroom | TODO — verify current public position |
+| **MDM (Master Data Management)** | MDM implementations are organizational change projects, not product installs; typical time-to-first-value is 9-18 months — set this expectation early | informatica.com MDM | TODO |
+| **Overlap with MuleSoft / Data Cloud / Tableau Prep** | The overlap is real and creates buyer confusion; sales must address it with a clear "who does what" story (application integration / customer 360 / data integration / data prep / BI prep) | salesforce.com partners | TODO |
+| **Connectors — supported sources and targets** | Informatica's connector library is broad; verify current connector availability (and any version constraints) before promising a specific source/target | informatica.com connectors | TODO |
+| **Cloud-native vs. PowerCenter** | PowerCenter (legacy on-prem) and IDMC are different products with different roadmaps; migration is a real project, not a switch | informatica.com migration | TODO |
+| **Data quality and data governance** | Native data quality and governance modules are separate from the integration runtime — confirm what's in the customer's contract before scoping | informatica.com data quality | TODO |
+| **Lakehouse coexistence (Snowflake / Databricks / dbt)** | MDM and data quality remain weak spots in lakehouse-native stacks; sometimes the right answer is "use both" rather than positioning displacement | informatica.com partners | TODO |
+| **CDC (Change Data Capture)** | CDC has specific source-system requirements and licensing — verify before scoping real-time replication | informatica.com CDC | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender leans toward:

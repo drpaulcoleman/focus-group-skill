@@ -15,6 +15,7 @@ install offers at the right moments.
 | **Salesforce integrations** | `sf` on PATH; `sf org list` returns ≥1 authorized org; MCP config has a `salesforce`-named server | Used by `/focus-group` Step 3c. |
 | **Slack integrations** | `slack` on PATH; MCP config has a `slack`-named server | Used by `/focus-group` Step 3c. |
 | **Version control** | `git` on PATH; `.git/` in workspace | Used by the session-end `git` install offer in `/download` (soft prompt). |
+| **Anonymize runtime** | Python 3 / Node.js / PowerShell / POSIX shell — runs the `/anonymize` skill's `detect-runtime.sh` (POSIX) or `detect-runtime.ps1` (Windows) | Used by `/focus-group` **Step 8.0 pre-dispatch gate**. Records `preferred` runtime + `degraded: true/false` (degraded = PowerShell or shell, regex-only, no L3 heuristic). When `available: false`, the gate blocks any external CLI dispatch on customer-grounded content until the user picks an install or `--single-ai` fallback. |
 
 ## What the probe does NOT do
 
@@ -64,6 +65,11 @@ Version control:
   ✓ git on PATH
   ✗ .git/ in workspace — not yet a git repo
   → If you generate files here, you'll see a soft offer at session end.
+
+Anonymize runtime:
+  ✓ Python 3.12  (preferred — full L1+L2+L3 detection)
+  ✓ Node.js 22   (also available — would be used as fallback)
+  → Step 8.0 pre-dispatch gate will pass cleanly when customer data is in scope.
 ```
 
 ## Persistence

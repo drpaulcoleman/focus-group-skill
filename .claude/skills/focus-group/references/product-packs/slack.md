@@ -8,6 +8,26 @@ Slack is a paid SaaS messaging product with Free, Pro, Business+, and Enterprise
 
 The three most common honest objections sales conversations hit: (1) "we already pay for Teams as part of Microsoft 365, why pay again" — the answer is integration depth and Slack Connect, not feature parity; (2) "our InfoSec team is nervous about external channels and data leakage" — legitimate concern that Enterprise Grid, DLP partners, and channel-posting policies address but do not eliminate; (3) "users will not adopt yet another tool" — real, and the answer is usually a phased rollout starting with one or two high-pain workflows, not a big-bang migration. The three complexities that get glossed: per-message cost models for high-volume bot postings can surprise customers on usage-based downstream services; Slack's retention policy is per-workspace and gets messy on Enterprise Grid with multiple workspaces; and the Salesforce-Slack integration ("Sales Elevate", Sales Cloud for Slack, Service Cloud for Slack) is genuinely useful but each app has its own setup, license requirements, and learning curve — it is not one switch.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Slack editions — Free / Pro / Business+ / Enterprise Grid** | Each edition has different message-history retention defaults, different security/compliance features, and different admin capabilities — verify customer's edition before promising features | slack.com pricing | TODO |
+| **Enterprise Grid — multi-workspace** | Grid lets customers run multiple workspaces under one org with shared channels and admin controls; retention policy is per-workspace and gets messy on Grid with multiple workspaces | slack.com enterprise grid | TODO |
+| **Slack Connect — external collaboration** | Channels shared with external organizations have specific security and admin controls; verify org-level Connect policy before promising customer-collaboration patterns | slack.com slack connect | TODO |
+| **Retention policy** | Configurable per workspace (or per channel on higher editions); default behavior differs by edition — never quote a default without checking | slack.com retention | TODO |
+| **DLP / compliance partners** | Slack supports DLP partners for content scanning; this is the typical answer to InfoSec concerns about external channels and data leakage — but does not eliminate the concern | slack.com security | TODO |
+| **Salesforce + Slack apps — Sales Elevate, Sales Cloud for Slack, Service Cloud for Slack** | Each app is a separate install with its own license requirements and learning curve; not one switch — sellers should set this expectation honestly | salesforce.com slack apps | TODO |
+| **Per-message / bot cost models** | High-volume bot postings can surprise customers on usage-based downstream services (e.g., usage-priced Slack-driven workflows or downstream APIs the bot calls) | slack.com pricing | TODO |
+| **Slack AI / Agentforce-on-Slack capabilities** | The Slack AI / agent integration story is evolving — describe currently shipping capabilities, not roadmap; verify against current Slack release notes | slack.com slack ai | TODO |
+| **Workflow Builder — limits and trigger types** | TODO — verify current Workflow Builder trigger types, limits, and what requires the developer platform | api.slack.com Workflow Builder | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender leans toward:

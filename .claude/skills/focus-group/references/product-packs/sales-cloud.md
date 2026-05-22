@@ -42,6 +42,27 @@ rhythm and frequently doubles the project's complexity; and reporting on histori
 pipeline (snapshots, trending) requires either Reporting Snapshots or Tableau / CRM
 Analytics, which is a separate skill set and often a separate license.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** (a verified
+fact a panel may quote with citation) or a **TODO stub** (not yet
+verified — the rubric scores 0 for any panel claim that lands on a stub
+row). See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Forecasting — Collaborative Forecasts** | Available in Enterprise edition and above; territory-based forecasts require Enterprise Territory Management to be enabled | help.salesforce.com Collaborative Forecasts | TODO — verify current help slug |
+| **CPQ — included or add-on?** | Salesforce CPQ (formerly Steelbrick / now in the Revenue Cloud family) is separately licensed; do not assume any Sales Cloud edition includes it without checking the customer's specific entitlement | salesforce.com pricing | TODO |
+| **Pipeline Inspection — edition availability** | TODO — confirm which editions include Pipeline Inspection (was added in a specific release) | help.salesforce.com Pipeline Inspection | TODO |
+| **Sales Engagement / Einstein Activity Capture** | TODO — confirm current packaging (separate add-on vs. included) and capture limits | salesforce.com pricing | TODO |
+| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
+| **Apex governor — DML rows per transaction** | TODO — verify before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
+| **API daily request limit** | Tied to edition + active user license count; verify the customer's specific entitlement before quoting a number | help.salesforce.com API Request Limits | TODO |
+| **Reporting Snapshots vs. Tableau / CRM Analytics** | Historical pipeline / trending in Sales Cloud requires either Reporting Snapshots (configured) or a separate analytics product — confirm before promising trended pipeline reporting | help.salesforce.com Reporting Snapshots | TODO |
+| **Lead conversion — what happens to the Lead record** | Confirm current behavior on conversion (Lead becomes inactive; Account/Contact/Opportunity created; standard fields mapped, custom fields require explicit field mapping) | help.salesforce.com Lead Conversion | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

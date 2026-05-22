@@ -52,6 +52,26 @@ it is not magic; and grounding an Agentforce agent on Data Cloud requires carefu
 retrieval design (chunking, embeddings, search-index configuration) that an unprepared
 SE will hand-wave.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Data Cloud — pricing unit** | Data Cloud is consumption-priced; primary units are Data Service Credits / queries / events — confirm current pricing units before any quote | salesforce.com/data-cloud/pricing | TODO — verify current pricing page |
+| **Zero Copy — supported sources** | Zero Copy data sharing is supported with specific cloud data warehouses (verify current list — e.g., Snowflake, Databricks, BigQuery, Redshift each have specific support tiers) | help.salesforce.com Data Cloud Zero Copy | TODO |
+| **Identity resolution** | Identity rules and reconciliation rules run on a defined schedule; rule complexity affects throughput; verify current rule-execution windows before promising real-time UID resolution | help.salesforce.com Data Cloud identity resolution | TODO |
+| **Calculated insights — execution model** | Calculated insights run on a schedule (not real-time by default); streaming insights have a different execution model and limits | help.salesforce.com Data Cloud calculated insights | TODO |
+| **Data Cloud — query API** | Data Cloud SQL / query API has rate limits and result-size limits — confirm current numbers before scoping a customer integration | developer.salesforce.com Data Cloud API | TODO |
+| **CRM connector / standard data model** | Standard Salesforce objects map to Data Cloud's standard data model; custom objects require explicit mapping; bidirectional sync has specific patterns | help.salesforce.com Data Cloud CRM connector | TODO |
+| **Data ingestion — connectors and limits** | Data Stream connectors (batch, streaming, CDC) each have separate enablement and limits | help.salesforce.com Data Stream | TODO |
+| **Trust Layer / Data Cloud / Agentforce interplay** | When Agentforce grounds on Data Cloud, the retrieval pattern is configured per topic — chunking, embeddings, search-index choice all materially affect agent quality | architect.salesforce.com decision guides | TODO |
+| **Data residency and regulatory boundaries** | Verify which regions support Data Cloud and any current GovCloud / EU residency limitations before promising a regulated deployment | trust.salesforce.com | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

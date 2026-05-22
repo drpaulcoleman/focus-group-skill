@@ -50,6 +50,26 @@ customer's marketing-ops team and the platform will not fix bad practice; and th
 SFMC and the newer native Marketing Cloud Growth / Advanced are different products with
 different roadmaps — picking the wrong one is a multi-year decision.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Marketing Cloud editions — SFMC vs. Marketing Cloud Growth/Advanced** | These are different products with different roadmaps, different data models, and different feature sets — confirm which one the customer's deal is for before any commitment | salesforce.com marketing cloud product page | TODO — verify naming, current as of release |
+| **Sending limits and reputation** | Send-volume limits are tied to edition + IP reputation + sender authentication (SPF/DKIM/DMARC) — never quote raw send caps without context | help.salesforce.com sending best practices | TODO |
+| **Compliance — CAN-SPAM / CASL / GDPR / TCPA** | Platform provides tools (preference centers, suppression lists, consent capture) but compliance is the customer's responsibility; the platform does not guarantee compliance | help.salesforce.com compliance | TODO |
+| **Journey Builder — entry sources and event triggers** | Journey Builder supports multiple entry sources (Data Extension, API event, schedule, Salesforce Audience); event-triggered journeys have specific latency characteristics — confirm before promising real-time | help.salesforce.com Journey Builder | TODO |
+| **Mobile / SMS — separate enablement** | SMS, MobilePush, WhatsApp, and other channels each have separate enablement, separate carrier relationships (for SMS), and separate compliance requirements | help.salesforce.com Mobile Studio | TODO |
+| **Marketing Cloud Personalization (formerly Interaction Studio)** | Separately licensed; personalization on web/mobile requires SDK implementation by the customer's web team | help.salesforce.com MC Personalization | TODO |
+| **Data Cloud + Marketing Cloud integration** | Data Cloud audiences can be activated in Marketing Cloud Growth/Advanced; legacy SFMC integration is via the Salesforce Audience connector with specific patterns and limits | help.salesforce.com integration | TODO |
+| **API limits — REST and SOAP** | TODO — confirm current API call limits and rate-limit windows for the specific edition | developer.salesforce.com Marketing Cloud APIs | TODO |
+| **AMPscript / SSJS — execution context and limits** | TODO — document current limits and security boundaries | help.salesforce.com AMPscript | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

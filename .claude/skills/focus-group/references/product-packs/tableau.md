@@ -8,6 +8,26 @@ Tableau ships in three main shapes: Tableau Cloud (Salesforce-hosted SaaS, the d
 
 The three most common honest objections: (1) "Power BI is included with our E5 license" — true, and the counter is depth of analysis, governance at scale, and cross-cloud data sources, not list-price comparison; (2) "our analysts already use [Looker / ThoughtSpot / Sigma]" — migrating dashboards is real work and should be scoped honestly; (3) "we do not want another semantic layer" — Tableau works best with a curated published data source or a connection to a governed warehouse model, and pretending it does not need modeling leads to dashboard sprawl. The complexities that get glossed: row-level security at scale requires careful design (entitlement tables, user functions); extract refresh schedules and live-query performance are operational concerns that fall on the customer's data team; and the Data Cloud + Tableau story is real but requires both products and a connector pattern (Zero Copy or query federation) the customer's data team has to operate.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Tableau Cloud vs. Tableau Server vs. Tableau Public** | Different deployment models, different security postures, different pricing — confirm which one the deal is for before any commitment | tableau.com pricing | TODO |
+| **Tableau Pulse — license and availability** | Pulse (AI-powered metric monitoring) has specific license requirements; verify the customer's edition before promising Pulse capabilities | help.tableau.com Pulse | TODO |
+| **CRM Analytics (formerly Tableau CRM / Einstein Analytics)** | A separate product from Tableau / Tableau Cloud, with a different data model (datasets, dashboards, lenses, SAQL) — do not conflate | help.salesforce.com CRM Analytics | TODO |
+| **Row-level security at scale** | RLS requires careful design (entitlement tables, user functions, data-source filters); pretending it works "out of the box" leads to leak risk | help.tableau.com RLS | TODO |
+| **Extract refresh schedules and live-query performance** | Extract refresh has specific scheduling/concurrency limits; live queries push performance into the source database — operational concerns the customer's data team owns | help.tableau.com performance | TODO |
+| **Tableau + Data Cloud (Zero Copy or query federation)** | Real but requires both products and a connector pattern the customer's data team has to operate; do not position as "free" or "automatic" | help.salesforce.com data cloud + tableau | TODO |
+| **Embedded analytics — licensing model** | Embedded usage has a separate license model (per-page-view or capacity-based) that differs from internal user licenses | tableau.com embedded analytics | TODO |
+| **Migration from Power BI / Looker / ThoughtSpot / Sigma** | Migrating dashboards is real work and should be scoped honestly; semantic-model translation rarely round-trips cleanly | salesforce.com partners | TODO |
+| **Governance — published data sources and content certification** | Best-practice deployment uses published data sources and content certification; without governance, dashboard sprawl is the typical outcome | help.tableau.com governance | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender leans toward:

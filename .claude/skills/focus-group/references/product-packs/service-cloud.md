@@ -47,6 +47,26 @@ broken; and reporting on contact-center KPIs (AHT, FCR, occupancy, schedule adhe
 usually requires CRM Analytics / Tableau or a workforce-management partner, not native
 reports.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Omni-Channel routing** | Omni-Channel routing supports skill-based, queue-based, and external routing patterns; available in Enterprise edition and above | help.salesforce.com Omni-Channel | TODO — verify current help slug |
+| **Service Cloud Voice — pricing model** | Consumption-priced on top of Service Cloud licensing; voice minutes are billed separately from CRM seats; confirm current pricing/contract before quoting | salesforce.com Service Cloud Voice | TODO |
+| **Knowledge — article publishing & permissions** | Salesforce Knowledge requires explicit user permissions and a publishing workflow; data-category visibility rules govern what each agent sees | help.salesforce.com Knowledge | TODO |
+| **Field Service overlap** | Field Service is a separately licensed product, not included in Service Cloud; confirm before scoping technician/dispatch features | salesforce.com Field Service | TODO |
+| **Agentforce Service Agent — deployment surfaces** | Embeddable in Experience Cloud, messaging channels, and the Service Console; sharing/FLS inheritance follows the agent user — see Trust Layer | help.salesforce.com Agentforce | TODO |
+| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
+| **Case assignment & escalation rules** | TODO — document current behavior, including what triggers re-evaluation and how this interacts with Omni-Channel | help.salesforce.com Case rules | TODO |
+| **CTI / partner phone integration** | TODO — confirm currently certified CTI partners and the OpenCTI vs. Service Cloud Voice tradeoffs | salesforce.com partners | TODO |
+| **Workforce Management (WFM) native vs. partner** | Native Service Cloud has limited WFM (AHT, schedule adherence, occupancy not first-class); CRM Analytics or a partner WFM product is typically required for serious contact-center ops | salesforce.com partners | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

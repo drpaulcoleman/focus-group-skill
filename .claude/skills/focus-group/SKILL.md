@@ -127,9 +127,12 @@ Under `--quick`: only Steps 1 (if unsaved), 2, and 5 run. Steps 0, 3, 4c, 7, 8, 
 ### Step 0 — Tooling preflight (cached)
 Skip under `--single-ai`. Probe which CLIs and integrations are available:
 `claude`, `codex`, `gemini`, `opencode`, `sf` (Salesforce CLI), Salesforce MCP,
-Slack MCP. Record findings; do **not** prompt for installs here —
+Slack MCP, and the **`/anonymize` runtime** (Python 3 / Node.js / PowerShell —
+any one is sufficient; see [`/anonymize`](../anonymize/SKILL.md) for the
+four-runtime chain). Record findings; do **not** prompt for installs here —
 install offers fire at the moment of concrete value (Step 4c, §8 of
-[references/usage.md](references/usage.md)). Details: [references/tooling-preflight.md](references/tooling-preflight.md).
+[references/usage.md](references/usage.md), or — for the anonymize runtime —
+the Step 8 pre-dispatch gate). Details: [references/tooling-preflight.md](references/tooling-preflight.md).
 
 **Detection cache (load-bearing for speed).** Probing CLIs and MCP
 servers can take 1–3 seconds; doing it on every invocation makes the
@@ -151,9 +154,22 @@ naked `/focus-group` feel slow after the first one. Cache the result:
       "sf":             { "available": true,  "orgs_connected": 2 },
       "salesforce_mcp": { "available": false, "server_name": null },
       "slack_mcp":      { "available": true,  "server_name": "slack" }
+    },
+    "anonymize_runtime": {
+      "available": true,
+      "preferred":  "python",
+      "candidates": ["python", "node", "powershell", "shell"],
+      "degraded":   false
     }
   }
   ```
+
+The `anonymize_runtime` block records the result of running
+`detect-runtime.sh` / `detect-runtime.ps1` from the `/anonymize` skill.
+`preferred` is the chosen runtime; `degraded: true` means only `powershell`
+or `shell` are available (regex-only mode, no L3 heuristic — callers
+must pass `--scrub <name>` for every entity name not caught by regex).
+The Step 8 pre-dispatch gate reads this entry directly.
 - **Read on every run.** If the cache exists and `detected_at` is less
   than **24 hours old**, skip the actual probe entirely and use the
   cached availability map. The 24-hour window catches new installs
@@ -365,7 +381,75 @@ Stakeholder (sign-off lens) or Audience (reception lens). Defaults from [referen
 Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate every harvested artifact actually contains the expected content before any persona reads it.
 
 ### Step 8 — Distribute panel across models
-Round-robin across available channels (Claude, Codex, Gemini, opencode). If only Claude is available, use the multi-Claude fallback (Opus + Sonnet). Quota-skip → reassign to the next channel. See [references/multi-model-panel.md](references/multi-model-panel.md).
+
+**Step 8.0 — Anonymize pre-dispatch gate (mandatory; fires before any external CLI call).**
+
+This gate runs **before** round-robin distribution and is non-skippable
+when any of the following are true:
+
+- the active org profile has `source: "internal:..."` (any `sf` / Salesforce MCP / Slack-MCP-derived data),
+- the active org profile has `customer_name` set (named org, even from public sources),
+- any panel prompt contains content that would match the `/anonymize` patterns (emails, phone numbers, money amounts ≥ 4 digits, ARR/MRR/TCV phrasing, Salesforce org IDs / sandbox aliases, etc. — see [`/anonymize` SKILL.md](../anonymize/SKILL.md)),
+- the user passed `--attendees <path>` (attendee profiles always contain personal data).
+
+**Gate logic:**
+
+1. Read `anonymize_runtime.available` from `.focus-group-cache.json`. If
+   stale, refresh with the `/anonymize` skill's `detect-runtime.sh` /
+   `detect-runtime.ps1`.
+2. **If `available: false`** — STOP before any external dispatch. Surface
+   the universal install offer ([references/usage.md](references/usage.md) §8 pattern):
+
+   > *I detected customer-grounded content in this panel and no
+   > `/anonymize` runtime on this host (Python 3 / Node.js / PowerShell —
+   > any one is sufficient). Sending this to external LLMs without
+   > anonymization would put identifiable customer data on third-party
+   > servers, which the skill's privacy contract refuses to do.*
+   >
+   > *(a) Walk me through installing Python now (~3 min)*
+   > *(b) Walk me through Node.js (~2 min if `node` is already present)*
+   > *(c) Run `--single-ai` for this panel — host Claude only, no external dispatch, no anonymize required*
+   > *(d) Cancel this run*
+
+   The gate **never silently downgrades to plaintext dispatch**. The
+   user must pick one of (a)–(d). Picking (c) flips the run to
+   `--single-ai` and continues; (d) aborts cleanly.
+
+3. **If `available: true` and `degraded: true`** (POSIX shell or
+   PowerShell — regex-only mode, no L3 heuristic), the orchestrator
+   MUST pass `--scrub <name>` for every entity name it knows from the
+   org profile (customer name, contact names from `internal_data`,
+   org alias, Slack channel names) before calling `anonymize.py scrub`.
+   Surface a one-line note: *"Anonymize is in degraded mode (regex only).
+   I'm passing the N entity names I know about as `--scrub` overrides."*
+
+4. **If `available: true` and `degraded: false`** (Python or Node.js,
+   full L1+L2+L3 detection), proceed normally — the library handles
+   detection.
+
+5. Every panel prompt destined for `codex`, `gemini`, `opencode`, or any
+   second-process Claude (`claude -p --model ...` for the multi-Claude
+   fallback, plus `cross_ai.py` dispatches in Stage B) **must pass through
+   `anonymize.scrub()` immediately before the dispatch call.** Local
+   `Agent`-tool subagent dispatches on the host Claude do NOT require the
+   scrub (the host model already has all the context the user authorized).
+
+6. The orchestrator records the gate decision (`pass` / `degraded` /
+   `single-ai-fallback` / `aborted`) in the report header line:
+   `**Anonymize:** pass (python) | degraded (powershell) | single-ai-fallback | n/a (generic, no customer data)`.
+
+**Then — Step 8.1 — Distribute.** Round-robin across available channels
+(Claude, Codex, Gemini, opencode). If only Claude is available, use the
+multi-Claude fallback (Opus + Sonnet). Quota-skip → reassign to the next
+channel. See [references/multi-model-panel.md](references/multi-model-panel.md).
+
+**`--single-ai` skips Step 8.0 entirely** — no external dispatch happens,
+so no anonymize gate is needed. The host Claude is the only model in scope.
+
+**`--no-anonymize` is not an officially supported switch.** If a caller
+sets it (or a user types it), surface the warning in [`/anonymize` SKILL.md
+"Safety rules" §3](../anonymize/SKILL.md) and require an explicit
+"yes, send identifiable data" confirm before continuing.
 
 ### Step 9 — Stage A: aggregate
 Claude (latest) aggregates persona feedback into the **Recommendations Report** per [references/output-format.md](references/output-format.md). **Frame the report for the user's role** (Step 1) — an Account Executive gets talk tracks and discovery-question revisions; a Solution Engineer gets demo-flow gotchas and feasibility flags; an Architect gets estate-impact and integration-sequencing notes; a Business Value Consultant gets ROI math and value-hypothesis language. Every persona's response follows the mandatory structure in [references/persona-output-template.md](references/persona-output-template.md). The aggregation step reads these structured responses and composes the role-framed instrument (Meeting Prep / Demo Prep / Architecture Review / Value Case) per [references/output-format.md](references/output-format.md) — role-framed instrument FIRST, then analytical Deep Analysis sections. Apply the anti-groupthink duties in [references/deliberation.md](references/deliberation.md): independent-derivation test, preserve dissent, Abilene check, devil's-advocate the verdict.

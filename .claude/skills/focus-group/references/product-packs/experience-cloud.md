@@ -50,6 +50,26 @@ meta-tag and structured-data work the customer's marketing team often does not b
 and Experience Cloud + Agentforce for a customer-facing agent inherits all of the above
 plus the Agentforce conversation envelope and grounding considerations.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Site templates — LWR vs. Aura** | LWR (Lightning Web Runtime) is the modern template; Aura templates exist for legacy sites but are not the recommended path for new builds | help.salesforce.com Experience Cloud templates | TODO |
+| **License types — Customer Community / Partner Community / Customer Community Plus** | License type determines what a community user can see and do, including sharing-set behavior and object access; verify customer's license entitlement before scoping | help.salesforce.com community licenses | TODO |
+| **Sharing — sharing sets vs. account-based sharing rules** | Community-user sharing has its own model (sharing sets, account-based sharing); sharing inheritance from internal users does not apply directly | help.salesforce.com sharing for communities | TODO |
+| **Accessibility / WCAG conformance** | Out-of-the-box components are designed for WCAG 2.1 AA in most cases; custom components and HTML overrides can break conformance; the customer's accessibility audit is required, not the vendor's word | help.salesforce.com accessibility | TODO |
+| **Custom domain / SEO** | Custom domains are supported via Salesforce's Custom Domain feature; SEO requires meta-tag and structured-data work the customer's marketing team typically does not budget | help.salesforce.com Experience Cloud SEO | TODO |
+| **Experience Cloud + Agentforce embedded agent** | Embedded customer-facing agents inherit Experience Cloud's authentication and sharing model plus the Agentforce conversation envelope and grounding considerations | help.salesforce.com Agentforce | TODO |
+| **Page-load performance / caching** | LWR sites have specific caching behavior; verify before promising sub-second load times in the customer's geography | help.salesforce.com Experience Cloud performance | TODO |
+| **Migration — Aura → LWR** | Migration is a re-implementation, not an upgrade; verify scope honestly before promising a "migration" timeline | help.salesforce.com migration | TODO |
+| **Guest user access** | Guest user permissions have specific defaults and security implications; over-permissive guest profiles are a frequent audit finding — verify before scoping unauthenticated access | help.salesforce.com guest user | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

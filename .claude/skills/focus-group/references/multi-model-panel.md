@@ -21,6 +21,21 @@ cross-model" guarantee: if no second-vendor CLI is installed, the skill
 still runs two Claude models in parallel so the panel has at least one axis
 of architectural independence.
 
+## Anonymize pre-dispatch gate (Step 8.0)
+
+Before any of the round-robin / fallback / dispatch logic in this file
+runs, [`SKILL.md` Step 8.0](../SKILL.md) requires the orchestrator to
+verify an `/anonymize` runtime is available **whenever the panel content
+is customer-grounded** (named org, internal-source profile, attendee
+profiles, or content matching anonymize patterns).
+
+If no runtime is found, the gate blocks dispatch and offers four options:
+install Python (~3 min) / install Node.js / fall back to `--single-ai`
+(host Claude only, no external dispatch needed) / cancel. The dispatch
+logic below assumes the gate has already passed; it never receives raw
+customer-identifiable data, only `anonymize.scrub()`-ed prompts with
+bidirectional placeholders. See [`/anonymize` SKILL.md](../../anonymize/SKILL.md).
+
 ## Round-robin distribution
 
 When the panel is composed (Step 4), the skill assigns each persona to a

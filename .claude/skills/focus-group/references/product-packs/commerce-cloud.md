@@ -50,6 +50,26 @@ demos that match their actual scenarios; and PCI scope reduction is a real benef
 only if the integration genuinely keeps the customer out of scope — a custom
 hosted-payment-page implementation can put scope back.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **B2C Commerce vs. B2B Commerce** | These are different products with different data models, different storefronts (SFRA / PWA Kit vs. LWR), and different pricing — confirm which one the deal is for before any commitment | salesforce.com commerce | TODO — verify product naming |
+| **PCI scope** | Salesforce Commerce can keep the merchant out of cardholder-data PCI scope when the certified payment integration is used; custom hosted-payment-page implementations can put scope back — confirm with the customer's QSA | salesforce.com commerce security | TODO |
+| **B2C Commerce — pricing model** | Typically a percentage of GMV (Gross Merchandise Value) above a base; verify current model and floors before quoting | salesforce.com commerce pricing | TODO |
+| **PWA Kit / SFRA storefront choice** | PWA Kit (headless, React-based) vs. SFRA (server-side, Pipelines) — choice has multi-year implications and different developer skill requirements | help.salesforce.com Commerce storefront | TODO |
+| **OCAPI / SCAPI / Shopper API** | Multiple API surfaces with different scope and limits; verify current limits before scoping integrations | developer.salesforce.com Commerce APIs | TODO |
+| **Tax — B2B vs. B2C** | Tax behaves differently in B2B (often Avalara/Vertex integration required) and B2C (built-in tax service for standard scenarios) — verify customer's tax scenarios | help.salesforce.com Commerce tax | TODO |
+| **Inventory & OMS** | Order Management Service (OMS) is a separately licensed product; verify whether the deal includes it and how it relates to existing customer ERP/WMS | salesforce.com OMS | TODO |
+| **Commerce + Agentforce / shopper agent** | Confirm currently shipping Agentforce-for-commerce capabilities vs. roadmap; do not position futures as currently available | salesforce.com agentforce | TODO |
+| **Internationalization / multi-site / multi-currency** | Verify current support for multi-site / multi-currency / multi-language and any limits on the number of sites per customer | help.salesforce.com Commerce internationalization | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

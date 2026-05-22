@@ -240,6 +240,46 @@ switch ($runtime) {
 }
 ```
 
+## Caller contract — when a calling skill MUST gate on `/anonymize`
+
+This contract is what `/focus-group` Step 8.0 (and any future caller)
+relies on. Calling skills MUST:
+
+1. **Run a runtime preflight before the first external-LLM dispatch on
+   customer-grounded content.** Customer-grounded means *any* of: a
+   named org in the prompt or active profile; a profile with `source:
+   "internal:..."` (sf / Salesforce MCP / Slack-derived); attendee
+   profiles loaded; content matching anonymize patterns (emails,
+   phones, money amounts ≥ 4 digits, ARR/MRR/TCV phrasing, Salesforce
+   org IDs / sandbox aliases). Use `scripts/detect-runtime.sh` (POSIX)
+   or `scripts/detect-runtime.ps1` (Windows).
+2. **Block dispatch and surface the universal install offer when no
+   runtime is available.** Never silently proceed in plaintext. The
+   four-option pattern is: (a) walk through Python install · (b) walk
+   through Node.js install · (c) fall back to a single-host-model mode
+   that needs no external dispatch · (d) cancel. The user picks one;
+   the caller honors the pick. *("Just run it without anonymize" is
+   not an option offered by default — see safety rule §3 below for the
+   only path that allows it, and only with explicit user confirm.)*
+3. **In degraded mode** (regex-only — PowerShell or POSIX shell), pass
+   `--scrub <name>` for every entity name the caller knows about (from
+   org profile, attendee files, etc.). The L3 heuristic is missing in
+   degraded mode; the caller is the only safety net.
+4. **Scrub immediately before the dispatch call,** not earlier — this
+   keeps the local context (with real names) usable for the host
+   model's reasoning, while only the dispatched prompt gets
+   placeholder substitution.
+5. **Restore on the response** before showing it to the user. The user
+   reads real names; the LLM only ever saw placeholders.
+6. **Record the gate decision in any user-visible report header** so the
+   user can see at a glance which channel saw what (e.g.,
+   `**Anonymize:** pass (python)` or `**Anonymize:** single-ai-fallback`).
+
+Callers in this repo that implement this contract: `/focus-group` (Step 8.0),
+`/cross-ai-review` (before each `cross_ai.py` dispatch on customer-grounded
+content), `/slackbot` (after building the raw profile, before any model
+sees it).
+
 ## Safety rules
 
 1. **The map never leaves the laptop.** It is git-ignored. The skill never
@@ -249,8 +289,14 @@ switch ($runtime) {
 3. **If `--no-anonymize` is passed by a caller**, the skill MUST surface a
    one-line warning to the user (*"You're about to send identifiable
    customer data to N external LLMs"*) and proceed only if the caller
-   confirms in the user-visible flow.
+   confirms in the user-visible flow. **`--no-anonymize` is not a
+   silent-override — it must always reach the user as a question.**
 4. **No telemetry.** The skill does not phone home in any form.
+5. **No silent plaintext dispatch.** When the caller cannot run anonymize
+   (no runtime, runtime errored, the caller forgot to wire the preflight),
+   the calling skill MUST surface the universal install offer or block
+   the dispatch. Silent plaintext dispatch of customer-grounded content
+   is the failure mode this contract exists to prevent.
 
 ## Errors
 

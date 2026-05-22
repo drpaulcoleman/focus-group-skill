@@ -8,6 +8,26 @@ Anypoint Platform is licensed through a combination of cores/vCores (runtime cap
 
 The three most common honest objections: (1) "we already have an iPaaS" — many customers do, and a credible pitch acknowledges coexistence rather than rip-and-replace; (2) "MuleSoft is too expensive for what we need" — frequently true at the low end of the market, where Composer or a competitor may be the right answer; (3) "our developers prefer to write integrations themselves" — MuleSoft's value is governance, reuse, and a managed runtime, not raw code authorship, and the pitch has to land on platform value. The complexities that get glossed: vCore sizing and bursting cost is a real ongoing finance conversation; the IDP (Intelligent Document Processing), RPA, and AI add-ons each have separate enablement and limits; and the MuleSoft AI / Topic Center / Agentforce-integration story is evolving rapidly — sales should describe currently shipping capabilities, not future direction.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **vCore pricing model** | MuleSoft Anypoint is consumption-priced on vCores (CPU/memory units); bursting and reserved capacity have different cost behavior — sizing is a real ongoing finance conversation | mulesoft.com pricing | TODO — verify current model |
+| **CloudHub 2.0 vs. CloudHub 1.0** | Different runtime, different deployment model, different limits — confirm which one the customer will run on; CloudHub 2.0 is the modern path | docs.mulesoft.com CloudHub 2.0 | TODO |
+| **Composer — separate from Anypoint Studio** | Composer is the no-code/low-code surface; Anypoint Studio is the developer surface — they are different products with different limits and licensing | docs.mulesoft.com Composer | TODO |
+| **iPaaS coexistence** | Many customers already run an iPaaS; a credible pitch acknowledges coexistence rather than rip-and-replace — confirm before promising platform consolidation | salesforce.com partners | TODO |
+| **IDP / RPA / AI add-ons** | Intelligent Document Processing, RPA, and AI add-ons each have separate enablement, licensing, and limits — do not assume they are bundled | mulesoft.com platform | TODO |
+| **Anypoint API Manager — policies and rate limits** | API policies (rate-limit, OAuth, throttle) are configured per API; verify enforcement model before scoping a security-critical integration | docs.mulesoft.com API Manager | TODO |
+| **MuleSoft AI / Topic Center / Agentforce integration** | This story is evolving rapidly — sales should describe currently shipping capabilities, not future direction | salesforce.com mulesoft | TODO — verify currently shipping vs. roadmap |
+| **DataWeave language** | Mule's transformation language; verify currently supported version and any deprecations before scoping | docs.mulesoft.com DataWeave | TODO |
+| **Hybrid deployment — RTF (Runtime Fabric) and on-prem** | Customers with on-prem requirements can run via Runtime Fabric or a self-managed Mule runtime; verify support tiers and patch model | docs.mulesoft.com RTF | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender leans toward:

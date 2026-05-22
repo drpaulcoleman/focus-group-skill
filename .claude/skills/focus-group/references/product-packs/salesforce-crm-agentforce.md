@@ -46,6 +46,34 @@ guarantee applies to the supported model providers via Salesforce — if the cus
 their own model, the guarantees change. Persona reactions should keep these realities
 visible rather than papered over.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** (a verified
+fact a panel may quote with citation) or a **TODO stub** (not yet
+verified — the rubric scores 0 for any panel claim that lands on a stub
+row, which is intentional pressure to keep this table fresh). When in
+doubt, prefer a citation to current Salesforce help / release notes
+over a value pasted here — Salesforce ships ~3 releases a year and
+governor limits, GA status, and pricing model details move.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Trust Layer — model providers** | Zero data retention is the default for Salesforce-supported model providers reached via the Trust Layer; bring-your-own-model arrangements have different retention guarantees per the customer's own contract with the provider | help.salesforce.com Trust Layer overview | TODO — verify against current help slug |
+| **Agentforce — pricing model** | Consumption-priced on conversations (not seats); high-volume customer-facing deployments must size the conversation envelope before quoting | salesforce.com/agentforce pricing page | TODO — verify current pricing page |
+| **Agentforce — sharing model** | Agent actions inherit the running user's sharing rules and FLS — the agent user's permission set determines what the agent can see and do | help.salesforce.com agent-builder permissions | TODO — verify current help slug |
+| **Data Cloud dependency** | Required when the agent must reason over unstructured data, cross-cloud data, or data outside the Salesforce object model; not required for in-CRM-only agents | architect.salesforce.com decision guides | TODO — verify which decision guide is current |
+| **Apex governor — SOQL queries per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
+| **Apex governor — DML rows per transaction** | TODO — verify against current Apex Developer Guide before any panel quotes a number | developer.salesforce.com Apex Limits | TODO |
+| **Bulk API 2.0 — daily request limit** | TODO — verify against current API Limits doc before any panel quotes a number | developer.salesforce.com API Limits | TODO |
+| **Agentforce — feature GA status** | TODO — confirm GA vs. pilot vs. beta status of each Agentforce feature the panel discusses against the most recent release-notes article (Spring '26 / Summer '26 etc.) | help.salesforce.com release notes | TODO |
+| **Government Cloud Plus — feature parity** | TODO — confirm which Agentforce features are available in Government Cloud Plus (the set is materially smaller than commercial cloud and changes per release) | trust.salesforce.com / GovCloud feature matrix | TODO |
+| **Trust Layer — masking surface** | TODO — list which entity types are masked by default vs. opt-in, since this is a frequent customer question | help.salesforce.com Einstein Trust Layer | TODO |
+
+**Maintainer note:** when a panel confidently quotes a TODO row, the
+accuracy rubric scores that claim 0/20 and flags it in the report.
+Filling stubs is the cheapest accuracy lever this pack has.
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender (Step 4a) leans toward:

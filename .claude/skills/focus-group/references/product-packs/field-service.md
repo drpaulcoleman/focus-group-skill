@@ -8,6 +8,26 @@ Field Service is licensed per Dispatcher, per Technician, and per Contractor sea
 
 The three most common honest objections: (1) "we already run on ServiceMax / IFS / Oracle and migration is too painful" — legitimate; the realistic answer is a phased migration tied to a Service Cloud consolidation, not a forklift; (2) "our technicians will not use the mobile app" — adoption is the largest risk and is mostly a UI configuration, training, and field-leader buy-in problem, not a product problem; (3) "scheduling optimization is a black box" — optimization works only when work-rule and skill data is clean, and customers must invest in data hygiene before they see the lift. The complexities that get glossed: contractor management (third-party crews) has different licensing and a different security model than employee technicians; offline conflict resolution is a real engineering concern that needs design attention up front; and parts management / inventory tracking is usable but often needs a real WMS or ERP integration for serious operations.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Field Service license** | Separately licensed from Service Cloud; technician licenses, dispatcher licenses, and contractor licenses each have distinct entitlements and pricing | salesforce.com field service | TODO |
+| **Mobile app — offline support** | The Field Service mobile app supports offline work with a defined sync model; offline conflict resolution is a real engineering concern that needs design attention up front | help.salesforce.com Field Service mobile | TODO |
+| **Scheduling — optimization engine** | Optimization (multi-day, in-day, optimization service) requires clean work-rule and skill data; the engine produces poor schedules on dirty data — customers must invest in data hygiene first | help.salesforce.com Field Service scheduling | TODO |
+| **Contractor / third-party crew model** | Contractor management uses a different security/license model than employee technicians; verify before scoping multi-tier crew patterns | help.salesforce.com Field Service contractors | TODO |
+| **Parts & inventory** | Native parts/inventory tracking is usable but often needs a real WMS or ERP integration for serious operations | help.salesforce.com Field Service inventory | TODO |
+| **Maps and routing** | Built-in mapping/routing has specific limits and coverage; complex multi-stop optimization may require additional licenses or partners | help.salesforce.com Field Service maps | TODO |
+| **Service Appointment object — sharing behavior** | Sharing on Service Appointments interacts with the Account, Service Resource, and Work Order in non-obvious ways — verify before scoping access | help.salesforce.com Field Service sharing | TODO |
+| **API limits — assignment and bulk schedule operations** | TODO — verify current limits for assignment/optimization API calls before scoping integrations | developer.salesforce.com Field Service APIs | TODO |
+| **Migration from ServiceMax / IFS / Oracle** | Migration is a phased project, not a forklift; phased migration tied to a Service Cloud consolidation is the realistic answer | salesforce.com partners | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender leans toward:

@@ -19,7 +19,7 @@ The report header always says so explicitly:
 | **Citation density** | 15 | `(claims_backed_by_meta_json / total_factual_claims) × 15`. A `references/<slug>/meta.json` from `/download` counts; an inline URL the model invented does not. |
 | **Hedging / uncertainty calibration** | 10 | Reward appropriate hedging on under-cited claims ("according to the customer's public IR page, ..."); penalize confident assertions on under-cited claims. Spot-check 5 claims; each scores 0–2. |
 | **Anti-hallucination cross-check** | 10 | Spot-check 3 claims against their cited sources. Pass → 10. Any one fails → 0 (and the failed claim is flagged in the report). |
-| **Platform-fact verification** | 20 | For each claim about Salesforce platform behavior (governor limits, pricing, feature GA status, sharing-model behavior, API limits, data-volume thresholds), verify against the active product pack's `## Platform Facts` section. Claims that contradict the pack → flagged and corrected in the report, scored 0. Claims the pack confirms → scored 1.0. Claims the pack doesn't cover → scored 0.5 and marked "unverified — check release notes." Average × 20. If no platform claims exist in the output, score the full 20 (no risk of misinformation). |
+| **Platform-fact verification** | 20 | For each claim about Salesforce platform behavior (governor limits, pricing, feature GA status, sharing-model behavior, API limits, data-volume thresholds), verify against the active product pack's `## Platform Facts` section. **Claims that contradict the pack** → flagged and corrected in the report, scored 0. **Claims the pack confirms** with a non-TODO row → scored 1.0. **Claims that land on a TODO-stub row** (the pack lists the topic but has not been verified) → scored 0 and the report flags the claim as "unverified — check current Salesforce help / release notes before quoting to a customer." **Claims the pack doesn't cover at all** (no row, even as stub) → scored 0.25 and marked "off-pack — verify against current docs." Average × 20. If no platform claims exist in the output, score the full 20 (no risk of misinformation). |
 
 Total: 0–100. Reported as `Accuracy: NN/100 — <one-line summary of where the
 points came from and where they did not>`.
@@ -43,10 +43,22 @@ Salesforce would survive a customer's admin Googling them.
 - Persona opinions ("the CIO won't approve this") — validated by deliberative profile authenticity
 - Competitive claims ("Dynamics does X") — validated by competitive-trigger sources
 
-**Verification source:** The active product pack's `## Platform Facts` matrix
-(each product pack should maintain one). When the product pack lacks a Platform
-Facts section, this factor scores a flat 15/20 (benefit of the doubt minus a
-small penalty for unverifiable claims).
+**Verification source:** The active product pack's `## Platform Facts` matrix.
+All 13 packs in this repo ship a Platform Facts section, with rows that are
+either **filled** (verified, citable) or **TODO-stubbed** (named topic, not
+yet verified — visible to maintainers as work owed).
+
+A TODO-stub row is **not** a free pass: panel claims that land on a stub
+score 0 for that claim and the report flags it as unverified. This is
+intentional pressure — the cheapest way to raise the pack's accuracy
+ceiling is to fill stubs against current Salesforce help / release notes.
+
+When the product pack genuinely lacks a Platform Facts section (e.g., a
+new pack added without one, or `--generic` mode where no pack is loaded),
+this factor scores 10/20 — half-credit, with a header note that the
+pack has no verification source on file. (`--generic` mode never had a
+pack to verify against, so this is the expected score there, not a
+defect.)
 
 **Correction behavior:** When Stage C identifies a platform-claim mismatch, it:
 1. Corrects the claim in the final report (strikethrough original + correction)

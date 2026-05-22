@@ -8,6 +8,26 @@ Revenue Cloud today is in a multi-product reality: the legacy CPQ product (origi
 
 The three most common honest objections: (1) "our CPQ implementation will be a multi-quarter project" — almost always true for complex B2B pricing, and the realistic answer is a phased rollout starting with the highest-volume product line, not a big-bang go-live; (2) "we already have a billing system / ERP that handles billing" — common, and Revenue Cloud Billing is not always the right call when a working ERP billing system exists; (3) "the partner ecosystem is uneven" — implementation quality varies sharply by partner and is the single largest predictor of deal success. The complexities that get glossed: amendments, co-terming, ramps, and renewals are where CPQ projects actually live or die; revenue recognition under ASC 606 / IFRS 15 is a finance-led design conversation that the AE cannot wing; and the legacy-CPQ-to-Revenue-Cloud-Advanced migration is a meaningful project for existing customers that should be scoped honestly rather than positioned as an upgrade.
 
+## Platform Facts
+
+This section is the verification source for accuracy-rubric factor 6
+(platform-fact verification). Each row is either **filled** or a **TODO
+stub**; the rubric scores 0 for any panel claim that lands on a stub
+row. See [salesforce-crm-agentforce.md](salesforce-crm-agentforce.md)
+for the canonical maintainer note.
+
+| Topic | Fact | Source / verified | Last verified |
+|-------|------|-------------------|---------------|
+| **Legacy CPQ vs. Revenue Cloud Advanced** | These are different product generations with different data models, different APIs, and different customization patterns; treat the migration as a project, not an upgrade | salesforce.com revenue cloud | TODO |
+| **CPQ — bundle, configuration, and price-rule engine** | Pricing logic lives in CPQ-specific objects (Quote, QuoteLine, ProductOption, PriceRule, ProductRule); Apex extension is supported but most logic should be declarative | help.salesforce.com CPQ | TODO |
+| **Amendments, co-terming, ramps, renewals** | These are where CPQ projects actually live or die; verify the customer's specific scenarios before scoping a phased rollout | help.salesforce.com CPQ amendments | TODO |
+| **Revenue recognition — ASC 606 / IFRS 15** | Revenue Cloud Billing supports ASC 606 / IFRS 15 patterns but configuration is finance-led; the AE cannot wing this — bring a finance-savvy SE or partner | help.salesforce.com Revenue Cloud Billing | TODO |
+| **Billing — built-in vs. ERP integration** | Revenue Cloud Billing is not always the right call when a working ERP billing system exists; coexistence is common | salesforce.com revenue cloud | TODO |
+| **Subscription Management** | Self-service subscription management has specific patterns; verify currently shipping capabilities before promising consumer-grade self-service | salesforce.com subscription management | TODO |
+| **Partner ecosystem** | Implementation quality varies sharply by partner and is the single largest predictor of deal success — surface this honestly | salesforce.com partners | TODO |
+| **API limits — quote and order operations** | TODO — verify current limits for quote/order API calls; bulk quote operations have specific patterns | developer.salesforce.com revenue cloud APIs | TODO |
+| **Data model — Order, OrderItem, Asset, Subscription** | The standard order/asset/subscription data model has specific lifecycle states and trigger behavior — verify before scoping custom automation | help.salesforce.com order | TODO |
+
 ## Recommended persona families
 
 When this pack is active, the persona recommender leans toward:

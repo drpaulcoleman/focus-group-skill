@@ -15,6 +15,7 @@ template.
 **Models that ran:** <list>
 **Models skipped:** <list with reason: quota / missing / timeout / error>
 **Grounding:**      product=<pack> · industry=<pack | none> · org-profile=<source>
+**Anonymize:**      pass (<runtime>) | degraded (<runtime>) | single-ai-fallback | n/a (generic, no customer data)
 **Accuracy:**       NN/100 — <one-line summary>
 **Date:**           YYYY-MM-DD
 ```
