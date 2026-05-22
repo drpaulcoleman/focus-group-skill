@@ -90,7 +90,7 @@ All other invocations. Run the 12-step pipeline below.
 | `--everyone` | Run with every available persona for the active pack(s); warn it is slow and synthesis is broader-but-shallower. |
 | `--org-profile` | Re-run the Org Profile wizard explicitly, even if a profile is on file. |
 | `--no-org-profile` | Skip the Org Profile gate for one-off generic prompts (skill notes feedback may miss specifics). |
-| `--org-profile-file <path>` | Load org profile from a hand-edited JSON. |
+| `--org-profile-file <path>` | Load org profile from a hand-edited JSON. **Path is validated** — must resolve inside the workspace root or the user's home directory; symlinks that escape these roots are rejected. See [references/org-profile-schema.md](references/org-profile-schema.md#path-validation-for---org-profile-file) for the validation rules and rejection messages. |
 | `--require-citations` | Strict mode — accuracy score capped at 70 when the workspace has zero `references/<slug>/meta.json` files; the orchestrator audits the report and moves un-cited claims to a "Needs verification" section. Skill offers to run `/download` against the active pack's seed list first to close the gap. |
 | `--role <slug>` | Override the saved role for this run only (does not persist). Slugs: `ae`, `se`, `industry-specialist`, `enterprise-architect`, `technical-architect`, `bvc`, `lead-engagement`, `csm`, `partner-am`, `other`. |
 | `--probe` | Force a fresh tooling preflight (CLI + MCP detection), bypassing the 24-hour `.focus-group-cache.json`. Useful right after installing a new CLI or MCP server. |
@@ -142,18 +142,18 @@ naked `/focus-group` feel slow after the first one. Cache the result:
   the skill folder). JSON shape:
   ```json
   {
-    "version": 1,
+    "version": 2,
     "detected_at": "2026-05-21T14:32:11Z",
     "clis": {
-      "claude":   { "available": true,  "path": "C:\\nvm4w\\nodejs\\claude.cmd" },
-      "codex":    { "available": true,  "path": "C:\\nvm4w\\nodejs\\codex.cmd" },
-      "gemini":   { "available": true,  "path": "C:\\nvm4w\\nodejs\\gemini.cmd" },
-      "opencode": { "available": false, "path": null }
+      "claude":   { "present": true,  "path": "C:\\nvm4w\\nodejs\\claude.cmd",   "operational": true,  "health": "ok",          "checked_at": "2026-05-21T14:32:11Z", "version": "1.0.84",   "latest_version": "1.0.84",  "update_available": false },
+      "codex":    { "present": true,  "path": "C:\\nvm4w\\nodejs\\codex.cmd",    "operational": false, "health": "unauth",      "checked_at": "2026-05-21T14:32:11Z", "version": "0.3.1",    "latest_version": "0.4.0",   "update_available": true,  "last_error": "exit 1: not signed in" },
+      "gemini":   { "present": true,  "path": "C:\\nvm4w\\nodejs\\gemini.cmd",   "operational": false, "health": "quota",       "checked_at": "2026-05-21T14:32:11Z", "version": "0.5.2",    "latest_version": "0.5.2",   "update_available": false, "last_error": "429: daily quota exceeded" },
+      "opencode": { "present": false, "path": null,                              "operational": false, "health": "missing",     "checked_at": "2026-05-21T14:32:11Z" }
     },
     "integrations": {
-      "sf":             { "available": true,  "orgs_connected": 2 },
-      "salesforce_mcp": { "available": false, "server_name": null },
-      "slack_mcp":      { "available": true,  "server_name": "slack" }
+      "sf":             { "present": true,  "orgs_connected": 2,    "operational": true,  "health": "ok" },
+      "salesforce_mcp": { "present": false, "server_name": null,    "operational": false, "health": "missing" },
+      "slack_mcp":      { "present": true,  "server_name": "slack", "operational": true,  "health": "ok" }
     },
     "anonymize_runtime": {
       "available": true,
@@ -163,6 +163,112 @@ naked `/focus-group` feel slow after the first one. Cache the result:
     }
   }
   ```
+
+**`present` vs `operational` (load-bearing).** A CLI on PATH is not the
+same as a CLI that can answer a prompt. Three failure modes turn a
+"present" CLI into a non-operational one:
+
+- **`unauth`** — the CLI is installed but not logged in (e.g., `codex`
+  with no API key, `gemini` without `gemini auth login`, an `opencode`
+  config missing a provider). The CLI exits non-zero with a message
+  matching `not signed in` / `not authenticated` / `missing API key` /
+  `unauthorized` (case-insensitive).
+- **`quota`** — the CLI is signed in but the account is out of credit
+  or rate-limited for the day. The CLI exits with a message matching
+  `quota` / `rate limit` / `429` / `usage limit` / `out of credit`.
+  Per [`/cross-ai-review` cli-matrix](../../cross-ai-review/references/cli-matrix.md),
+  quota detection only inspects runs that already failed, so a prompt
+  legitimately *discussing* rate limits is never misread.
+- **`error`** — the CLI errored for some other reason (binary missing
+  a dependency, timeout on the health check, internal segfault). Treat
+  as non-operational; surface the diagnostic.
+
+Only `present: true && operational: true` makes a CLI eligible for
+round-robin assignment. A `present: true && operational: false` CLI is
+treated **the same as a missing CLI** for dispatch — it does not count
+toward cross-vendor diversity, and it triggers the multi-Claude
+promotion logic if it would have been the only non-Claude channel.
+
+**Health check at probe time (cheap, capped).** For each `present: true`
+CLI, run a single low-cost prompt with a tight timeout (default 8 s):
+
+| CLI | Health check command | Pass condition |
+|-----|---------------------|----------------|
+| `claude` | `claude -p --model <id> "ok?"` (host CLI; usually skipped — assumed operational since the user is running the skill through it) | exit 0 + non-empty stdout |
+| `codex` | `codex exec --model <id> "ok?"` | exit 0 + non-empty stdout |
+| `gemini` | `gemini -p "ok?"` | exit 0 + non-empty stdout |
+| `opencode` | `opencode --model <id> "ok?"` | exit 0 + non-empty stdout |
+
+The probe parses the failure output for the auth/quota/error patterns
+above and writes the matching `health` value. The check is **capped at
+~10 seconds total wall-clock** across all CLIs (run in parallel); a
+slow CLI that exceeds the timeout is recorded `health: "error"`,
+`last_error: "health check timed out after 8s"`, and the run continues.
+
+The check uses **trivial input** ("ok?") to keep token spend near zero
+and to avoid burning quota that the panel would otherwise need.
+
+**Staleness check (runs alongside the health check).** For each
+`present: true` CLI, the probe also captures the running version and
+compares it to the latest available release. Staleness is **orthogonal
+to operational state**: a CLI can be operational *and* stale (works
+fine, but a newer release exists) — that's the most common case where
+this offer fires.
+
+Detection sources (one or more, whichever the CLI exposes):
+
+| CLI | Version source | Latest-version source |
+|-----|----------------|----------------------|
+| `claude` | `claude --version` | "A new version of Claude Code is available" line in startup stderr; or `claude doctor` if available |
+| `codex`  | `codex --version` | npm registry (`npm view @openai/codex version` if installed via npm), or self-reported update banner in stderr |
+| `gemini` | `gemini --version` | `gemini update --check` (when supported), or self-reported update banner |
+| `opencode` | `opencode --version` | `opencode update --check`, or self-reported update banner |
+
+The probe writes both `version` and `latest_version` to the cache when
+both can be determined. If `latest_version` cannot be determined cheaply
+(no registry call, no banner), it stays `null` and `update_available`
+stays `false` — silence is the safe default. The probe never fetches a
+registry listing on the network just to check for updates; it only uses
+signals the CLI itself emits, or a single trivial subcommand the CLI
+already provides.
+
+**The offer is user-confirmed; never auto-run.** When `update_available:
+true` for one or more operational CLIs, surface a **single** prompt at
+the end of Step 0 (before composing the panel):
+
+> *I noticed a few of your AI CLIs have updates available:*
+>
+> *• codex: 0.3.1 → 0.4.0 (run `npm i -g @openai/codex@latest`)*
+> *• gemini: 0.5.2 → 0.6.0 (run `gemini update`)*
+>
+> *Want me to run these updates now? They take about a minute each and
+> can be backed out by re-installing the older version.*
+>
+> *(a) Yes, update all of them*
+> *(b) Yes, but ask me before each one*
+> *(c) Skip — continue with the current versions*
+> *(d) Skip and don't ask again this session*
+
+On (a) or (b), the orchestrator runs the matching update command via
+Bash with the user's permission. On (c) or (d), the panel proceeds with
+the stale CLIs and the report header notes the available updates so the
+user sees them again later.
+
+**Suppression rules (so the offer doesn't become noise):**
+
+- A given staleness offer is shown **at most once per 24 hours per CLI**
+  per workspace (cache field `update_offer_dismissed_until`). Selecting
+  (d) "Skip and don't ask again this session" extends the suppression
+  to the whole session; selecting (c) extends it 24 h.
+- The offer is **never** surfaced under `--quick` / `--fast` (the
+  speed-mode user has already opted out of side errands).
+- The offer is **never** surfaced if the affected CLI is currently
+  `unauth` / `quota` / `error` — fix the operational issue first;
+  updating a broken CLI rarely helps.
+- If running the update command itself fails (network down, package
+  manager not available, permission denied), surface a one-line
+  err-doctrine message naming the failure and continue the panel run
+  with the un-updated CLI.
 
 The `anonymize_runtime` block records the result of running
 `detect-runtime.sh` / `detect-runtime.ps1` from the `/anonymize` skill.
@@ -184,9 +290,41 @@ The Step 8 pre-dispatch gate reads this entry directly.
   `/focus-group --probe`. Useful right after the user installs a new
   CLI and wants it picked up immediately.
 
-If **no CLI other than `claude`** is found (per cache or fresh probe),
-the skill silently configures the multi-Claude fallback (Opus + Sonnet)
-via `cross_ai.py` so the panel still gets cross-model diversity.
+**Multi-Claude fallback triggers (three of them, all monitored).** The
+fallback runs Opus + Sonnet in parallel via `cross_ai.py` (or two local
+Claude subagents if `cross_ai.py` is unavailable). It is the
+"public-version always cross-model" guarantee — the panel always gets
+at least one axis of architectural independence, even when the
+non-Claude cohort is missing or broken.
+
+The fallback engages on **any** of:
+
+1. **Probe time (Step 0)** — no other CLI is `present: true && operational: true`. Either nothing else is installed, or every other CLI is `unauth` / `quota` / `error`. The skill silently configures the fallback before composing the panel.
+2. **Stage A dispatch (Step 8.1)** — round-robin assigns personas to channels that *passed* the probe; if a channel fails its first real call (auth or quota error caught at runtime, not probe time), the cache entry is invalidated, the persona is reassigned, and if reassignment would leave Claude as the only operational vendor, the fallback engages mid-run.
+3. **Stage B consolidation (Step 10)** — Stage B requires a *different* model than Stage A used. If every non-Claude channel is non-operational by the time Stage B fires, the consolidator runs on the second Claude model (Sonnet if Stage A was Opus, or vice-versa) instead of skipping Stage B.
+
+**Each promotion is surfaced, not silent.** When the fallback engages
+because a CLI was *present but non-operational*, the report header
+says so explicitly so the user knows what to fix:
+
+```
+**Channels:**  claude (opus + sonnet, multi-Claude fallback) — codex unauth, gemini quota
+```
+
+This is the difference between *"you have no other CLIs"* (silent
+fallback, no action) and *"you have other CLIs but they aren't
+working"* (named fallback, with a one-line remediation each: *"codex
+is installed but not signed in — run `codex login` to add it back"*).
+
+**Surfaced remediation table** (place in the report header when any
+present-but-non-operational CLI was bypassed):
+
+| Health | Remediation hint |
+|--------|------------------|
+| `unauth` | "Run `<cli> login` (or set the provider API key) to add it back to the panel." |
+| `quota`  | "Account is rate-limited or out of credit; retry tomorrow or top up." |
+| `error`  | "Last error: `<truncated diagnostic>` — run `/focus-group --probe` after fixing." |
+| `missing`| (Don't surface — a missing CLI isn't a regression the user can fix without deciding to install something; Stage A's install-offer triggers handle that elsewhere.) |
 
 ### Step 1 — Your role (asked once, saved with consent)
 **Always ask this first** when invoked with no parameters in a
@@ -370,6 +508,18 @@ Stakeholder (sign-off lens) or Audience (reception lens). Defaults from [referen
 ### Step 7 — Topic research (auto-run with consent)
 **Default behavior:** When the user approved web research at Step 4 (chose "Profile by name" or "Profile by culture & size" with relationship = prospect/lead), `/download` runs automatically for any in-scope URLs not yet in `references/<slug>/`. No additional prompt needed — Step 4 consent covers it.
 
+**"In-scope URLs" — explicit definition (load-bearing for consent scope).** Auto-run is **single-hop only**. In-scope means:
+- URLs the user explicitly passed in the prompt or via `--attendees`.
+- URLs listed in the active product/industry pack's seed-list (`references/product-packs/<slug>.md` and `references/industry-packs/<slug>.md`).
+- URLs in the active org profile's `source_urls` array (added during Step 4a).
+
+Out-of-scope (do **not** follow without re-asking):
+- URLs discovered *inside* harvested pages (no transitive crawling). If an IR page links to a supply-chain partner's site, the partner's URL is out-of-scope until the user explicitly approves it.
+- URLs in user-pasted text the user didn't intend as research targets (e.g., a pasted email signature with a company URL).
+- URLs the model itself generates while reasoning (model-invented citations are never auto-fetched).
+
+When an out-of-scope URL would meaningfully improve grounding, surface it once with the user and ask: *"This page links to <partner-url> — want me to harvest that too?"* Single-hop expansion only; never recursive.
+
 **Consent-gated exceptions:**
 - If Step 4 Q1 = "Skip — generic feedback is fine" → do NOT auto-run `/download`. Offer it as an option only.
 - If `--no-citations` is set → skip `/download` entirely.
@@ -377,6 +527,14 @@ Stakeholder (sign-off lens) or Audience (reception lens). Defaults from [referen
 - LinkedIn / sign-in-wall / paywall URLs → respect the Step 2 short-circuit rules (never fetch; suggest local-save workaround).
 
 **Failure is non-blocking.** If `/download` finds nothing or fails for any URL, note the gap in the report header and proceed. The accuracy rubric's citation-density factor will reflect the missing sources.
+
+**Citation-density defensive check (post-Step 7, pre-Step 8).** Before composing persona prompts, count the `references/<slug>/meta.json` files that `/download` actually wrote for this run's in-scope URLs. If the count is **zero** AND the panel will produce factual claims (i.e., the run is not `--generic` with `--no-citations`), the orchestrator must:
+
+1. Surface a one-line warning: *"No citations were collected — every factual claim will land as 'off-pack' or 'unverified' in the accuracy rubric. Do you want to (a) re-run /download against the active pack's seed-list, (b) continue and accept a low citation-density score, or (c) abort?"*
+2. Default to (a) on user approval; on (b), set a flag that suppresses the per-claim "no citation" warnings (they'd flood the report) and instead surfaces a single header note: *"Citation density: 0 — all factual claims are unverified."*
+3. (a) and (b) are explicit user choices; never default to (b) silently. (c) aborts cleanly.
+
+Skip this check when `--no-citations` is set (the user has explicitly opted out) or when the panel is `--generic` and the prompt has no factual claims to cite (rare; usually pure persona-reception questions).
 
 Apply [references/deliberation.md](references/deliberation.md) Duty 6: validate every harvested artifact actually contains the expected content before any persona reads it.
 
@@ -470,10 +628,35 @@ keeps the trigger mechanical: a maintainer who updates the patterns in
 > invalidate this assumption. Verify the host's endpoint matches what
 > the user authorized when adding new host runtimes.
 
-**Then — Step 8.1 — Distribute.** Round-robin across available channels
-(Claude, Codex, Gemini, opencode). If only Claude is available, use the
-multi-Claude fallback (Opus + Sonnet). Quota-skip → reassign to the next
-channel. See [references/multi-model-panel.md](references/multi-model-panel.md).
+**Then — Step 8.1 — Distribute.** Round-robin across the **operational**
+channels — `clis[*].present: true && clis[*].operational: true` from the
+Step 0 cache. A CLI on PATH but in `unauth` / `quota` / `error` state is
+**excluded from round-robin** (it would fail at dispatch and waste the
+turn). If the only remaining operational vendor is Claude, engage the
+multi-Claude fallback (Opus + Sonnet) and surface the bypassed CLIs in
+the report header per the table above.
+
+**Runtime invalidation (mid-dispatch).** If a channel passes the Step 0
+health check but fails the *real* persona-prompt call with an
+auth/quota/error pattern, the orchestrator must:
+
+1. Mark the cache entry `operational: false` with the matching health
+   value and `last_error` text. Update `checked_at`.
+2. Reassign the persona to the next operational channel (round-robin).
+3. If reassignment leaves Claude as the only operational vendor,
+   engage the multi-Claude fallback for the *remaining* personas — do
+   not retry the broken channel within the same run. Surface the
+   mid-run promotion in the report header (e.g., *"gemini fell over
+   mid-run — reassigned 2 personas to multi-Claude"*).
+4. If the broken CLI was running Stage B's consolidation when it
+   failed, fall back to the second Claude model (Sonnet if A was Opus,
+   Opus if A was Sonnet). Stage B never silently skips when Claude is
+   available — only when *every* model option (including the second
+   Claude) is non-operational.
+
+Quota-skip and reassignment rules come from
+[references/multi-model-panel.md](references/multi-model-panel.md);
+this section adds the **promotion-to-Claude-fallback** behavior on top.
 
 **`--single-ai` skips Step 8.0 entirely** — no external dispatch happens,
 so no anonymize gate is needed. The host Claude is the only model in scope.
@@ -530,20 +713,48 @@ product pack's `## Platform Facts` table. For each claim:
   adjust any dependent action items.
 - **Lands on a TODO-stub row** (the topic is named but not yet verified)
   → mark the claim "unverified — check current Salesforce help / release
-  notes before quoting to a customer."
+  notes before quoting to a customer." Scored 0.5 (half-credit) per
+  [accuracy-rubric.md factor 6](references/accuracy-rubric.md), not 0.
 - **Off-pack** (no row at all) → mark the claim "off-pack — verify
-  against current docs."
+  against current docs." Scored 0.25.
 
 This produces the inputs the accuracy-rubric factor 6 scores against —
 do not skip it, even when the panel's claims look obviously right
 (governor limits in particular shift across releases). See
-[references/accuracy-rubric.md](references/accuracy-rubric.md) factor 6.
+[references/accuracy-rubric.md](references/accuracy-rubric.md) factor 6
+and "TODO-stub scoring rationale" for why stubs receive half-credit.
 
 Compute the accuracy score per [references/accuracy-rubric.md](references/accuracy-rubric.md). Attach the citations block from all `references/<slug>/meta.json` files used.
 
 Under `--require-citations`, move under-cited claims to a "Needs verification" section and cap the accuracy score at 70 until the gap is closed.
 
 Under `--no-citations`, skip citation enforcement entirely: do not cap accuracy, do not move claims to "Needs verification," do not reference missing citations in the report. The accuracy rubric's citation-density factor scores 0 (no penalty, no bonus).
+
+**Low-accuracy follow-up recommendation (proactive rigor offer).** After computing the headline score, if it falls below **75/100** AND the run was not already strict (no `--require-citations` was passed) AND the user did not explicitly opt out (no `--no-citations`), append a **"Tighten this report"** block immediately after the accuracy line in the report header. The block recommends the cheapest re-run that would lift the score, keyed off the lowest-scoring factor:
+
+| Lowest-scoring factor | Recommended re-run | Why it helps |
+|----------------------|-------------------|--------------|
+| **Citation density** (factor 3) below 50% of weight | `/focus-group <same prompt> --require-citations` | Forces the orchestrator to run `/download` against the active pack's seed-list before composing the panel; un-cited claims move to "Needs verification" so the user can see exactly what's unsupported. Default recommendation when factor 3 is the weakest. |
+| **Platform-fact verification** (factor 6) below 50% of weight | Fill the relevant Platform Facts TODO stubs in `references/product-packs/<slug>.md`, then re-run | Half-credit stubs cap factor 6 at 0.5; verifying the rows lifts them to 1.0. Cite the specific stub topics that scored half-credit on this run. |
+| **Anti-hallucination** (factor 5) scored 0 | `/focus-group <same prompt> --require-citations` and review the flagged claim manually | A failed cross-check means a cited source didn't actually support the claim. Strict mode forces the gap into the open. |
+| **Channel coverage** (factor 1) below 50% of weight | Re-run with `--probe` after re-installing the missing CLIs, OR run `/focus-group config probe` | Coverage gap means a CLI was unavailable. Re-probe and retry once the channel is back. |
+| Multiple factors tied / unclear | `/focus-group <same prompt> --require-citations` | The strict-citations mode is the broadest single lever — it forces evidence on factors 3, 5, and indirectly 6, and surfaces what's actually weak. Default fallback. |
+
+**Block format** (place directly after the `**Accuracy:**` line in the report header):
+
+```
+**Tighten this report:** Score is <NN>/100 — primarily limited by <factor name> (<sub-score>/<max>).
+Re-run with `--require-citations` to force evidence-backed claims and see what's unsupported,
+or <factor-specific remediation>. Estimated lift: +<X>–<Y> points.
+```
+
+The block is **informational, not blocking.** The user can ignore it and ship the report as-is — sometimes 70 is good enough for an internal sanity-check. The recommendation exists so the user doesn't accept a lower-confidence report by default when one re-run would meaningfully improve it.
+
+**Suppression rules:**
+- `--require-citations` was already used → no recommendation (the user already opted into rigor).
+- `--no-citations` was used → no recommendation (the user explicitly opted out).
+- `--quick` / `--fast` → no recommendation (the mode trades accuracy for speed by design; the user already accepted the tradeoff).
+- Headline score ≥ 75 → no recommendation (the report is solid; offering rigor would be noise).
 
 ### Step 12 — Present & save
 Present to the user. Save to `.scratch/focus-group/<YYYY-MM-DD>-<short-slug>.md`.
@@ -603,7 +814,8 @@ The gate **never blocks the panel.** If a check cannot complete (no API key, off
 - [references/persona-roster.md](references/persona-roster.md) — full persona library + quick-pick panels
 - [references/product-packs/](references/product-packs/) — one file per Salesforce product pack
 - [references/industry-packs/](references/industry-packs/) — one file per Salesforce industry pack
-- [references/org-profile-schema.md](references/org-profile-schema.md) — the customer-grounding gate, wizard, and internal-data consent flow
+- [references/org-profile-schema.md](references/org-profile-schema.md) — the customer-grounding gate, wizard, internal-data consent flow, and `--org-profile-file` path validation
+- [references/privacy-model.md](references/privacy-model.md) — what anonymization protects, what it doesn't, and how to decide where a report can be shared
 - [references/deliberation.md](references/deliberation.md) — cognitive diversity and anti-groupthink
 - [references/multi-model-panel.md](references/multi-model-panel.md) — channel discovery and multi-Claude fallback
 - [references/output-format.md](references/output-format.md) — the report template

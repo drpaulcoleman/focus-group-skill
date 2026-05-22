@@ -59,8 +59,23 @@ right default unless the user pinned personas to channels manually with
 
 ## Multi-Claude fallback
 
-When the only available CLI is `claude`, the skill silently configures the
-fallback **without prompting the user**. The behavior:
+The fallback engages when no other vendor's CLI is **operational** — not
+just when no other CLI is **present**. "Present but non-operational"
+covers three cases the skill must distinguish from "missing":
+
+- `unauth` — installed but not signed in (`codex` without an API key,
+  `gemini` without `gemini auth login`).
+- `quota` — signed in but rate-limited or out of credit for the day.
+- `error` — present but errored on the Step 0 health check, or errored
+  on its first real dispatch in this run.
+
+A CLI on PATH that returns `unauth` / `quota` / `error` is treated the
+same as a missing CLI for dispatch — it does not count toward
+cross-vendor diversity. SKILL.md Step 0 records this in the cache as
+`{ present: true, operational: false, health: "<unauth|quota|error>" }`.
+
+When no other vendor is `present && operational`, the skill silently
+configures the fallback **without prompting the user**. The behavior:
 
 1. `available = [claude-opus, claude-sonnet]` (model ids read from
    `config.json` `multi_claude_fallback.primary` and `.secondary`).
@@ -73,14 +88,35 @@ fallback **without prompting the user**. The behavior:
 6. The report header says: *"Multi-Claude fallback in effect — two Claude
    models, one architecture. Agreement is meaningful but not as strong as
    a cross-vendor agreement would be."*
+7. **When the trigger was non-operational CLIs (not missing ones),** the
+   header also lists each bypassed CLI with a one-line remediation
+   (e.g., *"codex unauth — run `codex login` to add it back"*) so the
+   user can fix the gap rather than wonder where the cross-vendor
+   diversity went.
 
 The fallback uses `/cross-ai-review`'s `cross_ai.py` if available; if not,
 it spawns two local Claude subagents directly.
 
+**Mid-run promotion.** If a CLI passes the Step 0 health check but fails
+its first real persona-prompt dispatch with an auth/quota pattern, the
+orchestrator invalidates the cache entry, reassigns the persona, and —
+if that leaves Claude as the only operational vendor — promotes the
+*remaining* dispatches to multi-Claude. The promotion is surfaced in the
+header (*"gemini fell over mid-run — reassigned 2 personas to
+multi-Claude"*); the skill never silently retries the broken channel.
+
+**Stage B is never silently skipped when Claude is available.** If
+every non-Claude option is non-operational by the time Stage B runs, the
+consolidator runs on the second Claude model (Sonnet if A was Opus, or
+vice-versa). Skipping Stage B is reserved for the case where *every*
+model option — including the second Claude — is unavailable, which is
+extremely rare on a host that's running this skill at all.
+
 The skill **does not** prompt the user to install another CLI just because
 the fallback engaged — that decision belongs to the install-offer triggers
 in [usage.md](usage.md) §8 (which fire after a `/cross-ai-review` run
-completes, not during a `/focus-group` panel).
+completes, not during a `/focus-group` panel). The header's one-line
+remediation is information, not a prompt.
 
 ## Quota-skip and reassignment
 

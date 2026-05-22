@@ -16,9 +16,26 @@ template.
 **Models skipped:** <list with reason: quota / missing / timeout / error>
 **Grounding:**      product=<pack> · industry=<pack | none> · org-profile=<source>
 **Anonymize:**      pass (<runtime>) | degraded (<runtime>) | single-ai-fallback | n/a (generic, no customer data)
+**Sensitivity:**    low | medium | high | highest — <one-line "where can this report go?" summary>
 **Accuracy:**       NN/100 — <one-line summary>
 **Date:**           YYYY-MM-DD
 ```
+
+The **Sensitivity** field follows the rubric in
+[`privacy-model.md`](privacy-model.md#sharing-rules--where-can-a-report-go).
+Quick map:
+
+- `--generic` (no customer profile) → **low**
+- Profile by culture & size, no `internal_data` → **medium**
+- Profile by name (public sources only) → **medium-high**
+- Profile by name with `internal_data` (sf / Salesforce MCP / Slack) → **high**
+- Any of the above + heightened-sensitivity industry (public sector,
+  HIPAA-regulated healthcare, regulated finance) → bump one level →
+  often **highest**
+
+The one-line summary should name the most-restrictive sharing rule that
+applies — e.g., *"high — account team only; never in a Slack Connect
+channel that includes the customer."*
 
 When grounding includes a named customer, also include:
 ```

@@ -217,3 +217,59 @@ product-focus lens fires:
 Always git-ignore this file (the README recommends adding
 `.claude/skills/*/.org-profile*` to the user's `.gitignore` if the
 workspace is shared via git).
+
+## Path validation for `--org-profile-file`
+
+The `--org-profile-file <path>` switch reads JSON from an arbitrary
+filesystem path. Without bounds checking, a typo (or a malicious arg
+in a copy-pasted command) could point the skill at `/etc/passwd`,
+`~/.ssh/id_rsa`, or another file the skill has no business reading —
+and on parse failure, the error path could leak filesystem structure
+to the model.
+
+Before opening the file, the orchestrator must enforce these rules:
+
+1. **Resolve the path.** Expand `~`, then call the host's "real path"
+   resolver (`os.path.realpath` on Python, `fs.realpathSync` on Node)
+   to follow symlinks. The check runs against the *resolved* path,
+   not the literal argument — a symlink inside the workspace that
+   points to `/etc/passwd` is rejected on the resolved target.
+
+2. **Allowed roots (the resolved path must be inside one of these):**
+   - The current workspace root (the directory `/focus-group` was
+     invoked from, or its nearest ancestor containing `.git` /
+     `.claude/`).
+   - The user's home directory (`$HOME` / `%USERPROFILE%`).
+   - An explicit `profiles/` subdirectory of either of the above.
+
+3. **Disallowed even if technically inside an allowed root:**
+   - Any path under `.git/`, `.ssh/`, `.aws/`, `.config/gh/`,
+     `.netrc`, `.npmrc`, `.pypirc`, or any file matching
+     `*credential*` / `*secret*` / `*.pem` / `*.key`.
+   - Any path that the OS reports as not a regular file (devices,
+     FIFOs, sockets, directories).
+
+4. **Size cap.** Reject files larger than **256 KB**. A legitimate
+   org profile is < 4 KB; anything larger is either wrong or hostile.
+
+5. **Rejection message** (per the err-doctrine in
+   [err-doctrine.md](err-doctrine.md) — name the cause, say what's
+   safe, offer a next step):
+
+   > *I can't load that profile file — it resolves to `<resolved-path>`,
+   > which is outside the allowed roots (workspace + home directory).*
+   >
+   > *Move the file inside this workspace (or your home directory) and
+   > re-run, or paste the JSON inline and I'll save it as a new
+   > `.org-profile.json` after you confirm.*
+
+6. **On parse failure** (file is inside the allowed root but the JSON
+   is malformed), surface the line/column from the parser but **never**
+   print the file's full path or any of its contents to the model
+   context — print only the bare filename + the parse error. This
+   prevents an out-of-bounds file (that somehow passed validation)
+   from leaking its contents through error text.
+
+The same validation rules apply to any future switch that takes a
+filesystem path argument (e.g., a hypothetical `--persona-file`
+override).
